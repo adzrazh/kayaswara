@@ -80,7 +80,7 @@
    ========================================================================== */
 *, *::before, *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; scroll-padding-top: 96px; }
+html { scroll-behavior: smooth; scroll-padding-top: 116px; }
 
 body {
     font-family: var(--font-body);
@@ -553,13 +553,17 @@ p { margin-bottom: 1rem; }
 }
 .site-header.is-stuck { box-shadow: var(--shadow-sm); background: rgba(251, 250, 246, .98); }
 
-.site-header .navbar { padding: .65rem 0; }
+.site-header .navbar {
+    padding: 1.1rem 0;
+    min-height: 82px;
+}
 
 .brand {
     display: flex;
     align-items: center;
-    gap: .7rem;
+    gap: .8rem;
     text-decoration: none;
+    padding: .15rem 0;
 }
 .brand-mark {
     width: 42px;
@@ -621,6 +625,7 @@ p { margin-bottom: 1rem; }
 .main-nav .nav-link.active { color: var(--primary); font-weight: 600; }
 
 .nav-actions { display: flex; align-items: center; gap: .6rem; }
+.nav-actions .btn { padding: .62rem 1.25rem; }
 
 .nav-toggle {
     width: 42px;
@@ -1799,6 +1804,7 @@ p { margin-bottom: 1rem; }
 
     body { font-size: .97rem; }
     .site-topbar { display: none; }
+    .site-header .navbar { padding: .85rem 0; min-height: 70px; }
     .hero-meta { gap: 1.25rem 2rem; }
     .hero-actions .btn { flex: 1 1 100%; }
     .track-form .form-control { flex: 1 1 100%; }

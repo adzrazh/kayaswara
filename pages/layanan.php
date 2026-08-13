@@ -3,7 +3,7 @@
  * Layanan (Services) Page – Kayaswara Publishing
  */
 $pageTitle = 'Layanan – ' . getSetting('site_name', 'Kayaswara');
-$metaDesc  = 'Layanan penerbitan buku akademik lengkap: penerbitan buku ajar, konversi KTI, editing, layout, desain cover, ISBN, dan distribusi.';
+$metaDesc  = 'Layanan penerbitan buku akademik lengkap: penerbitan buku ajar, konversi KTI, editing, layout, desain cover, dan distribusi pemasaran.';
 $siteUrl   = defined('SITE_URL') ? SITE_URL : '';
 ?>
 
@@ -12,7 +12,7 @@ $siteUrl   = defined('SITE_URL') ? SITE_URL : '';
     <div class="container">
         <div class="page-hero-content text-center fade-in-up">
             <h1 class="page-hero-title">Layanan Penerbitan Buku Akademik</h1>
-            <p class="page-hero-subtitle">Dari naskah mentah hingga buku ber-ISBN siap terbit — kami menangani seluruh proses penerbitan buku akademik Anda dengan standar profesional.</p>
+            <p class="page-hero-subtitle">Dari naskah mentah hingga buku siap terbit — kami menangani seluruh proses penerbitan buku akademik Anda dengan standar profesional.</p>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb justify-content-center">
                     <li class="breadcrumb-item"><a href="<?= $siteUrl ?>/">Beranda</a></li>
@@ -46,15 +46,15 @@ $siteUrl   = defined('SITE_URL') ? SITE_URL : '';
                         </div>
                     </div>
                     <div class="service-detail-body">
-                        <p>Layanan penerbitan buku akademik lengkap mulai dari review naskah, editing, layout, desain cover, pengurusan ISBN, hingga pencetakan. Kami menerbitkan buku ajar, buku referensi, monograf, dan buku ilmiah lainnya.</p>
-                        <p>Setiap buku yang diterbitkan mendapatkan ISBN resmi dari Perpustakaan Nasional RI dan tersedia dalam format cetak maupun e-book.</p>
+                        <p>Layanan penerbitan buku akademik lengkap mulai dari review naskah, editing, layout, desain cover, hingga pencetakan. Kami menerbitkan buku ajar, buku referensi, monograf, dan buku ilmiah lainnya.</p>
+                        <p>Setiap buku yang diterbitkan akan tersedia dalam format cetak maupun e-book.</p>
                         <h6 class="mt-3 mb-2 fw-700">Yang Anda Dapatkan:</h6>
                         <ul class="service-feature-list">
                             <li><i class="fas fa-check-circle"></i> Review & evaluasi naskah oleh tim editor</li>
                             <li><i class="fas fa-check-circle"></i> Editing substansi & tata bahasa</li>
                             <li><i class="fas fa-check-circle"></i> Layout & typesetting profesional</li>
                             <li><i class="fas fa-check-circle"></i> Desain cover buku custom</li>
-                            <li><i class="fas fa-check-circle"></i> ISBN resmi & pencetakan buku</li>
+                            <li><i class="fas fa-check-circle"></i> Distribusi Toko Online</li>
                         </ul>
                     </div>
                 </div>
@@ -73,14 +73,14 @@ $siteUrl   = defined('SITE_URL') ? SITE_URL : '';
                         </div>
                     </div>
                     <div class="service-detail-body">
-                        <p>Layanan mengubah Karya Tulis Ilmiah (KTI) Anda menjadi buku ber-ISBN. Kami mengonversi skripsi, tesis, disertasi, jurnal, dan prosiding menjadi buku akademik yang memenuhi standar penerbitan.</p>
+                        <p>Layanan mengubah Karya Tulis Ilmiah (KTI) Anda menjadi buku siap terbit. Kami mengonversi skripsi, tesis, disertasi, jurnal, dan prosiding menjadi buku akademik yang memenuhi standar penerbitan.</p>
                         <p>Konversi KTI ke buku memberikan nilai tambah berupa kredit penerbitan buku bagi karir akademik Anda sebagai dosen atau peneliti.</p>
                         <h6 class="mt-3 mb-2 fw-700">Yang Anda Dapatkan:</h6>
                         <ul class="service-feature-list">
                             <li><i class="fas fa-check-circle"></i> Parafrase & restrukturisasi konten KTI</li>
                             <li><i class="fas fa-check-circle"></i> Penambahan bab & penyesuaian format buku</li>
                             <li><i class="fas fa-check-circle"></i> Editing substansi & bahasa</li>
-                            <li><i class="fas fa-check-circle"></i> Layout, desain cover & ISBN</li>
+                            <li><i class="fas fa-check-circle"></i> Layout & desain cover</li>
                             <li><i class="fas fa-check-circle"></i> Konsultasi konten dengan penulis</li>
                         </ul>
                     </div>
@@ -142,27 +142,25 @@ $siteUrl   = defined('SITE_URL') ? SITE_URL : '';
             </div>
 
             <!-- 5. ISBN & Distribusi -->
-            <div class="col-lg-6" id="isbn">
-                <div class="service-detail-card fade-in-up" data-testid="layanan-isbn">
+            <!-- 5. Distribusi & Pemasaran -->
+            <div class="col-lg-6" id="distribusi">
+                <div class="service-detail-card fade-in-up" data-testid="layanan-distribusi">
                     <div class="service-detail-header" style="background: linear-gradient(135deg, var(--primary-dark), #0F2A45);">
                         <div class="service-detail-icon">
-                            <i class="fas fa-barcode fa-2x"></i>
+                            <i class="fas fa-bullhorn fa-2x"></i>
                         </div>
                         <div>
-                            <h3 class="service-detail-title">ISBN & Distribusi</h3>
-                            <p class="service-detail-tagline mb-0">Estimasi: 7–14 hari kerja</p>
+                            <h3 class="service-detail-title">Distribusi & Pemasaran</h3>
+                            <p class="service-detail-tagline mb-0">Opsional / Termasuk Paket</p>
                         </div>
                     </div>
                     <div class="service-detail-body">
-                        <p>Pengurusan ISBN (International Standard Book Number) resmi dari Perpustakaan Nasional Republik Indonesia. ISBN wajib untuk buku yang akan diperjualbelikan dan menjadi syarat kredit penerbitan buku dosen.</p>
-                        <p>Kami juga membantu distribusi buku Anda ke marketplace online (Tokopedia, Shopee, dll), toko buku, dan perpustakaan institusi.</p>
+                        <p>Distribusi buku cetak dan e-book Anda ke berbagai kanal penjualan baik toko buku online maupun jaringan akademik. Kami juga membantu memasarkan buku Anda ke institusi pendidikan terkait.</p>
                         <h6 class="mt-3 mb-2 fw-700">Yang Anda Dapatkan:</h6>
                         <ul class="service-feature-list">
-                            <li><i class="fas fa-check-circle"></i> Pengurusan ISBN resmi Perpusnas RI</li>
-                            <li><i class="fas fa-check-circle"></i> Barcode ISBN untuk cover buku</li>
-                            <li><i class="fas fa-check-circle"></i> Distribusi ke marketplace online</li>
-                            <li><i class="fas fa-check-circle"></i> Listing di katalog Perpusnas</li>
-                            <li><i class="fas fa-check-circle"></i> Sertifikat penerbitan buku</li>
+                            <li><i class="fas fa-check-circle"></i> Penjualan di marketplace resmi kami</li>
+                            <li><i class="fas fa-check-circle"></i> E-book tersedia di Google Play Books</li>
+                            <li><i class="fas fa-check-circle"></i> Pemasaran ke perpustakaan kampus</li>
                         </ul>
                     </div>
                 </div>
@@ -248,7 +246,7 @@ $siteUrl   = defined('SITE_URL') ? SITE_URL : '';
                 ['num' => '01', 'icon' => 'fas fa-comments',        'title' => 'Konsultasi Awal',      'desc' => 'Sesi konsultasi gratis untuk memahami kebutuhan penerbitan Anda — jenis buku, target pembaca, timeline, dan anggaran yang tersedia.'],
                 ['num' => '02', 'icon' => 'fas fa-clipboard-list',  'title' => 'Review Naskah',        'desc' => 'Tim editor kami melakukan review awal naskah Anda dan menyusun proposal kerja yang detail — mencakup scope, timeline, dan biaya.'],
                 ['num' => '03', 'icon' => 'fas fa-pen-fancy',       'title' => 'Editing & Layout',     'desc' => 'Naskah diedit, dilayout, dan didesain cover-nya. Anda akan mendapatkan update progress dan kesempatan memberikan feedback di setiap tahap.'],
-                ['num' => '04', 'icon' => 'fas fa-barcode',         'title' => 'ISBN & Finalisasi',    'desc' => 'Pengurusan ISBN resmi dan finalisasi seluruh materi buku. Anda melakukan final review sebelum buku masuk tahap cetak.'],
+                ['num' => '04', 'icon' => 'fas fa-bullseye',         'title' => 'Finalisasi & Pemasaran',    'desc' => 'Finalisasi seluruh materi buku. Anda melakukan final review sebelum buku masuk tahap cetak dan didistribusikan.'],
                 ['num' => '05', 'icon' => 'fas fa-flag-checkered',  'title' => 'Cetak & Distribusi',   'desc' => 'Buku dicetak sesuai jumlah yang disepakati dan didistribusikan. Anda menerima buku fisik, e-book, dan sertifikat penerbitan.'],
             ];
             foreach ($steps as $i => $step):
@@ -286,19 +284,19 @@ $siteUrl   = defined('SITE_URL') ? SITE_URL : '';
                         </h2>
                         <div id="faqL1" class="accordion-collapse collapse show" data-bs-parent="#faqLayanan">
                             <div class="accordion-body">
-                                Untuk penerbitan lengkap (editing, layout, cover, ISBN, cetak), prosesnya memakan waktu <strong>14–30 hari kerja</strong> tergantung panjang naskah dan kompleksitas editing. Untuk konversi KTI ke buku, estimasinya <strong>21–45 hari kerja</strong> karena memerlukan proses parafrase dan restrukturisasi konten.
+                                Untuk penerbitan lengkap (editing, layout, cover, cetak), prosesnya memakan waktu <strong>14–30 hari kerja</strong> tergantung panjang naskah dan kompleksitas editing. Untuk konversi KTI ke buku, estimasinya <strong>21–45 hari kerja</strong> karena memerlukan proses parafrase dan restrukturisasi konten.
                             </div>
                         </div>
                     </div>
                     <div class="accordion-item">
                         <h2 class="accordion-header">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqL2">
-                                Apakah buku yang diterbitkan mendapat ISBN resmi?
+                                Apakah bisa revisi hasil editing atau desain cover?
                             </button>
                         </h2>
-                        <div id="faqL2" class="accordion-collapse collapse" data-bs-parent="#faqLayanan">
+                        <div id="faqCollapse2" class="accordion-collapse collapse" data-bs-parent="#layananFaq">
                             <div class="accordion-body">
-                                Ya, setiap buku yang kami terbitkan mendapatkan <strong>ISBN resmi dari Perpustakaan Nasional RI</strong>. ISBN ini tercatat secara nasional dan diakui untuk keperluan kredit penerbitan buku dosen (BKD), kenaikan jabatan akademik, dan sertifikasi.
+                                Tentu bisa. Penulis diberikan <strong>2 kali kesempatan revisi minor</strong> setelah draf awal editing, layout, dan desain cover diberikan. Revisi mayor akan dikenakan biaya tambahan.
                             </div>
                         </div>
                     </div>

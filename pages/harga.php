@@ -34,7 +34,7 @@ $siteUrl   = defined('SITE_URL') ? SITE_URL : '';
                     <div class="pricing-card-header">
                         <div class="pricing-tier-icon"><i class="fas fa-seedling"></i></div>
                         <h3 class="pricing-tier-name">Basic</h3>
-                        <p class="pricing-tier-desc">Cocok untuk penulis yang sudah memiliki naskah siap terbit dan hanya butuh ISBN + cetak.</p>
+                        <p class="pricing-tier-desc">Cocok untuk penulis yang sudah memiliki naskah siap terbit dan butuh layanan cetak.</p>
                         <div class="pricing-price">
                             <span class="pricing-amount" style="font-size:1.5rem;">Hubungi Kami</span>
                         </div>
@@ -45,7 +45,7 @@ $siteUrl   = defined('SITE_URL') ? SITE_URL : '';
                             <li><i class="fas fa-check-circle text-success"></i> Review naskah awal</li>
                             <li><i class="fas fa-check-circle text-success"></i> Layout & typesetting standar</li>
                             <li><i class="fas fa-check-circle text-success"></i> Desain cover standar (1 opsi)</li>
-                            <li><i class="fas fa-check-circle text-success"></i> ISBN resmi Perpusnas RI</li>
+                            <li><i class="fas fa-check-circle text-success"></i> Distribusi Toko Online</li>
                             <li><i class="fas fa-check-circle text-success"></i> Cetak 10 eksemplar</li>
                             <li><i class="fas fa-check-circle text-success"></i> Sertifikat penerbitan</li>
                             <li><i class="fas fa-check-circle text-success"></i> Support 14 hari</li>
@@ -165,8 +165,8 @@ $siteUrl   = defined('SITE_URL') ? SITE_URL : '';
                     <tr><td>Desain cover buku</td><td class="text-center">1 opsi</td><td class="text-center">3 opsi</td><td class="text-center">Premium</td></tr>
                     <tr><td>E-book (PDF & EPUB)</td><td class="text-center"><i class="fas fa-times text-muted"></i></td><td class="text-center"><i class="fas fa-check text-success"></i></td><td class="text-center"><i class="fas fa-check text-success"></i></td></tr>
 
-                    <tr><td colspan="4" class="compare-section-header">ISBN & Distribusi</td></tr>
-                    <tr><td>ISBN resmi Perpusnas RI</td><td class="text-center"><i class="fas fa-check text-success"></i></td><td class="text-center"><i class="fas fa-check text-success"></i></td><td class="text-center"><i class="fas fa-check text-success"></i></td></tr>
+                    <tr><td colspan="4" class="compare-section-header">Distribusi & Pemasaran</td></tr>
+                    <tr><td>Distribusi Toko Online</td><td class="text-center"><i class="fas fa-check text-success"></i></td><td class="text-center"><i class="fas fa-check text-success"></i></td><td class="text-center"><i class="fas fa-check text-success"></i></td></tr>
                     <tr><td>Jumlah cetak termasuk</td><td class="text-center">10 eks</td><td class="text-center">25 eks</td><td class="text-center">50 eks</td></tr>
                     <tr><td>Distribusi toko buku online</td><td class="text-center"><i class="fas fa-times text-muted"></i></td><td class="text-center"><i class="fas fa-check text-success"></i></td><td class="text-center"><i class="fas fa-check text-success"></i></td></tr>
                     <tr><td>Distribusi offline</td><td class="text-center"><i class="fas fa-times text-muted"></i></td><td class="text-center"><i class="fas fa-times text-muted"></i></td><td class="text-center"><i class="fas fa-check text-success"></i></td></tr>

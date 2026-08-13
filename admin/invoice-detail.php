@@ -79,7 +79,7 @@ $pdfDir  = defined('ROOT_PATH') ? ROOT_PATH . '/invoices' : dirname(__DIR__) . '
 $pdfFile = $pdfDir . '/' . preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ','',$inv['invoice_number'])) . '.pdf';
 $pdfExists = file_exists($pdfFile);
 
-$serviceOpts = ['setup_ojs'=>'Penerbitan Buku','migrasi'=>'Konversi KTI','kustomisasi'=>'Editing & Layout','pelatihan'=>'Desain Cover','maintenance'=>'ISBN & Distribusi','indeksasi_doaj'=>'Cek Plagiasi','indeksasi_sinta'=>'Konsultasi Penulisan','lainnya'=>'Lainnya'];
+$serviceOpts = ['setup_ojs'=>'Penerbitan Buku','migrasi'=>'Konversi KTI','kustomisasi'=>'Editing & Layout','pelatihan'=>'Desain Cover','maintenance'=>'Distribusi & Pemasaran','indeksasi_doaj'=>'Cek Plagiasi','indeksasi_sinta'=>'Konsultasi Penulisan','lainnya'=>'Lainnya'];
 $packageOpts = ['basic'=>'Basic','professional'=>'Professional','premium'=>'Premium','custom'=>'Custom'];
 
 require_once ADMIN_PATH . '/includes/header.php';

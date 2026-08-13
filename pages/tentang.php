@@ -33,7 +33,7 @@ $siteUrl   = defined('SITE_URL') ? SITE_URL : '';
                     CV. Kayaswara adalah penyedia jasa penerbitan buku akademik profesional yang berfokus pada buku ajar, buku referensi, monograf, dan karya ilmiah lainnya untuk komunitas akademik Indonesia.
                 </p>
                 <p class="text-muted mb-3">
-                    Kami hadir sebagai respons terhadap kebutuhan dosen, peneliti, dan akademisi Indonesia untuk menerbitkan buku berkualitas tinggi secara mudah, cepat, dan terjangkau — dengan standar penerbitan profesional dan ISBN resmi.
+                    Kami hadir sebagai respons terhadap kebutuhan dosen, peneliti, dan akademisi Indonesia untuk menerbitkan buku berkualitas tinggi secara mudah, cepat, dan terjangkau — dengan standar penerbitan profesional.
                 </p>
                 <p class="text-muted">
                     Dalam perjalanan kami, Kayaswara telah membantu puluhan penulis dari berbagai bidang keilmuan — mulai dari pendidikan, kesehatan, teknik, hukum, ekonomi, hingga ilmu sosial dan humaniora — menerbitkan karya mereka.
@@ -87,7 +87,7 @@ $siteUrl   = defined('SITE_URL') ? SITE_URL : '';
                     <ul class="vm-mission-list">
                         <li>Menyediakan layanan penerbitan buku akademik berkualitas tinggi, terjangkau, dan mudah diakses oleh seluruh akademisi Indonesia.</li>
                         <li>Mendampingi penulis dari proses penulisan hingga distribusi buku dengan standar profesional.</li>
-                        <li>Mendukung peningkatan karir akademik dosen melalui penerbitan buku ber-ISBN yang diakui secara nasional.</li>
+                        <li>Mendukung peningkatan karir akademik dosen melalui penerbitan buku yang diakui secara nasional.</li>
                         <li>Terus berinovasi menghadirkan solusi penerbitan modern untuk mendukung ekosistem publikasi ilmiah yang berkelanjutan.</li>
                     </ul>
                 </div>
@@ -109,7 +109,7 @@ $siteUrl   = defined('SITE_URL') ? SITE_URL : '';
             $whyUs = [
                 ['icon' => 'fas fa-book-open',        'title' => 'Fokus Buku Akademik',               'desc' => 'Kami tidak menerbitkan semua jenis buku. Fokus eksklusif kami pada buku akademik menjadikan kami ahli yang memahami kebutuhan spesifik buku ajar, referensi, dan monograf secara mendalam.'],
                 ['icon' => 'fas fa-users-cog',         'title' => 'Tim Berlatar Belakang Akademik',    'desc' => 'Tim kami memiliki pengalaman langsung di dunia akademik — sebagai peneliti dan penulis. Pemahaman ini membantu kami memberikan solusi yang benar-benar relevan untuk kebutuhan penerbitan Anda.'],
-                ['icon' => 'fas fa-graduation-cap',    'title' => 'Memahami Regulasi Akademik',        'desc' => 'Kami memahami kebutuhan kredit penerbitan buku dosen (BKD), persyaratan ISBN, dan standar penerbitan buku yang diakui untuk kenaikan jabatan akademik.'],
+                ['icon' => 'fas fa-graduation-cap',    'title' => 'Memahami Regulasi Akademik',        'desc' => 'Kami memahami kebutuhan penerbitan buku dosen, dan standar penerbitan buku yang diakui untuk kenaikan jabatan akademik.'],
                 ['icon' => 'fas fa-handshake',         'title' => 'Pendampingan Jangka Panjang',       'desc' => 'Hubungan kami dengan penulis tidak berhenti setelah buku terbit. Kami memberikan pendampingan berkelanjutan termasuk konsultasi, distribusi, dan cetak ulang.'],
                 ['icon' => 'fas fa-shield-alt',        'title' => 'Transparansi & Kepercayaan',        'desc' => 'Anda selalu mendapatkan informasi yang jelas tentang proses, biaya, dan timeline. Penulis memiliki kontrol penuh atas naskahnya di setiap tahap penerbitan.'],
             ];
@@ -170,7 +170,7 @@ $siteUrl   = defined('SITE_URL') ? SITE_URL : '';
         <div class="row g-4">
             <?php
             $testimonials = [
-                ['text' => '"Proses penerbitan buku ajar saya di Kayaswara sangat cepat dan profesional. Tim editor sangat teliti, desain cover-nya memuaskan, dan ISBN keluar tepat waktu. Sangat direkomendasikan untuk sesama dosen yang ingin menerbitkan buku."', 'name' => 'Dr. Hendra Kusuma, M.Si.', 'role' => 'Dosen – Universitas Negeri Semarang'],
+                ['text' => '"Proses penerbitan buku ajar saya di Kayaswara sangat cepat dan profesional. Tim editor sangat teliti, desain cover-nya memuaskan. Sangat direkomendasikan untuk sesama dosen yang ingin menerbitkan buku."', 'name' => 'Dr. Hendra Kusuma, M.Si.', 'role' => 'Dosen – Universitas Negeri Semarang'],
                 ['text' => '"Saya mengonversi disertasi saya menjadi buku referensi melalui Kayaswara. Prosesnya didampingi dari awal — mulai dari restrukturisasi konten, editing, hingga terbit. Hasilnya sangat profesional dan memuaskan."', 'name' => 'Prof. Dr. Siti Aminah, M.Pd.', 'role' => 'Guru Besar – Universitas Islam Indonesia'],
                 ['text' => '"Kayaswara membantu saya menerbitkan buku pertama saya. Sebagai penulis pemula, saya sangat terbantu dengan konsultasi dan pendampingan yang diberikan. Sekarang buku saya sudah tersedia di toko buku online!"', 'name' => 'Dr. Agus Setiawan, M.T.', 'role' => 'Dosen – Institut Teknologi Sepuluh Nopember'],
             ];

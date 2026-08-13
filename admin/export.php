@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         'migrasi'     => 'Konversi KTI',
         'kustomisasi' => 'Editing & Layout',
         'pelatihan'   => 'Desain Cover',
-        'maintenance' => 'ISBN & Distribusi',
+        'maintenance' => 'Distribusi & Pemasaran',
         'lainnya'     => 'Lainnya',
     ];
     $status_labels   = ['new' => 'Baru', 'contacted' => 'Dihubungi', 'follow_up' => 'Follow Up', 'negotiation' => 'Negosiasi', 'closed_won' => 'Closed Won', 'closed_lost' => 'Closed Lost'];

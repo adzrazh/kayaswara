@@ -95,7 +95,7 @@ $service_labels = [
     'migrasi'     => 'Konversi KTI',
     'kustomisasi' => 'Editing & Layout',
     'pelatihan'   => 'Desain Cover',
-    'maintenance' => 'ISBN & Distribusi',
+    'maintenance' => 'Distribusi & Pemasaran',
     'lainnya'     => 'Lainnya',
 ];
 

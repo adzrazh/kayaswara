@@ -11,7 +11,7 @@ $faviconPath = getSetting('favicon_path', '');
 $primaryColor   = getSetting('primary_color', '#1A3C5E');
 $secondaryColor = getSetting('secondary_color', '#1A3C5E');
 $accentColor    = getSetting('accent_color', '#B8860B');
-$metaDescription = $metaDesc ?? getSetting('meta_description', 'Jasa penerbitan buku akademik profesional untuk dosen, peneliti, dan akademisi Indonesia. Buku ajar, referensi, monograf ber-ISBN resmi.');
+$metaDescription = $metaDesc ?? getSetting('meta_description', 'Jasa penerbitan buku akademik profesional untuk dosen, peneliti, dan akademisi Indonesia. Buku ajar, referensi, dan monograf.');
 
 $siteUrl = defined('SITE_URL') ? SITE_URL : '';
 $faviconHref = !empty($faviconPath) ? $siteUrl . '/assets/uploads/site/' . $faviconPath : $siteUrl . '/assets/images/favicon.ico';
@@ -100,6 +100,9 @@ $flashMessages = getFlash();
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?= activeClass('portofolio', $currentPage) ?>" href="<?= $siteUrl ?>/portofolio">Portofolio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= activeClass('publikasi', $currentPage) ?>" href="<?= $siteUrl ?>/publikasi">Publikasi</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?= activeClass('blog', $currentPage) ?>" href="<?= $siteUrl ?>/blog">Blog</a>

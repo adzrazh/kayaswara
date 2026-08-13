@@ -225,7 +225,7 @@ $waNumber = getSetting('whatsapp_number', '');
                                         <option value="kustomisasi" <?= $preService === 'kustomisasi' ? 'selected' : '' ?>>Editing & Layout</option>
                                         <option value="migrasi">Konversi KTI ke Buku</option>
                                         <option value="pelatihan">Desain Cover Buku</option>
-                                        <option value="maintenance" <?= $preService === 'maintenance' ? 'selected' : '' ?>>ISBN & Distribusi</option>
+                                        <option value="maintenance" <?= $preService === 'maintenance' ? 'selected' : '' ?>>Distribusi & Pemasaran</option>
                                         <option value="lainnya">Lainnya / Saya tidak yakin</option>
                                     </select>
                                 </div>

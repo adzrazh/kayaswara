@@ -207,7 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $step === 2) {
                     'email_contact'    => 'kayaswara.jurnal@gmail.com',
                     'address'          => 'Jln. Sunan Kalijaga Timur 10, Kec. Larangan, Kota Tangerang, Banten',
                     'footer_text'      => '© ' . date('Y') . ' Kayaswara. All rights reserved.',
-                    'meta_description' => 'Jasa penerbitan buku akademik profesional untuk dosen, peneliti, dan akademisi Indonesia. Buku ajar, referensi, monograf ber-ISBN resmi.',
+                    'meta_description' => 'Jasa penerbitan buku akademik profesional untuk dosen, peneliti, dan akademisi Indonesia. Buku ajar, referensi, dan monograf.',
                 ];
 
                 $insertSettings = $testPdo->prepare(

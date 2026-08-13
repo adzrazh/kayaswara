@@ -71,7 +71,8 @@ $address        = getSetting('address', '');
                     <ul class="footer-links">
                         <li><a href="<?= $siteUrl ?>/">Beranda</a></li>
                         <li><a href="<?= $siteUrl ?>/layanan">Layanan</a></li>
-                        <li><a href="<?= $siteUrl ?>/portofolio">Portofolio</a></li>
+                        <li><a href="<?= $siteUrl ?>/portofolio">Portofolio Kami</a></li>
+                        <li><a href="<?= $siteUrl ?>/publikasi">Katalog Publikasi</a></li>
                         <li><a href="<?= $siteUrl ?>/blog">Blog</a></li>
                         <li><a href="<?= $siteUrl ?>/harga">Harga</a></li>
                         <li><a href="<?= $siteUrl ?>/tentang">Tentang Kami</a></li>
@@ -86,7 +87,7 @@ $address        = getSetting('address', '');
                         <li><a href="<?= $siteUrl ?>/layanan#konversi">Konversi KTI ke Buku</a></li>
                         <li><a href="<?= $siteUrl ?>/layanan#editing">Editing & Layout</a></li>
                         <li><a href="<?= $siteUrl ?>/layanan#desain">Desain Cover Buku</a></li>
-                        <li><a href="<?= $siteUrl ?>/layanan#isbn">ISBN & Distribusi</a></li>
+                        <li><a href="<?= $siteUrl ?>/layanan#distribusi">Distribusi & Pemasaran</a></li>
                         <li><a href="<?= $siteUrl ?>/layanan#konsultasi-pendampingan">Konsultasi & Pendampingan</a></li>
                     </ul>
                 </div>

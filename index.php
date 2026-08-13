@@ -111,6 +111,9 @@ if (isset($_GET['page'])) {
         case 'tracking':
             $page = 'tracking';
             break;
+        case 'publikasi':
+            $page = 'publikasi';
+            break;
         case 'invoice':
             $page = 'invoice';
             break;

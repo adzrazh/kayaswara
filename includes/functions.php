@@ -390,7 +390,7 @@ function getDefaultMilestones(string $serviceType = 'setup_ojs'): array {
         ['Layout & Typesetting',           'Penataan layout buku, pengaturan halaman, margin, header/footer, dan daftar isi.'],
         ['Desain Cover Buku',              'Pembuatan desain cover buku sesuai identitas konten dan preferensi penulis.'],
         ['Review & Revisi Penulis',        'Penulis melakukan review hasil editing dan layout. Revisi dilakukan sesuai feedback.'],
-        ['Pengurusan ISBN',                'Pengajuan dan pengurusan ISBN resmi dari Perpustakaan Nasional RI.'],
+        ['Distribusi & Pemasaran',                'Pengajuan dan distribusi buku ke toko offline dan online.'],
         ['Finalisasi & Pracetak',          'Finalisasi seluruh materi buku dan persiapan file untuk proses pencetakan.'],
         ['Pencetakan Buku',                'Proses cetak buku sesuai jumlah eksemplar yang disepakati.'],
         ['Serah Terima & Distribusi',      'Buku diserahterimakan kepada penulis lengkap dengan sertifikat penerbitan.'],
@@ -1129,7 +1129,7 @@ function generateInvoicePDF(array $inv, array $order): string {
     }
 
     // Invoice meta (right)
-    $serviceOpts=['setup_ojs'=>'Penerbitan Buku','migrasi'=>'Konversi KTI','kustomisasi'=>'Editing & Layout','pelatihan'=>'Desain Cover','maintenance'=>'ISBN & Distribusi','indeksasi_doaj'=>'Cek Plagiasi','indeksasi_sinta'=>'Konsultasi Penulisan','lainnya'=>'Lainnya'];
+    $serviceOpts=['setup_ojs'=>'Penerbitan Buku','migrasi'=>'Konversi KTI','kustomisasi'=>'Editing & Layout','pelatihan'=>'Desain Cover','maintenance'=>'Distribusi & Pemasaran','indeksasi_doaj'=>'Cek Plagiasi','indeksasi_sinta'=>'Konsultasi Penulisan','lainnya'=>'Lainnya'];
     $packageOpts=['basic'=>'Basic','professional'=>'Professional','premium'=>'Premium','custom'=>'Custom'];
     $statusLabels=['draft'=>'DRAFT','sent'=>'TERKIRIM','paid'=>'LUNAS','cancelled'=>'BATAL'];
     $rx=110; $lW=42; $vW=$cW-($rx-15)-$lW; $ry=$y;

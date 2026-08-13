@@ -6,8 +6,8 @@ Website profesional untuk jasa penerbitan buku akademik (buku ajar, buku referen
 
 ### Frontend (Public)
 - **Halaman Beranda** — Hero section, statistik, layanan unggulan, portofolio, testimoni
-- **Halaman Layanan** — Detail layanan penerbitan: Penerbitan Buku, Konversi KTI, Editing & Layout, Desain Cover, ISBN & Distribusi, Konsultasi
-- **Halaman Harga** — 3 paket penerbitan (Basic, Professional, Premium) dengan tabel perbandingan
+- **Halaman Layanan** — Detail layanan penerbitan: Penerbitan Buku, Konversi KTI, Editing & Layout, Desain Cover, Distribusi & Pemasaran, Konsultasi
+- **Halaman Harga** — Perbandingan paket layanan (Basic, Professional, Premium, Custom) dengan tabel perbandingan
 - **Halaman Tentang** — Profil perusahaan, visi misi, tim, testimoni
 - **Portofolio** — Galeri buku yang telah diterbitkan dengan filter kategori
 - **Blog** — Artikel tips penulisan & penerbitan dengan kategori dan pencarian

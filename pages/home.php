@@ -34,7 +34,7 @@ $latestPosts = fetchAll("SELECT * FROM blog_posts WHERE status='published' ORDER
                         Anda Bersama Kami
                     </h1>
                     <p class="hero-subtitle">
-                        Kami membantu dosen, peneliti, dan akademisi di seluruh Indonesia menerbitkan buku ajar, buku referensi, monograf, dan karya ilmiah lainnya secara profesional — dari naskah hingga buku siap terbit ber-ISBN.
+                        Kami membantu dosen, peneliti, dan akademisi di seluruh Indonesia menerbitkan buku ajar, buku referensi, monograf, dan karya ilmiah lainnya secara profesional — dari naskah hingga buku siap terbit.
                     </p>
                     <div class="hero-actions">
                         <a href="<?= $siteUrl ?>/konsultasi" class="btn btn-accent btn-lg" data-testid="hero-cta-konsultasi">
@@ -46,7 +46,7 @@ $latestPosts = fetchAll("SELECT * FROM blog_posts WHERE status='published' ORDER
                     </div>
                     <div class="hero-trust mt-4">
                         <span class="hero-trust-item">
-                            <i class="fas fa-isbn text-accent me-1"></i> ISBN Resmi
+                            <i class="fas fa-truck text-accent me-1"></i> Pengiriman Seluruh Indonesia
                         </span>
                         <span class="hero-trust-item">
                             <i class="fas fa-headset text-accent me-1"></i> Pendampingan Penuh
@@ -128,17 +128,17 @@ $latestPosts = fetchAll("SELECT * FROM blog_posts WHERE status='published' ORDER
             <span class="section-badge">Layanan Kami</span>
             <h2 class="section-title">Solusi Lengkap Penerbitan Buku Akademik</h2>
             <p class="section-subtitle">
-                Dari naskah mentah hingga buku ber-ISBN siap terbit dan terdistribusi — kami menyediakan layanan penerbitan end-to-end untuk kebutuhan akademik Anda.
+                Dari naskah mentah hingga buku siap terbit dan terdistribusi — kami menyediakan layanan penerbitan end-to-end untuk kebutuhan akademik Anda.
             </p>
         </div>
         <div class="row g-4 mt-2">
             <?php
             $features = [
-                ['icon' => 'fas fa-book',           'title' => 'Penerbitan Buku',     'desc' => 'Layanan penerbitan buku akademik lengkap — mulai dari review naskah, editing, layout, desain cover, ISBN, hingga cetak. Buku ajar, referensi, dan monograf.', 'color' => 'primary'],
-                ['icon' => 'fas fa-file-alt',       'title' => 'Konversi KTI',        'desc' => 'Ubah karya tulis ilmiah Anda (skripsi, tesis, disertasi, jurnal, prosiding) menjadi buku ber-ISBN yang siap terbit dan bernilai kredit akademik.', 'color' => 'secondary'],
+                ['icon' => 'fas fa-book',           'title' => 'Penerbitan Buku',     'desc' => 'Layanan penerbitan buku akademik lengkap — mulai dari review naskah, editing, layout, desain cover, hingga cetak. Buku ajar, referensi, dan monograf.', 'color' => 'primary'],
+                ['icon' => 'fas fa-file-alt',       'title' => 'Konversi KTI',        'desc' => 'Ubah karya tulis ilmiah Anda (skripsi, tesis, disertasi, jurnal, prosiding) menjadi buku yang siap terbit dan bernilai kredit akademik.', 'color' => 'secondary'],
                 ['icon' => 'fas fa-pen-fancy',      'title' => 'Editing & Layout',    'desc' => 'Tim editor profesional kami memastikan naskah Anda bebas kesalahan tata bahasa, konsisten secara akademik, dan tertata rapi sesuai standar penerbitan.', 'color' => 'accent'],
                 ['icon' => 'fas fa-palette',        'title' => 'Desain Cover Buku',   'desc' => 'Desain cover buku yang menarik dan profesional sesuai identitas penulis serta standar penerbitan — meningkatkan daya tarik pembaca.', 'color' => 'primary'],
-                ['icon' => 'fas fa-barcode',        'title' => 'ISBN & Distribusi',   'desc' => 'Pengurusan ISBN resmi dari Perpustakaan Nasional RI dan distribusi buku ke toko buku online maupun offline di seluruh Indonesia.', 'color' => 'secondary'],
+                ['icon' => 'fas fa-bullhorn',        'title' => 'Distribusi & Pemasaran',   'desc' => 'Distribusi buku ke toko buku online maupun offline di seluruh Indonesia, serta pemasaran melalui kanal digital.', 'color' => 'secondary'],
                 ['icon' => 'fas fa-chalkboard-teacher', 'title' => 'Konsultasi & Pendampingan', 'desc' => 'Pendampingan penuh dari awal hingga akhir proses penerbitan. Konsultasi gratis untuk menentukan jenis buku, strategi penerbitan, dan kebutuhan Anda.', 'color' => 'accent'],
             ];
             foreach ($features as $i => $f):
@@ -281,7 +281,7 @@ $latestPosts = fetchAll("SELECT * FROM blog_posts WHERE status='published' ORDER
                     <?php
                     $whyItems = [
                         ['icon' => 'fas fa-award',          'title' => 'Fokus pada Buku Akademik',            'desc' => 'Spesialisasi kami adalah buku ajar, buku referensi, dan monograf — bukan penerbit umum.'],
-                        ['icon' => 'fas fa-handshake',      'title' => 'Pendampingan dari Awal hingga Akhir', 'desc' => 'Kami mendampingi Anda di setiap tahap — dari konsultasi, editing, layout, ISBN, hingga distribusi.'],
+                        ['icon' => 'fas fa-handshake',      'title' => 'Pendampingan dari Awal hingga Akhir', 'desc' => 'Kami mendampingi Anda di setiap tahap — dari konsultasi, editing, layout, hingga pemasaran dan distribusi.'],
                         ['icon' => 'fas fa-graduation-cap', 'title' => 'Memahami Dunia Akademik',             'desc' => 'Tim kami berlatar belakang akademik dan memahami kebutuhan kredit penerbitan buku dosen.'],
                         ['icon' => 'fas fa-bolt',           'title' => 'Proses Cepat & Transparan',           'desc' => 'Timeline yang realistis dengan update progress berkala. Anda selalu tahu status naskah Anda.'],
                     ];
@@ -303,7 +303,7 @@ $latestPosts = fetchAll("SELECT * FROM blog_posts WHERE status='published' ORDER
                 <div class="testimonial-card">
                     <div class="testimonial-quote-icon"><i class="fas fa-quote-left"></i></div>
                     <p class="testimonial-text">
-                        "Kayaswara membantu saya mengubah disertasi menjadi buku referensi ber-ISBN dalam waktu kurang dari 1 bulan. Proses editing dan layout sangat profesional, dan desain cover-nya memuaskan. Tim konsultan sangat responsif dan mendampingi saya dari awal hingga buku siap terbit."
+                        "Kayaswara membantu saya mengubah disertasi menjadi buku referensi dalam waktu kurang dari 1 bulan. Proses editing dan layout sangat profesional, dan desain cover-nya memuaskan. Tim konsultan sangat responsif dan mendampingi saya dari awal hingga buku siap terbit."
                     </p>
                     <div class="testimonial-author">
                         <div class="testimonial-avatar">

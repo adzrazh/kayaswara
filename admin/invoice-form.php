@@ -27,7 +27,7 @@ $csrf = csrf_token();
 $serviceOptions = [
     'setup_ojs' => 'Penerbitan Buku', 'migrasi' => 'Konversi KTI',
     'kustomisasi' => 'Editing & Layout', 'pelatihan' => 'Desain Cover',
-    'maintenance' => 'ISBN & Distribusi', 'indeksasi_doaj' => 'Cek Plagiasi',
+    'maintenance' => 'Distribusi & Pemasaran', 'indeksasi_doaj' => 'Cek Plagiasi',
     'indeksasi_sinta' => 'Konsultasi Penulisan', 'lainnya' => 'Lainnya',
 ];
 $packageOptions = ['basic' => 'Basic', 'professional' => 'Professional', 'premium' => 'Premium', 'custom' => 'Custom'];

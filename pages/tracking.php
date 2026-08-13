@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'migrasi'     => 'Konversi KTI ke Buku',
         'kustomisasi' => 'Editing & Layout',
         'pelatihan'   => 'Desain Cover Buku',
-        'maintenance' => 'ISBN & Distribusi',
+        'maintenance' => 'Distribusi & Pemasaran',
         'lainnya'     => 'Lainnya',
     ];
     $serviceLabel = $serviceLabels[$order['service_type']] ?? ucfirst($order['service_type']);

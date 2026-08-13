@@ -80,7 +80,7 @@
    ========================================================================== */
 *, *::before, *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; scroll-padding-top: 116px; }
+html { scroll-behavior: smooth; scroll-padding-top: 132px; }
 
 body {
     font-family: var(--font-body);
@@ -90,7 +90,9 @@ body {
     background-color: var(--paper);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    overflow-x: hidden;
+    /* clip, BUKAN hidden: `overflow-x: hidden` menjadikan body sebuah scroll
+       container sehingga `position: sticky` pada masthead berhenti bekerja. */
+    overflow-x: clip;
 }
 
 img { max-width: 100%; height: auto; }
@@ -110,21 +112,44 @@ a:hover { color: var(--accent); }
     border-radius: var(--r-xs);
 }
 
-.container { max-width: var(--container-max); }
+/* Padding container disamakan dengan setengah gutter terbesar yang dipakai
+   (baris .g-5 memakai margin negatif 24px per sisi). Dengan padding 12px
+   bawaan Bootstrap, baris tersebut melebihi lebar layar dan menimbulkan
+   geser horizontal 12px di mobile. */
+.container, .container-fluid {
+    max-width: var(--container-max);
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+.container-fluid { max-width: none; }
 
-/* Skip link — accessibility for keyboard users */
+/* Skip link — accessibility for keyboard users.
+   Disembunyikan dengan teknik clip, bukan left:-9999px, supaya tidak
+   menambah lebar gulir halaman (penyebab geser horizontal di mobile). */
 .skip-link {
     position: absolute;
-    left: -9999px;
     top: 0;
+    left: 0;
     z-index: 2000;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    clip-path: inset(50%);
     background: var(--primary);
     color: #fff;
-    padding: .75rem 1.25rem;
     border-radius: 0 0 var(--r-sm) 0;
     font-weight: 600;
 }
-.skip-link:focus { left: 0; color: #fff; }
+.skip-link:focus {
+    width: auto;
+    height: auto;
+    padding: .75rem 1.25rem;
+    overflow: visible;
+    clip-path: none;
+    color: #fff;
+}
 
 /* ==========================================================================
    3. TYPOGRAPHY
@@ -545,17 +570,29 @@ p { margin-bottom: 1rem; }
 .site-header {
     position: sticky;
     top: 0;
-    z-index: 1040;
-    background: rgba(251, 250, 246, .92);
-    backdrop-filter: saturate(180%) blur(10px);
+    /* 1030 = di atas konten halaman, tetapi tetap di bawah offcanvas (1045)
+       dan backdrop-nya (1040) agar laci menu mobile menutup penuh. */
+    z-index: 1030;
+    /* Latar SOLID sebagai dasar: sebagian browser mobile tidak mendukung
+       backdrop-filter, dan latar tembus pandang membuat masthead terlihat
+       menyatu dengan konten yang lewat di belakangnya. */
+    background: var(--paper);
     border-bottom: 1px solid var(--line);
     transition: box-shadow .25s var(--ease), background-color .25s var(--ease);
 }
-.site-header.is-stuck { box-shadow: var(--shadow-sm); background: rgba(251, 250, 246, .98); }
+@supports ((backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px))) {
+    .site-header {
+        background: rgba(251, 250, 246, .94);
+        -webkit-backdrop-filter: saturate(180%) blur(12px);
+        backdrop-filter: saturate(180%) blur(12px);
+    }
+    .site-header.is-stuck { background: rgba(251, 250, 246, .985); }
+}
+.site-header.is-stuck { box-shadow: var(--shadow-sm); }
 
 .site-header .navbar {
-    padding: 1.1rem 0;
-    min-height: 82px;
+    padding: 1.35rem 0;
+    min-height: 94px;
 }
 
 .brand {
@@ -1804,7 +1841,7 @@ p { margin-bottom: 1rem; }
 
     body { font-size: .97rem; }
     .site-topbar { display: none; }
-    .site-header .navbar { padding: .85rem 0; min-height: 70px; }
+    .site-header .navbar { padding: 1rem 0; min-height: 78px; }
     .hero-meta { gap: 1.25rem 2rem; }
     .hero-actions .btn { flex: 1 1 100%; }
     .track-form .form-control { flex: 1 1 100%; }

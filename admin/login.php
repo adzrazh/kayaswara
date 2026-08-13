@@ -84,16 +84,16 @@ $csrf = csrf_token();
 
     <style>
         :root {
-            --primary: #1A3C5E;
-            --secondary: #1A3C5E;
-            --accent: #B8860B;
+            --primary: #1F4B3F;
+            --secondary: #2F6B57;
+            --accent: #A9752F;
         }
 
         * { box-sizing: border-box; }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            background: #FBFAF6;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -109,9 +109,9 @@ $csrf = csrf_token();
             position: fixed;
             inset: 0;
             background:
-                radial-gradient(circle at 20% 20%, rgba(26,60,94,0.12) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(26,60,94,0.12) 0%, transparent 50%),
-                radial-gradient(circle at 50% 50%, rgba(184,134,11,0.05) 0%, transparent 70%);
+                radial-gradient(circle at 20% 20%, rgba(31,75,63,0.12) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(31,75,63,0.12) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(169,117,47,0.05) 0%, transparent 70%);
             z-index: 0;
         }
 
@@ -131,7 +131,7 @@ $csrf = csrf_token();
         .login-brand-icon {
             width: 64px;
             height: 64px;
-            background: linear-gradient(135deg, var(--secondary), #0f766e);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             border-radius: 16px;
             display: inline-flex;
             align-items: center;
@@ -139,55 +139,57 @@ $csrf = csrf_token();
             font-size: 28px;
             color: #fff;
             margin-bottom: 14px;
-            box-shadow: 0 8px 24px rgba(26,60,94,0.35);
+            box-shadow: 0 8px 24px rgba(31,75,63,0.35);
         }
 
         .login-brand h1 {
-            font-size: 20px;
-            font-weight: 800;
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 22px;
+            font-weight: 700;
             color: var(--primary);
             margin: 0 0 4px;
         }
 
         .login-brand p {
             font-size: 13px;
-            color: #64748b;
+            color: #77857D;
             margin: 0;
         }
 
         /* Card */
         .login-card {
             background: #fff;
-            border-radius: 20px;
+            border-radius: 16px;
             padding: 36px 40px;
             box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 20px 60px rgba(0,0,0,0.06);
-            border: 1px solid #e2e8f0;
+            border: 1px solid #E3E0D4;
         }
 
         .login-card h2 {
+            font-family: 'Source Serif 4', Georgia, serif;
             font-size: 22px;
-            font-weight: 800;
-            color: #1e293b;
+            font-weight: 700;
+            color: #16211C;
             margin: 0 0 6px;
         }
 
         .login-card .subtitle {
             font-size: 13px;
-            color: #64748b;
+            color: #77857D;
             margin-bottom: 28px;
         }
 
         .form-label {
             font-weight: 600;
             font-size: 13px;
-            color: #374151;
+            color: #16211C;
             margin-bottom: 6px;
         }
 
         .form-control {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Inter', sans-serif;
             font-size: 14px;
-            border: 1.5px solid #e2e8f0;
+            border: 1.5px solid #E3E0D4;
             border-radius: 8px;
             padding: 11px 14px;
             transition: all 0.2s ease;
@@ -195,7 +197,7 @@ $csrf = csrf_token();
 
         .form-control:focus {
             border-color: var(--secondary);
-            box-shadow: 0 0 0 3px rgba(26,60,94,0.12);
+            box-shadow: 0 0 0 3px rgba(31,75,63,0.12);
             outline: none;
         }
 
@@ -204,12 +206,12 @@ $csrf = csrf_token();
         }
 
         .input-group .input-group-text {
-            background: #f8fafc;
-            border: 1.5px solid #e2e8f0;
+            background: #FBFAF6;
+            border: 1.5px solid #E3E0D4;
             border-left: none;
             border-radius: 0 8px 8px 0;
             cursor: pointer;
-            color: #94a3b8;
+            color: #A6B0A9;
             transition: color 0.2s;
         }
 
@@ -222,14 +224,14 @@ $csrf = csrf_token();
             border: none;
             border-radius: 8px;
             padding: 12px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Inter', sans-serif;
             font-size: 14.5px;
             font-weight: 700;
             color: #fff;
             width: 100%;
             cursor: pointer;
             transition: all 0.25s ease;
-            box-shadow: 0 4px 14px rgba(26,60,94,0.3);
+            box-shadow: 0 4px 14px rgba(31,75,63,0.3);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -237,9 +239,9 @@ $csrf = csrf_token();
         }
 
         .btn-login:hover {
-            background: linear-gradient(135deg, #0F2A45, #1A3C5E);
+            background: linear-gradient(135deg, #163830, #1F4B3F);
             transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(26,60,94,0.4);
+            box-shadow: 0 6px 20px rgba(31,75,63,0.4);
         }
 
         .btn-login:active {
@@ -247,11 +249,11 @@ $csrf = csrf_token();
         }
 
         .alert-error {
-            background: #fee2e2;
+            background: #FBEDEC;
             border: 1px solid #fecaca;
             border-radius: 8px;
             padding: 12px 16px;
-            color: #991b1b;
+            color: #8A2C23;
             font-size: 13.5px;
             font-weight: 500;
             display: flex;
@@ -264,7 +266,7 @@ $csrf = csrf_token();
             text-align: center;
             margin-top: 24px;
             font-size: 12px;
-            color: #94a3b8;
+            color: #A6B0A9;
         }
 
         .login-footer a {
@@ -284,7 +286,7 @@ $csrf = csrf_token();
             justify-content: center;
             gap: 6px;
             font-size: 11px;
-            color: #94a3b8;
+            color: #A6B0A9;
             margin-top: 20px;
         }
 
@@ -329,7 +331,7 @@ $csrf = csrf_token();
 
             <div class="mb-4">
                 <label for="username" class="form-label">
-                    <i class="fas fa-user me-1" style="color:#1A3C5E;"></i>
+                    <i class="fas fa-user me-1" style="color:#1F4B3F;"></i>
                     Username
                 </label>
                 <input
@@ -347,7 +349,7 @@ $csrf = csrf_token();
 
             <div class="mb-4">
                 <label for="password" class="form-label">
-                    <i class="fas fa-lock me-1" style="color:#1A3C5E;"></i>
+                    <i class="fas fa-lock me-1" style="color:#1F4B3F;"></i>
                     Password
                 </label>
                 <div class="input-group">

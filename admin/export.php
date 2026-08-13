@@ -55,14 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
 
     // Service labels
-    $service_labels = [
-        'setup_ojs'   => 'Penerbitan Buku',
-        'migrasi'     => 'Konversi KTI',
-        'kustomisasi' => 'Editing & Layout',
-        'pelatihan'   => 'Desain Cover',
-        'maintenance' => 'Distribusi & Pemasaran',
-        'lainnya'     => 'Lainnya',
-    ];
+    $service_labels = getServiceTypes();
     $status_labels   = ['new' => 'Baru', 'contacted' => 'Dihubungi', 'follow_up' => 'Follow Up', 'negotiation' => 'Negosiasi', 'closed_won' => 'Closed Won', 'closed_lost' => 'Closed Lost'];
     $priority_labels = ['low' => 'Rendah', 'medium' => 'Sedang', 'high' => 'Tinggi'];
 
@@ -169,14 +162,7 @@ try {
     $total_all = $r ? (int)$r['cnt'] : 0;
 } catch (Exception $e) {}
 
-$service_labels = [
-    'setup_ojs'   => 'Penerbitan Buku',
-    'migrasi'     => 'Migrasi',
-    'kustomisasi' => 'Editing & Layout',
-    'pelatihan'   => 'Pelatihan',
-    'maintenance' => 'Maintenance',
-    'lainnya'     => 'Lainnya',
-];
+$service_labels = getServiceTypes();
 $status_labels   = ['new' => 'Baru', 'contacted' => 'Dihubungi', 'follow_up' => 'Follow Up', 'negotiation' => 'Negosiasi', 'closed_won' => 'Closed Won', 'closed_lost' => 'Closed Lost'];
 $priority_labels = ['low' => 'Rendah', 'medium' => 'Sedang', 'high' => 'Tinggi'];
 
@@ -190,8 +176,8 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
     <!-- Page Header -->
     <div class="page-header">
         <div class="page-header-left">
-            <h2>Export Data</h2>
-            <p>Unduh data konsultasi dalam format CSV untuk analisis lebih lanjut.</p>
+            <h2>Ekspor Data</h2>
+            <p>Unduh rekap pengajuan naskah dalam format CSV.</p>
         </div>
         <div class="page-header-actions">
             <!-- Export Semua -->
@@ -269,7 +255,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
 
                     <!-- Export Filtered CSV -->
                     <?php if (!empty($preview_data)): ?>
-                    <div style="margin-top:16px;padding-top:16px;border-top:1px solid #e2e8f0;">
+                    <div style="margin-top:16px;padding-top:16px;border-top:1px solid #E3E0D4;">
                         <form method="POST">
                             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                             <input type="hidden" name="action" value="export">
@@ -294,12 +280,12 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                         <div class="export-icon">
                             <i class="fas fa-file-csv"></i>
                         </div>
-                        <div style="font-weight:700;font-size:14px;color:#1e293b;margin-bottom:8px;">Format CSV</div>
-                        <p style="font-size:13px;color:#64748b;margin-bottom:16px;">
+                        <div style="font-weight:700;font-size:14px;color:#16211C;margin-bottom:8px;">Format CSV</div>
+                        <p style="font-size:13px;color:#77857D;margin-bottom:16px;">
                             File CSV dapat dibuka dengan Microsoft Excel, Google Sheets, atau LibreOffice Calc.
                             Kompatibel dengan karakter Indonesia (UTF-8 BOM).
                         </p>
-                        <div style="background:#f8fafc;border-radius:8px;padding:12px;font-size:12px;color:#64748b;text-align:left;">
+                        <div style="background:#FCFBF7;border-radius:8px;padding:12px;font-size:12px;color:#77857D;text-align:left;">
                             <div style="font-weight:700;margin-bottom:8px;color:#374151;">Kolom yang diekspor:</div>
                             <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
                                 <div>• ID</div><div>• Nama</div>
@@ -323,7 +309,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                     <h5 class="admin-card-title">
                         <i class="fas fa-table"></i>
                         Preview Data
-                        <span class="badge" style="background:#e2e8f0;color:#475569;font-size:11px;margin-left:4px;">
+                        <span class="badge" style="background:#E3E0D4;color:#45544D;font-size:11px;margin-left:4px;">
                             <?= count($preview_data) ?> dari <?= $total_all ?> total
                         </span>
                     </h5>
@@ -368,7 +354,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                     <td>
                                         <div style="font-size:12px;"><?= htmlspecialchars($row['email']) ?></div>
                                         <?php if (!empty($row['phone'])): ?>
-                                        <div style="font-size:11px;color:#94a3b8;"><?= htmlspecialchars($row['phone']) ?></div>
+                                        <div style="font-size:11px;color:#A6B0A9;"><?= htmlspecialchars($row['phone']) ?></div>
                                         <?php endif; ?>
                                     </td>
                                     <td style="font-size:12.5px;"><?= htmlspecialchars($row['institution'] ?? '-') ?></td>
@@ -385,10 +371,10 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                             <?= htmlspecialchars($priority_labels[$row['priority']] ?? $row['priority']) ?>
                                         </span>
                                     </td>
-                                    <td style="font-size:12px;color:#64748b;white-space:nowrap;">
+                                    <td style="font-size:12px;color:#77857D;white-space:nowrap;">
                                         <?= !empty($row['follow_up_date']) ? date('d M Y', strtotime($row['follow_up_date'])) : '—' ?>
                                     </td>
-                                    <td style="font-size:12px;color:#64748b;white-space:nowrap;">
+                                    <td style="font-size:12px;color:#77857D;white-space:nowrap;">
                                         <?= date('d M Y', strtotime($row['created_at'])) ?>
                                     </td>
                                 </tr>

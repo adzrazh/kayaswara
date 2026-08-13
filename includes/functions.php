@@ -1,11 +1,8 @@
 <?php
 /**
- * Core Functions - Kayaswara Publishing
- * All helper functions for the admin panel and frontend.
- *
- * Note: This is a stub/placeholder file created by the admin builder.
- * The full implementation is created by the main site builder agent.
- * The admin panel depends on all functions listed below.
+ * Kayaswara — core helpers shared by the public site and the admin panel.
+ * Database access, settings, catalog/service vocabularies, notifications,
+ * and invoice generation all live here.
  */
 
 // ============================================================
@@ -16,7 +13,7 @@ function db(): PDO {
     static $pdo = null;
     if ($pdo === null) {
         $host    = defined('DB_HOST')    ? DB_HOST    : 'localhost';
-        $dbname  = defined('DB_NAME')    ? DB_NAME    : 'kayaswara_publisher';
+        $dbname  = defined('DB_NAME')    ? DB_NAME    : 'kayaswara';
         $user    = defined('DB_USER')    ? DB_USER    : 'root';
         $pass    = defined('DB_PASS')    ? DB_PASS    : '';
         $charset = defined('DB_CHARSET') ? DB_CHARSET : 'utf8mb4';
@@ -122,8 +119,8 @@ function getAllSettings(): array {
 // Helpers
 // ============================================================
 
-function slugify(string $text): string {
-    $text = mb_strtolower($text, 'UTF-8');
+function slugify(?string $text): string {
+    $text = mb_strtolower((string) $text, 'UTF-8');
     // Transliterate common Indonesian/Latin characters
     $replace = [
         'à' => 'a', 'á' => 'a', 'â' => 'a', 'ã' => 'a', 'ä' => 'a', 'å' => 'a',
@@ -179,15 +176,133 @@ function deleteImage(string $path): bool {
     return false;
 }
 
-function truncate(string $text, int $length = 150): string {
-    $text = strip_tags($text);
+function truncate(?string $text, int $length = 150): string {
+    $text = strip_tags((string) $text);
     if (mb_strlen($text) <= $length) return $text;
     return mb_substr($text, 0, $length) . '...';
 }
 
-function formatDate(string $date, string $format = 'd M Y'): string {
+function formatDate(?string $date, string $format = 'd M Y'): string {
     if (empty($date)) return '-';
     return date($format, strtotime($date));
+}
+
+// ============================================================
+// Publication Catalog (Katalog Publikasi)
+// ============================================================
+
+/**
+ * Canonical list of catalog categories: db value => public label.
+ */
+function getPublicationCategories(): array {
+    return [
+        'buku_ajar'       => 'Buku Ajar',
+        'buku_referensi'  => 'Buku Referensi',
+        'monograf'        => 'Monograf',
+        'bunga_rampai'    => 'Bunga Rampai',
+        'prosiding'       => 'Prosiding',
+        'lainnya'         => 'Lainnya',
+    ];
+}
+
+function getPublicationCategoryLabel(?string $key): string {
+    $key = (string) $key;
+    $map = getPublicationCategories();
+    return $map[$key] ?? 'Lainnya';
+}
+
+/**
+ * Public URL of a publication cover, or '' when none has been uploaded.
+ */
+function publicationCoverUrl(?string $file): string {
+    if (empty($file)) return '';
+    $base = defined('SITE_URL') ? rtrim(SITE_URL, '/') : '';
+    return $base . '/assets/uploads/publications/' . rawurlencode($file);
+}
+
+/**
+ * Build a slug that is guaranteed unique within a table.
+ */
+function uniqueSlug(?string $text, string $table, int $ignoreId = 0): string {
+    $base = slugify($text);
+    if ($base === '') $base = 'item-' . time();
+    $slug = $base;
+    $i    = 2;
+    while (true) {
+        try {
+            $row = fetch("SELECT id FROM `{$table}` WHERE slug = ? AND id <> ? LIMIT 1", [$slug, $ignoreId]);
+        } catch (Exception $e) {
+            return $slug;
+        }
+        if (!$row) return $slug;
+        $slug = $base . '-' . $i++;
+    }
+}
+
+/**
+ * Categories for the institutional-collaboration showcase (`portfolio` table).
+ * Keys are the historical enum values; labels describe the kind of partner.
+ */
+function getPartnerCategories(): array {
+    return [
+        'jurnal'     => 'Perguruan Tinggi',
+        'konferensi' => 'Lembaga Penelitian',
+        'repositori' => 'Komunitas & Asosiasi',
+        'lainnya'    => 'Lainnya',
+    ];
+}
+
+function getPartnerCategoryLabel(?string $key): string {
+    $key = (string) $key;
+    $map = getPartnerCategories();
+    return $map[$key] ?? 'Lainnya';
+}
+
+/**
+ * Service types offered to authors.
+ * Keys are the historical `service_type` enum values stored in `consultations`
+ * and `orders`; labels are what the public site and admin panel display.
+ */
+function getServiceTypes(): array {
+    return [
+        'setup_ojs'   => 'Penerbitan Buku (naskah lengkap)',
+        'kustomisasi' => 'Penyuntingan & Tata Letak',
+        'migrasi'     => 'Konversi Karya Tulis Ilmiah',
+        'pelatihan'   => 'Desain Sampul',
+        'maintenance' => 'Katalogisasi & Distribusi',
+        'lainnya'     => 'Lainnya / belum yakin',
+    ];
+}
+
+function getServiceTypeLabel(?string $key): string {
+    $key = (string) $key;
+    $map = getServiceTypes();
+    return $map[$key] ?? ucfirst(str_replace('_', ' ', $key));
+}
+
+/**
+ * Package tiers used on the pricing page and in orders.
+ */
+function getPackageTiers(): array {
+    return [
+        'basic'        => 'Dasar',
+        'professional' => 'Profesional',
+        'premium'      => 'Lengkap',
+        'custom'       => 'Khusus',
+    ];
+}
+
+function getPackageTierLabel(?string $key): string {
+    $key = (string) $key;
+    $map = getPackageTiers();
+    return $map[$key] ?? ($key !== '' ? ucfirst($key) : '-');
+}
+
+/**
+ * Rupiah formatter used by the catalog and invoices.
+ */
+function rupiah($amount): string {
+    return 'Rp ' . number_format((float) $amount, 0, ',', '.');
 }
 
 // ============================================================
@@ -239,8 +354,8 @@ function getFlash(): array {
 // Sanitize
 // ============================================================
 
-function sanitize(string $input): string {
-    return htmlspecialchars(strip_tags(trim($input)), ENT_QUOTES, 'UTF-8');
+function sanitize(?string $input): string {
+    return htmlspecialchars(strip_tags(trim((string) $input)), ENT_QUOTES, 'UTF-8');
 }
 
 /**
@@ -249,7 +364,8 @@ function sanitize(string $input): string {
  * and dangerous attributes (on*, style, srcdoc, data:, javascript:).
  * Allows safe formatting tags only.
  */
-function sanitizeHtml(string $html): string {
+function sanitizeHtml(?string $html): string {
+    $html = (string) $html;
     if (empty(trim($html))) return '';
 
     // 1. Strip outright dangerous tags and everything inside them
@@ -320,7 +436,8 @@ function getPagination(int $total, int $perPage, int $currentPage): array {
 // Status Badges (Bootstrap class names)
 // ============================================================
 
-function getStatusBadge(string $status): string {
+function getStatusBadge(?string $status): string {
+    $status = (string) $status;
     $map = [
         'new'         => 'primary',
         'contacted'   => 'info',
@@ -334,7 +451,8 @@ function getStatusBadge(string $status): string {
     return $map[$status] ?? 'secondary';
 }
 
-function getStatusLabel(string $status): string {
+function getStatusLabel(?string $status): string {
+    $status = (string) $status;
     $map = [
         'new'         => 'Baru',
         'contacted'   => 'Dihubungi',
@@ -348,7 +466,8 @@ function getStatusLabel(string $status): string {
     return $map[$status] ?? ucfirst(str_replace('_', ' ', $status));
 }
 
-function getPriorityBadge(string $priority): string {
+function getPriorityBadge(?string $priority): string {
+    $priority = (string) $priority;
     $map = [
         'low'    => 'secondary',
         'medium' => 'warning',
@@ -383,23 +502,22 @@ function generateTrackingCode(): string {
  * Returns array of [title, description].
  */
 function getDefaultMilestones(string $serviceType = 'setup_ojs'): array {
-    $base = [
-        ['Pesanan Diterima',               'Pesanan penerbitan buku telah diterima dan sedang diproses oleh tim kami.'],
-        ['Review Naskah Awal',             'Tim editor melakukan review awal naskah untuk menentukan lingkup pekerjaan.'],
-        ['Editing & Proofreading',         'Proses editing tata bahasa, ejaan, dan konsistensi konten naskah.'],
-        ['Layout & Typesetting',           'Penataan layout buku, pengaturan halaman, margin, header/footer, dan daftar isi.'],
-        ['Desain Cover Buku',              'Pembuatan desain cover buku sesuai identitas konten dan preferensi penulis.'],
-        ['Review & Revisi Penulis',        'Penulis melakukan review hasil editing dan layout. Revisi dilakukan sesuai feedback.'],
-        ['Distribusi & Pemasaran',                'Pengajuan dan distribusi buku ke toko offline dan online.'],
-        ['Finalisasi & Pracetak',          'Finalisasi seluruh materi buku dan persiapan file untuk proses pencetakan.'],
-        ['Pencetakan Buku',                'Proses cetak buku sesuai jumlah eksemplar yang disepakati.'],
-        ['Serah Terima & Distribusi',      'Buku diserahterimakan kepada penulis lengkap dengan sertifikat penerbitan.'],
+    // Tahapan mengikuti alur penerbitan yang dipublikasikan di halaman /proses
+    return [
+        ['Naskah Diterima',            'Berkas naskah dan data penulis telah diterima serta diperiksa kelengkapannya oleh redaksi.'],
+        ['Telaah Redaksi',             'Redaksi menilai keaslian, kedalaman kajian, struktur, dan kesesuaian naskah dengan lini terbitan.'],
+        ['Kesepakatan Penerbitan',     'Lingkup pekerjaan, jadwal, dan biaya disepakati serta dituangkan dalam perjanjian penerbitan.'],
+        ['Penyuntingan Substansi',     'Penyuntingan isi, alur argumen, dan struktur bab beserta catatan revisi untuk penulis.'],
+        ['Penyuntingan Bahasa',        'Penyuntingan tata bahasa, ejaan, istilah, serta konsistensi sitasi dan daftar pustaka.'],
+        ['Tata Letak & Desain Sampul', 'Penataan isi buku sesuai standar terbitan akademik dan perancangan sampul bersama penulis.'],
+        ['Persetujuan Akhir Penulis',  'Penulis memeriksa contoh cetak dan menyatakan persetujuan tertulis atas berkas final.'],
+        ['Produksi & Katalogisasi',    'Buku dicetak sesuai spesifikasi dan dicatat pada katalog penerbit beserta data bibliografinya.'],
+        ['Serah Terima & Distribusi',  'Buku diserahkan kepada penulis dan disebarkan sesuai kanal yang disepakati.'],
     ];
-
-    return $base;
 }
 
-function getOrderStatusLabel(string $status): string {
+function getOrderStatusLabel(?string $status): string {
+    $status = (string) $status;
     $map = [
         'pending'     => 'Menunggu',
         'in_progress' => 'Dikerjakan',
@@ -409,7 +527,8 @@ function getOrderStatusLabel(string $status): string {
     return $map[$status] ?? ucfirst($status);
 }
 
-function getOrderStatusBadge(string $status): string {
+function getOrderStatusBadge(?string $status): string {
+    $status = (string) $status;
     $map = [
         'pending'     => 'warning',
         'in_progress' => 'info',
@@ -419,7 +538,8 @@ function getOrderStatusBadge(string $status): string {
     return $map[$status] ?? 'secondary';
 }
 
-function getMilestoneStatusLabel(string $status): string {
+function getMilestoneStatusLabel(?string $status): string {
+    $status = (string) $status;
     $map = [
         'pending'     => 'Menunggu',
         'in_progress' => 'Sedang Dikerjakan',
@@ -868,7 +988,8 @@ function _sendViaSMTP(string $to, string $subject, string $body,
 // Navigation Helper
 // ============================================================
 
-function activeClass(string $page, string $current): string {
+function activeClass(?string $page, ?string $current): string {
+    $page = (string) $page; $current = (string) $current;
     // Also match detail pages (e.g. portofolio-detail matches portofolio)
     if ($page === $current) return 'active';
     if (strpos($current, $page . '-') === 0) return 'active';
@@ -879,13 +1000,18 @@ function activeClass(string $page, string $current): string {
 // Invoice System
 // ============================================================
 
-// ---- Info Perusahaan (edit sesuai kebutuhan) ---------------
-if (!defined('INV_COMPANY_NAME'))    define('INV_COMPANY_NAME',    'CV. Kayaswara');
-if (!defined('INV_COMPANY_TAGLINE')) define('INV_COMPANY_TAGLINE', 'Jasa Penerbitan & Pencetakan Buku Akademik Profesional');
-if (!defined('INV_COMPANY_ADDRESS')) define('INV_COMPANY_ADDRESS', 'Jln. Sunan Kalijaga Timur 10, Kec. Larangan, Kota Tangerang, Banten');
-if (!defined('INV_COMPANY_PHONE'))   define('INV_COMPANY_PHONE',   '081213169703');
-if (!defined('INV_COMPANY_EMAIL'))   define('INV_COMPANY_EMAIL',   'kayaswara.jurnal@gmail.com');
-if (!defined('INV_COMPANY_NPWP'))    define('INV_COMPANY_NPWP',    'XX.XXX.XXX.X-XXX.XXX'); // ganti dengan NPWP asli
+/**
+ * Company details printed on invoices, taken from site settings.
+ * Defined lazily so including this file never touches the database on its own.
+ */
+function defineInvoiceCompanyConstants(): void {
+    if (!defined('INV_COMPANY_NAME'))    define('INV_COMPANY_NAME',    html_entity_decode(getSetting('legal_name', 'CV. Kayaswara'), ENT_QUOTES, 'UTF-8'));
+    if (!defined('INV_COMPANY_TAGLINE')) define('INV_COMPANY_TAGLINE', html_entity_decode(getSetting('site_tagline', 'Penerbit Buku Akademik'), ENT_QUOTES, 'UTF-8'));
+    if (!defined('INV_COMPANY_ADDRESS')) define('INV_COMPANY_ADDRESS', html_entity_decode(getSetting('address', ''), ENT_QUOTES, 'UTF-8'));
+    if (!defined('INV_COMPANY_PHONE'))   define('INV_COMPANY_PHONE',   getSetting('whatsapp_number', ''));
+    if (!defined('INV_COMPANY_EMAIL'))   define('INV_COMPANY_EMAIL',   getSetting('email_contact', ''));
+    if (!defined('INV_COMPANY_NPWP'))    define('INV_COMPANY_NPWP',    getSetting('legal_npwp', '-'));
+}
 
 // ---- Rekening Pembayaran -----------------------------------
 function getInvoiceBankAccounts(): array {
@@ -935,9 +1061,10 @@ function _hexToRgb(string $hex): array {
 
 function generateInvoicePDF(array $inv, array $order): string {
     require_once __DIR__ . '/fpdf/fpdf.php';
+    defineInvoiceCompanyConstants();
 
-    if (!class_exists('SnAdaPDF')) {
-        class SnAdaPDF extends FPDF {
+    if (!class_exists('KayaswaraPDF')) {
+        class KayaswaraPDF extends FPDF {
             protected $angle      = 0;
             protected $extgstates = [];
             public    $wmText     = '';
@@ -1076,7 +1203,7 @@ function generateInvoicePDF(array $inv, array $order): string {
     ];
     $wm = $wmMap[$inv['status']] ?? null;
 
-    $pdf = new SnAdaPDF('P', 'mm', 'A4');
+    $pdf = new KayaswaraPDF('P', 'mm', 'A4');
     if ($wm) { $pdf->wmText = $wm['text']; $pdf->wmColor = $wm['color']; }
     $pdf->footerTxt = _pdfText('Terima kasih atas kepercayaan Anda – ' . INV_COMPANY_NAME . ' | ' . INV_COMPANY_EMAIL . ' | ' . INV_COMPANY_PHONE);
     $pdf->SetMargins(15,15,15);
@@ -1129,8 +1256,8 @@ function generateInvoicePDF(array $inv, array $order): string {
     }
 
     // Invoice meta (right)
-    $serviceOpts=['setup_ojs'=>'Penerbitan Buku','migrasi'=>'Konversi KTI','kustomisasi'=>'Editing & Layout','pelatihan'=>'Desain Cover','maintenance'=>'Distribusi & Pemasaran','indeksasi_doaj'=>'Cek Plagiasi','indeksasi_sinta'=>'Konsultasi Penulisan','lainnya'=>'Lainnya'];
-    $packageOpts=['basic'=>'Basic','professional'=>'Professional','premium'=>'Premium','custom'=>'Custom'];
+    $serviceOpts = getServiceTypes();
+    $packageOpts = getPackageTiers();
     $statusLabels=['draft'=>'DRAFT','sent'=>'TERKIRIM','paid'=>'LUNAS','cancelled'=>'BATAL'];
     $rx=110; $lW=42; $vW=$cW-($rx-15)-$lW; $ry=$y;
     foreach([

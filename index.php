@@ -1,16 +1,15 @@
 <?php
 /**
- * Kayaswara Publishing Website - Front Controller
- * Routes all requests to the appropriate page file.
+ * Kayaswara — Front controller.
+ * Maps a clean URL (or ?page=) to a file in /pages and renders it inside the site shell.
  */
 
-// If not installed, redirect to installer
+// Not installed yet → installer
 if (!file_exists(__DIR__ . '/config.php')) {
     header('Location: install.php');
     exit;
 }
 
-// Load configuration and core includes
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/functions.php';
@@ -36,11 +35,9 @@ header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: SAMEORIGIN');
 header('X-XSS-Protection: 1; mode=block');
 header('Referrer-Policy: strict-origin-when-cross-origin');
-// Strict-Transport-Security: force HTTPS for 1 year (enable only if your site uses HTTPS)
 if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
     header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
 }
-// Content-Security-Policy: allow scripts/styles from CDN, block inline eval and dangerous sources
 header("Content-Security-Policy: default-src 'self'; " .
     "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com; " .
     "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com https://fonts.gstatic.com; " .
@@ -51,121 +48,107 @@ header("Content-Security-Policy: default-src 'self'; " .
     "base-uri 'self'; " .
     "form-action 'self';");
 
-// ──────────────────────────────────────────
-// PARSE REQUEST URI → determine page
-// ──────────────────────────────────────────
-$requestUri = $_SERVER['REQUEST_URI'] ?? '/';
-$scriptName = dirname($_SERVER['SCRIPT_NAME']);
-$basePath   = rtrim($scriptName, '/');
+// ──────────────────────────────────────────────────────────────
+// ROUTING
+//   $routes: first URL segment  →  [page file, detail page file for /segment/{slug}]
+//   Legacy slugs are kept so existing links and bookmarks keep working.
+// ──────────────────────────────────────────────────────────────
+$routes = [
+    ''                  => ['home',              null],
+    'home'              => ['home',              null],
+    'beranda'           => ['home',              null],
+    'publikasi'         => ['publikasi',         'publikasi-detail'],
+    'katalog'           => ['publikasi',         'publikasi-detail'],
+    'layanan'           => ['layanan',           null],
+    'proses'            => ['proses',            null],
+    'biaya'             => ['harga',             null],
+    'harga'             => ['harga',             null],
+    'wawasan'           => ['blog',              'blog-detail'],
+    'blog'              => ['blog',              'blog-detail'],
+    'tentang'           => ['tentang',           null],
+    'portofolio'        => ['portofolio',        'portofolio-detail'],
+    'kirim-naskah'      => ['konsultasi',        null],
+    'konsultasi'        => ['konsultasi',        null],
+    'lacak'             => ['tracking',          null],
+    'tracking'          => ['tracking',          null],
+    'kebijakan-privasi' => ['kebijakan-privasi', null],
+    'kebijakan-refund'  => ['kebijakan-refund',  null],
+    'invoice'           => ['invoice',           null],
+];
 
-// Strip base path and query string
-$path = $requestUri;
-if (!empty($basePath) && strpos($path, $basePath) === 0) {
-    $path = substr($path, strlen($basePath));
-}
-$path = strtok($path, '?'); // Remove query string
-$path = trim($path, '/');
-
-// Query-string based routing fallback (for hosts without mod_rewrite)
 if (isset($_GET['page'])) {
-    $page = $_GET['page'];
+    // Query-string routing (hosts without mod_rewrite, and internal rewrites)
+    $requested = preg_replace('/[^a-zA-Z0-9\-_]/', '', (string) $_GET['page']);
+    $known = [];
+    foreach ($routes as $r) {
+        $known[] = $r[0];
+        if ($r[1]) $known[] = $r[1];
+    }
+    $page = in_array($requested, $known, true) ? $requested : '404';
 } else {
-    // Map clean URL segments to page names
-    $segments = explode('/', $path);
-    $firstSeg = $segments[0] ?? '';
+    $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
+    $basePath   = rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
+
+    $path = $requestUri;
+    if ($basePath !== '' && strpos($path, $basePath) === 0) {
+        $path = substr($path, strlen($basePath));
+    }
+    $path = trim((string) strtok($path, '?'), '/');
+
+    $segments  = $path === '' ? [''] : explode('/', $path);
+    $firstSeg  = strtolower($segments[0]);
     $secondSeg = $segments[1] ?? '';
 
-    switch ($firstSeg) {
-        case '':
-        case 'home':
-            $page = 'home';
-            break;
-        case 'layanan':
-            $page = 'layanan';
-            break;
-        case 'portofolio':
-            if (!empty($secondSeg)) {
-                $_GET['slug'] = $secondSeg;
-                $page = 'portofolio-detail';
-            } else {
-                $page = 'portofolio';
-            }
-            break;
-        case 'blog':
-            if (!empty($secondSeg)) {
-                $_GET['slug'] = $secondSeg;
-                $page = 'blog-detail';
-            } else {
-                $page = 'blog';
-            }
-            break;
-        case 'harga':
-            $page = 'harga';
-            break;
-        case 'tentang':
-            $page = 'tentang';
-            break;
-        case 'konsultasi':
-            $page = 'konsultasi';
-            break;
-        case 'tracking':
-            $page = 'tracking';
-            break;
-        case 'publikasi':
-            $page = 'publikasi';
-            break;
-        case 'invoice':
+    if (!isset($routes[$firstSeg])) {
+        $page = '404';
+    } else {
+        [$listPage, $detailPage] = $routes[$firstSeg];
+
+        if ($secondSeg !== '' && $detailPage !== null) {
+            $_GET['slug'] = $secondSeg;
+            $page = $detailPage;
+        } elseif ($secondSeg !== '' && $firstSeg === 'invoice') {
+            $_GET['token'] = $secondSeg;
             $page = 'invoice';
-            break;
-        case 'kebijakan-privasi':
-            $page = 'kebijakan-privasi';
-            break;
-        case 'kebijakan-refund':
-            $page = 'kebijakan-refund';
-            break;
-        default:
+        } elseif ($secondSeg !== '') {
             $page = '404';
-            break;
+        } else {
+            $page = $listPage;
+        }
     }
 }
 
-// Sanitize page name — only allow alphanumeric, hyphen, underscore
-$page = preg_replace('/[^a-zA-Z0-9\-_]/', '', $page);
+$pageFile    = __DIR__ . '/pages/' . $page . '.php';
+$currentPage = $page ?: 'home';
 
-// Build page file path
-$pageFile = __DIR__ . '/pages/' . $page . '.php';
-
-// Handle AJAX submissions before output starts (konsultasi + tracking)
-if (in_array($page, ['konsultasi', 'tracking']) && $_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-    require_once $pageFile;
+// AJAX submissions must answer before any shell output
+if (in_array($page, ['konsultasi', 'tracking'], true)
+    && $_SERVER['REQUEST_METHOD'] === 'POST'
+    && !empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+    require $pageFile;
     exit;
 }
 
-// Invoice page: serve PDF directly (bypass output buffer + template)
+// Invoice streams a PDF — bypass the HTML shell entirely
 if ($page === 'invoice' && file_exists($pageFile)) {
     require $pageFile;
     exit;
 }
 
-// ──────────────────────────────────────────
+// ──────────────────────────────────────────────────────────────
 // RENDER
-// ──────────────────────────────────────────
-
-// Determine page title (individual pages can override $pageTitle)
+// ──────────────────────────────────────────────────────────────
 $pageTitle = getSetting('site_name', 'Kayaswara');
-$currentPage = $page ?: 'home';
 
-// Load the page to allow it to set $pageTitle and $metaDesc before header
 ob_start();
 if (file_exists($pageFile)) {
     require $pageFile;
 } else {
     http_response_code(404);
-    echo '<div class="container py-5 text-center"><h1>404</h1><p>Halaman tidak ditemukan.</p><a href="' . (defined('SITE_URL') ? SITE_URL : '/') . '" class="btn btn-primary">Kembali ke Beranda</a></div>';
+    require __DIR__ . '/pages/404.php';
 }
 $pageContent = ob_get_clean();
 
-// Now output header, page content, footer
 require __DIR__ . '/includes/header.php';
 echo $pageContent;
 require __DIR__ . '/includes/footer.php';

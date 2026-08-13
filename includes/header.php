@@ -1,208 +1,202 @@
 <?php
 /**
- * Global site header. Included by index.php after page content is buffered.
- * Variables available: $currentPage, $pageTitle, $metaDesc
+ * Global site header — Kayaswara
+ * Included by index.php after the page body has been buffered.
+ * Available: $currentPage, $pageTitle, $metaDesc
  */
 
+$siteUrl     = defined('SITE_URL') ? rtrim(SITE_URL, '/') : '';
 $siteName    = html_entity_decode(getSetting('site_name', 'Kayaswara'), ENT_QUOTES, 'UTF-8');
-$siteTagline = html_entity_decode(getSetting('site_tagline', 'Jasa Penerbitan & Pencetakan Buku Akademik Profesional'), ENT_QUOTES, 'UTF-8');
+$siteTagline = html_entity_decode(getSetting('site_tagline', 'Penerbit Buku Akademik'), ENT_QUOTES, 'UTF-8');
 $logoPath    = getSetting('logo_path', '');
 $faviconPath = getSetting('favicon_path', '');
-$primaryColor   = getSetting('primary_color', '#1A3C5E');
-$secondaryColor = getSetting('secondary_color', '#1A3C5E');
-$accentColor    = getSetting('accent_color', '#B8860B');
-$metaDescription = $metaDesc ?? getSetting('meta_description', 'Jasa penerbitan buku akademik profesional untuk dosen, peneliti, dan akademisi Indonesia. Buku ajar, referensi, dan monograf.');
 
-$siteUrl = defined('SITE_URL') ? SITE_URL : '';
-$faviconHref = !empty($faviconPath) ? $siteUrl . '/assets/uploads/site/' . $faviconPath : $siteUrl . '/assets/images/favicon.ico';
+$primaryColor   = getSetting('primary_color', '#1F4B3F');
+$secondaryColor = getSetting('secondary_color', '#2F6B57');
+$accentColor    = getSetting('accent_color', '#A9752F');
 
+$metaDescription = $metaDesc ?? getSetting(
+    'meta_description',
+    'Kayaswara adalah penerbit buku akademik untuk dosen, peneliti, dan mahasiswa: buku ajar, buku referensi, monograf, dan bunga rampai.'
+);
+
+$emailContact = getSetting('email_contact', '');
+$waNumber     = getSetting('whatsapp_number', '');
+$waDigits     = $waNumber ? preg_replace('/\D/', '', $waNumber) : '';
+
+$faviconHref  = !empty($faviconPath) ? $siteUrl . '/assets/uploads/site/' . $faviconPath : '';
 $flashMessages = getFlash();
+
+// Primary navigation — single source of truth for desktop + mobile
+$navItems = [
+    ['key' => 'home',      'label' => 'Beranda',   'url' => '/',           'icon' => 'fa-house'],
+    ['key' => 'publikasi', 'label' => 'Publikasi', 'url' => '/publikasi',  'icon' => 'fa-book-open'],
+    ['key' => 'layanan',   'label' => 'Layanan',   'url' => '/layanan',    'icon' => 'fa-pen-nib'],
+    ['key' => 'proses',    'label' => 'Proses',    'url' => '/proses',     'icon' => 'fa-diagram-project'],
+    ['key' => 'harga',     'label' => 'Biaya',     'url' => '/biaya',      'icon' => 'fa-receipt'],
+    ['key' => 'blog',      'label' => 'Wawasan',   'url' => '/wawasan',    'icon' => 'fa-newspaper'],
+    ['key' => 'tentang',   'label' => 'Tentang',   'url' => '/tentang',    'icon' => 'fa-landmark'],
+];
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= htmlspecialchars($pageTitle ?? $siteName) ?></title>
     <meta name="description" content="<?= htmlspecialchars($metaDescription) ?>">
     <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="<?= htmlspecialchars($primaryColor) ?>">
+    <meta property="og:site_name" content="<?= htmlspecialchars($siteName) ?>">
     <meta property="og:title" content="<?= htmlspecialchars($pageTitle ?? $siteName) ?>">
     <meta property="og:description" content="<?= htmlspecialchars($metaDescription) ?>">
     <meta property="og:type" content="website">
-    <title><?= htmlspecialchars($pageTitle ?? $siteName) ?></title>
-    <?php if (!empty($faviconPath)): ?>
+    <meta property="og:locale" content="id_ID">
+    <?php if (!empty($faviconHref)): ?>
     <link rel="icon" href="<?= htmlspecialchars($faviconHref) ?>">
     <?php endif; ?>
 
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <!-- Bootstrap 5.3.3 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-
-    <!-- Font Awesome 6.5 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-    <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="<?= $siteUrl ?>/assets/css/style.css">
 
-    <!-- Dynamic CSS Variables from DB Settings -->
     <style>
         :root {
             --primary:   <?= htmlspecialchars($primaryColor) ?>;
             --secondary: <?= htmlspecialchars($secondaryColor) ?>;
             --accent:    <?= htmlspecialchars($accentColor) ?>;
         }
+        @media (min-width: 992px) and (max-width: 1199.98px) {
+            .main-nav .nav-link { font-size: .87rem; padding-left: .6rem; padding-right: .6rem; }
+            .main-nav .nav-link::after { left: .6rem; right: .6rem; }
+        }
     </style>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 
+<a class="skip-link" href="#main">Lompat ke konten utama</a>
 
-<nav id="mainNav" class="navbar navbar-expand-lg navbar-dark sticky-top" style="background-color: var(--primary); z-index: 1050;">
+<!-- Utility bar -->
+<div class="site-topbar d-none d-md-block">
     <div class="container">
-        <!-- Brand / Logo -->
-        <a class="navbar-brand d-flex align-items-center gap-2" href="<?= $siteUrl ?>/">
-            <?php if (!empty($logoPath)): ?>
-                <img src="<?= $siteUrl ?>/assets/uploads/site/<?= htmlspecialchars($logoPath) ?>"
-                     alt="<?= htmlspecialchars($siteName) ?> logo"
-                     class="navbar-logo-img">
-            <?php else: ?>
-                <!-- Inline SVG Logo (fallback when no logo uploaded) -->
-                <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Kayaswara Logo">
-                    <rect width="38" height="38" rx="9" fill="rgba(255,255,255,0.15)"/>
-                    <path d="M10 28V12l9-4 9 4v16H22v-6h-6v6z" fill="rgba(255,255,255,0.95)"/>
-                    <rect x="15" y="14" width="8" height="2" rx="1" fill="<?= htmlspecialchars($secondaryColor) ?>"/>
-                    <rect x="15" y="18" width="8" height="2" rx="1" fill="<?= htmlspecialchars($secondaryColor) ?>" opacity="0.6"/>
-                </svg>
-            <?php endif; ?>
-            <!-- Site name & tagline always shown beside logo/icon (desktop & mobile) -->
-            <div class="d-flex flex-column gap-1">
-                <span class="fw-700 fs-6 lh-1"><?= htmlspecialchars($siteName) ?></span>
-                <span class="navbar-tagline"><?= htmlspecialchars($siteTagline) ?></span>
+        <div class="topbar-inner">
+            <div class="topbar-links">
+                <?php if (!empty($emailContact)): ?>
+                <a href="mailto:<?= htmlspecialchars($emailContact) ?>">
+                    <i class="fa-regular fa-envelope"></i><?= htmlspecialchars($emailContact) ?>
+                </a>
+                <?php endif; ?>
+                <?php if (!empty($waDigits)): ?>
+                <a href="https://wa.me/<?= htmlspecialchars($waDigits) ?>" target="_blank" rel="noopener">
+                    <i class="fa-brands fa-whatsapp"></i><?= htmlspecialchars($waNumber) ?>
+                </a>
+                <?php endif; ?>
             </div>
-        </a>
-
-        <!-- Mobile Toggle → Offcanvas -->
-        <button class="navbar-toggler border-0 d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu"
-                aria-controls="mobileMenu" aria-label="Buka navigasi">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <!-- Desktop Navigation (hidden on mobile) -->
-        <div class="collapse navbar-collapse d-none d-lg-flex" id="navbarMain">
-            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
-                <li class="nav-item">
-                    <a class="nav-link <?= activeClass('home', $currentPage) ?>" href="<?= $siteUrl ?>/">Beranda</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link <?= activeClass('layanan', $currentPage) ?>" href="<?= $siteUrl ?>/layanan">Layanan</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link <?= activeClass('portofolio', $currentPage) ?>" href="<?= $siteUrl ?>/portofolio">Portofolio</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link <?= activeClass('publikasi', $currentPage) ?>" href="<?= $siteUrl ?>/publikasi">Publikasi</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link <?= activeClass('blog', $currentPage) ?>" href="<?= $siteUrl ?>/blog">Blog</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link <?= activeClass('harga', $currentPage) ?>" href="<?= $siteUrl ?>/harga">Harga</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link <?= activeClass('tentang', $currentPage) ?>" href="<?= $siteUrl ?>/tentang">Tentang</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link <?= activeClass('tracking', $currentPage) ?>" href="<?= $siteUrl ?>/tracking">
-                        <i class="fas fa-search me-1"></i>Tracking
-                    </a>
-                </li>
-                <li class="nav-item ms-lg-2">
-                    <a class="btn btn-accent nav-cta" href="<?= $siteUrl ?>/konsultasi" data-testid="nav-cta-konsultasi">
-                        <i class="fas fa-comments me-1"></i> Konsultasi Gratis
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
-<!-- Mobile Offcanvas Menu (slide from right) -->
-<div class="offcanvas offcanvas-end d-lg-none" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel"
-     style="background-color: var(--primary); max-width: 300px; top: 64px; height: calc(100dvh - 64px);">
-    <div class="offcanvas-header border-bottom" style="border-color: rgba(255,255,255,0.08) !important;">
-        <h5 class="offcanvas-title text-white" id="mobileMenuLabel">
-            <i class="fas fa-bars me-2"></i>Menu
-        </h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Tutup"></button>
-    </div>
-    <div class="offcanvas-body d-flex flex-column p-0">
-        <nav class="flex-grow-1">
-            <ul class="list-unstyled m-0">
-                <?php
-                $menuItems = [
-                    ['page' => 'home', 'label' => 'Beranda', 'icon' => 'fa-home', 'url' => '/'],
-                    ['page' => 'layanan', 'label' => 'Layanan', 'icon' => 'fa-cogs', 'url' => '/layanan'],
-                    ['page' => 'portofolio', 'label' => 'Portofolio', 'icon' => 'fa-briefcase', 'url' => '/portofolio'],
-                    ['page' => 'blog', 'label' => 'Blog', 'icon' => 'fa-newspaper', 'url' => '/blog'],
-                    ['page' => 'harga', 'label' => 'Harga', 'icon' => 'fa-tags', 'url' => '/harga'],
-                    ['page' => 'tentang', 'label' => 'Tentang', 'icon' => 'fa-info-circle', 'url' => '/tentang'],
-                    ['page' => 'tracking', 'label' => 'Tracking Pesanan', 'icon' => 'fa-search-location', 'url' => '/tracking'],
-                ];
-                foreach ($menuItems as $mi):
-                    $isActive = activeClass($mi['page'], $currentPage) === 'active';
-                ?>
-                <li>
-                    <a href="<?= $siteUrl . $mi['url'] ?>"
-                       class="d-flex align-items-center gap-3 px-4 py-3 text-white text-decoration-none"
-                       style="font-size:0.95rem; font-weight:<?= $isActive ? '700' : '500' ?>; background:<?= $isActive ? 'rgba(255,255,255,0.1)' : 'transparent' ?>; border-left:3px solid <?= $isActive ? 'var(--accent)' : 'transparent' ?>;">
-                        <i class="fas <?= $mi['icon'] ?>" style="width:20px; text-align:center; opacity:0.7;"></i>
-                        <?= $mi['label'] ?>
-                    </a>
-                </li>
-                <?php endforeach; ?>
-            </ul>
-        </nav>
-  <script>
-  (function(){
-    window.addEventListener('scroll', function(){
-      var nav = document.getElementById('mainNav');
-      if (!nav) return;
-      if (window.scrollY > 10) {
-        nav.classList.add('scrolled');
-      } else {
-        nav.classList.remove('scrolled');
-      }
-    }, {passive: true});
-  })();
-  </script>
-  
-        <div class="p-4 mt-auto" style="border-top:1px solid rgba(255,255,255,0.1);">
-            <a href="<?= $siteUrl ?>/konsultasi"
-               class="btn btn-accent d-block text-center fw-600"
-               style="width:90%; margin:0 auto; padding:0.75rem 1rem; font-size:0.95rem; border-radius:10px;">
-                <i class="fas fa-comments me-2"></i>Konsultasi Gratis
-            </a>
+            <div class="topbar-links">
+                <span><i class="fa-regular fa-clock"></i>Senin–Jumat, 08.00–17.00 WIB</span>
+                <a href="<?= $siteUrl ?>/lacak"><i class="fa-solid fa-location-crosshairs"></i>Lacak Naskah</a>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Flash Messages -->
-<?php if (!empty($flashMessages)): ?>
-<div class="flash-container position-fixed top-0 end-0 p-3" style="z-index:9999; margin-top:70px;">
-    <?php foreach ($flashMessages as $msg): ?>
-        <?php
-        $alertMap = ['success' => 'alert-success', 'error' => 'alert-danger', 'warning' => 'alert-warning', 'info' => 'alert-info'];
-        $alertClass = isset($alertMap[$msg['type']]) ? $alertMap[$msg['type']] : 'alert-info';
-        ?>
-        <div class="alert <?= $alertClass ?> alert-dismissible fade show shadow" role="alert">
-            <?= $msg['message'] ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+<!-- Masthead -->
+<header class="site-header">
+    <nav class="navbar navbar-expand-lg py-0" aria-label="Navigasi utama">
+        <div class="container">
+            <a class="brand" href="<?= $siteUrl ?>/">
+                <span class="brand-mark">
+                    <?php if (!empty($logoPath)): ?>
+                        <img src="<?= $siteUrl ?>/assets/uploads/site/<?= htmlspecialchars($logoPath) ?>" alt="Logo <?= htmlspecialchars($siteName) ?>">
+                    <?php else: ?>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M3 5.5C5.4 4.2 8.2 4.2 10.6 5.5v13c-2.4-1.3-5.2-1.3-7.6 0v-13Z" fill="currentColor" opacity=".9"/>
+                            <path d="M21 5.5c-2.4-1.3-5.2-1.3-7.6 0v13c2.4-1.3 5.2-1.3 7.6 0v-13Z" fill="currentColor" opacity=".55"/>
+                            <path d="M12 4v16" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>
+                        </svg>
+                    <?php endif; ?>
+                </span>
+                <span>
+                    <span class="brand-name"><?= htmlspecialchars($siteName) ?></span>
+                    <span class="brand-sub"><?= htmlspecialchars($siteTagline) ?></span>
+                </span>
+            </a>
+
+            <div class="d-none d-lg-flex align-items-center ms-auto gap-3">
+                <ul class="main-nav navbar-nav">
+                    <?php foreach ($navItems as $item): ?>
+                    <li class="nav-item">
+                        <a class="nav-link <?= activeClass($item['key'], $currentPage) ?>" href="<?= $siteUrl . $item['url'] ?>">
+                            <?= $item['label'] ?>
+                        </a>
+                    </li>
+                    <?php endforeach; ?>
+                </ul>
+                <div class="nav-actions">
+                    <a class="btn btn-primary btn-sm" href="<?= $siteUrl ?>/kirim-naskah">
+                        <i class="fa-regular fa-paper-plane"></i>Kirim Naskah
+                    </a>
+                </div>
+            </div>
+
+            <button class="nav-toggle d-lg-none ms-auto" type="button"
+                    data-bs-toggle="offcanvas" data-bs-target="#mobileNav"
+                    aria-controls="mobileNav" aria-label="Buka menu navigasi">
+                <i class="fa-solid fa-bars"></i>
+            </button>
         </div>
+    </nav>
+</header>
+
+<!-- Mobile drawer -->
+<div class="offcanvas offcanvas-end mobile-nav" tabindex="-1" id="mobileNav" aria-labelledby="mobileNavLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="mobileNavLabel"><?= htmlspecialchars($siteName) ?></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Tutup"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column p-0">
+        <ul class="mobile-nav-list">
+            <?php foreach ($navItems as $item): ?>
+            <li>
+                <a href="<?= $siteUrl . $item['url'] ?>" class="<?= activeClass($item['key'], $currentPage) ?>">
+                    <i class="fa-solid <?= $item['icon'] ?>"></i><?= $item['label'] ?>
+                </a>
+            </li>
+            <?php endforeach; ?>
+            <li>
+                <a href="<?= $siteUrl ?>/lacak" class="<?= activeClass('tracking', $currentPage) ?>">
+                    <i class="fa-solid fa-location-crosshairs"></i>Lacak Naskah
+                </a>
+            </li>
+        </ul>
+        <div class="mobile-nav-foot">
+            <a href="<?= $siteUrl ?>/kirim-naskah" class="btn btn-primary w-100">
+                <i class="fa-regular fa-paper-plane"></i>Kirim Naskah
+            </a>
+            <?php if (!empty($emailContact)): ?>
+            <p class="mb-0 mt-3 small text-muted">
+                <i class="fa-regular fa-envelope me-1"></i><?= htmlspecialchars($emailContact) ?>
+            </p>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+
+<?php if (!empty($flashMessages)): ?>
+<div class="flash-stack">
+    <?php foreach ($flashMessages as $msg):
+        $map = ['success' => 'alert-success', 'error' => 'alert-danger', 'warning' => 'alert-warning', 'info' => 'alert-info'];
+        $cls = $map[$msg['type']] ?? 'alert-info';
+    ?>
+    <div class="alert <?= $cls ?> alert-dismissible fade show shadow-sm" role="alert">
+        <?= htmlspecialchars($msg['message']) ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Tutup"></button>
+    </div>
     <?php endforeach; ?>
 </div>
 <?php endif; ?>
 
-<!-- Main Content Wrapper -->
-<main id="mainContent">
+<main id="main" class="flex-grow-1">

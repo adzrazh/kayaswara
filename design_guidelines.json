@@ -1,71 +1,83 @@
 {
+  "brand": "Kayaswara",
+  "legal_entity": "CV. Kayaswara",
+  "positioning": "Penerbit buku akademik — bukan penyedia jasa cetak umum.",
   "theme": "Light",
-  "archetype": "Swiss & High-Contrast (Editorial Variant)",
-  "emotional_tone": "Authoritative, Precise, Scholarly, and Effortlessly Modern. An anti-default, premium aesthetic.",
-  "tech_stack_guidance": "PHP, MySQL, Bootstrap 5, Vanilla CSS/JS. Avoid using standard Bootstrap aesthetics. Override soft shadows and default primary colors. Rely heavily on custom utility classes, sharp borders, and sophisticated typography.",
+  "archetype": "Academic Press — tenang, bersih, ramah lingkungan, berwibawa.",
+  "emotional_tone": "Tenang dan dapat dipercaya. Kertas daur ulang, tinta hijau tua, aksen kuning tanah. Tidak berteriak, tidak menjanjikan hal yang tak bisa ditepati.",
+  "tech_stack": "PHP 7.4+ native, MySQL, Bootstrap 5.3 (grid + komponen dasar saja), CSS kustom, JavaScript vanilla. Kompatibel shared hosting cPanel.",
   "colors": {
-    "background_base": "#FAFAFA",
-    "background_surface": "#FFFFFF",
-    "primary_brand": "#8C1D18",
-    "primary_hover": "#6A1411",
-    "text_primary": "#1A1A1A",
-    "text_secondary": "#595959",
-    "border_color": "#E0E0E0",
-    "accent_dark": "#0A0A0A"
+    "primary": "#1F4B3F",
+    "primary_dark": "#163830",
+    "secondary": "#2F6B57",
+    "accent": "#A9752F",
+    "accent_dark": "#8E6126",
+    "paper": "#FBFAF6",
+    "paper_tint": "#F4F2EA",
+    "paper_deep": "#EDEAE0",
+    "surface": "#FFFFFF",
+    "line": "#E3E0D4",
+    "line_strong": "#CFCBBB",
+    "ink": "#16211C",
+    "ink_soft": "#45544D",
+    "ink_muted": "#77857D",
+    "state_ok": "#2E7D4F",
+    "state_warn": "#B8860B",
+    "state_danger": "#B3392E",
+    "state_info": "#2C6E8F"
   },
   "typography": {
-    "google_fonts_url": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap",
-    "headings": {
-      "font_family": "'Cormorant Garamond', serif",
-      "style": "Elegant, tight letter-spacing, highly readable but classic."
+    "google_fonts_url": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap",
+    "display": {
+      "font_family": "'Source Serif 4', Georgia, serif",
+      "usage": "Judul, angka statistik, kutipan. Berat 600–700, letter-spacing -0.01em."
     },
     "body": {
-      "font_family": "'IBM Plex Sans', sans-serif",
-      "style": "Clean, geometric, sterile-mono feel for maximum contrast against the serif headers."
+      "font_family": "'Inter', system-ui, sans-serif",
+      "usage": "Teks isi, antarmuka, tabel. Ukuran dasar 16px, line-height 1.7."
     },
-    "scale": {
-      "h1": "4rem (64px) - Use tight line-height (1.1) and tight tracking.",
-      "h2": "2.5rem (40px)",
-      "h3": "1.75rem (28px)",
-      "body": "1rem (16px) - Use loose line-height (1.6) for readability.",
-      "overline": "0.75rem (12px) uppercase, wide letter-spacing (0.2em)."
-    }
+    "eyebrow": "Inter 600, 0.72rem, uppercase, letter-spacing 0.16em, warna secondary, didahului garis 26px warna accent."
   },
-  "spacing_and_layout": {
-    "grid": "Bento-style grids for features and services. Use Bootstrap rows/cols but with gap-4 or gap-5. Avoid 100% full-width equal columns if possible—mix col-md-8 and col-md-4 for asymmetry.",
-    "padding": "Generous. Multiply standard Bootstrap padding by 2. Use 'py-5' and custom 'py-6' (e.g., 6rem) for sections.",
-    "borders": "1px solid #E0E0E0 or #1A1A1A depending on contrast. Sharp corners (border-radius: 0 or max 2px)."
+  "shape": {
+    "radius_xs": "4px",
+    "radius_sm": "6px",
+    "radius_md": "10px",
+    "radius_lg": "16px",
+    "radius_pill": "999px",
+    "borders": "1px solid var(--line). Kartu mengandalkan garis, bukan bayangan tebal.",
+    "shadows": "Sangat halus — rgba(22,33,28,.05–.12). Bayangan hanya muncul saat hover."
   },
-  "component_guidelines": {
-    "buttons": "Square or 2px rounded corners. Primary button: bg-dark (#1A1A1A) text-white. Hover state: bg-brand (#8C1D18). Thick 1px borders. Add 'data-testid' to all buttons.",
-    "cards_services": "Flat rectangular blocks. border: 1px solid #E0E0E0. background: #FFFFFF. NO box-shadow. On hover, apply a subtle -translate-y transition and change border color to #1A1A1A.",
-    "hero_section": "Asymmetric layout. Left: Massive H1 typography, narrow column. Right: Overlapping image (hero_academic_books) with a slight offset bento-box. Max overlay opacity bg-black/30 if text is on image.",
-    "navigation": "Solid background (#FAFAFA) with a 1px bottom border. No deep drop shadows. Links in IBM Plex Sans, clean and small.",
-    "accordion_faq": "Override default Bootstrap accordion. Remove borders between items, just use a 1px solid bottom border per item. No background color on active state. Use a simple + / - icon.",
-    "order_tracking": "Vertical timeline. Use a left-aligned thick 2px line (#E0E0E0). Nodes are sharp squares (not circles) in #1A1A1A. Active nodes in #8C1D18.",
-    "data_testid_rule": "ALL interactive elements, links, forms, and buttons MUST have a 'data-testid' attribute (e.g., data-testid='submit-consultation-btn')."
+  "layout": {
+    "container_max": "1180px",
+    "section_padding_y": "5.5rem desktop, 3.25rem mobile",
+    "grid": "Bootstrap 5 row/col dengan gutter g-4."
   },
-  "images": {
-    "hero_main": {
-      "url": "https://static.prod-images.emergentagent.com/jobs/23bd64a1-57c8-488f-82ab-a3c1c8a9d678/images/c08fd7697caa8101d65dc72bf0339b29e9095f00a2c6ee867a363ba8ebf94144.png",
-      "description": "Elegant academic study room, hardbound books, scholarly manuscript."
-    },
-    "hero_abstract": {
-      "url": "https://static.prod-images.emergentagent.com/jobs/23bd64a1-57c8-488f-82ab-a3c1c8a9d678/images/432cdede29c7824f683ba57a0a55013fd81da87f23723990ff1f35a69fe92dcc.png",
-      "description": "Abstract crisp white paper pages, architectural shadows."
-    },
-    "service_publishing": {
-      "url": "https://images.unsplash.com/photo-1503694978374-8a2fa686963a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwyfHxib29rJTIwcHVibGlzaGluZyUyMHByaW50aW5nJTIwcHJlc3N8ZW58MHx8fHwxNzc1OTc4Njc5fDA&ixlib=rb-4.1.0&q=85",
-      "description": "Industrial book printing machine."
-    },
-    "library_academic": {
-      "url": "https://images.unsplash.com/photo-1759732639771-812fe192a9a3?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NjV8MHwxfHNlYXJjaHw0fHxhY2FkZW1pYyUyMGxpYnJhcnklMjByZWFkaW5nfGVufDB8fHx8MTc3NTk3ODY3OXww&ixlib=rb-4.1.0&q=85",
-      "description": "Grand academic library interior with ornate railings."
-    },
-    "books_rack": {
-      "url": "https://images.unsplash.com/photo-1524591282491-edb48a0fca8f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NjV8MHwxfHNlYXJjaHwxfHxhY2FkZW1pYyUyMGxpYnJhcnklMjByZWFkaW5nfGVufDB8fHx8MTc3NTk3ODY3OXww&ixlib=rb-4.1.0&q=85",
-      "description": "Books on a rack, academic reading."
-    }
+  "motion": {
+    "easing": "cubic-bezier(.4, 0, .2, 1)",
+    "reveal": "Kelas .reveal + IntersectionObserver, translateY(18px) → 0 dalam 0.6s.",
+    "hover": "translateY(-3px) pada kartu, tanpa scale berlebihan.",
+    "reduced_motion": "Seluruh animasi dinonaktifkan pada prefers-reduced-motion."
   },
-  "instructions_to_main_agent": "1. Set up a global custom CSS file/block that imports the Google Fonts and overrides Bootstrap's root variables (--bs-primary, --bs-body-font-family, etc.). 2. Apply 'Cormorant Garamond' to all h1-h6 tags. Apply 'IBM Plex Sans' to the body. 3. Strip out default Bootstrap shadows (.shadow) and rounded corners (.rounded) for a crisp, high-end editorial look. 4. Use the provided image URLs exclusively for visual placeholders—do not use generic dummyimage.com placeholders. 5. Implement the bento-box grid strategy where possible using Bootstrap's grid system combined with custom gaps. 6. Ensure every clickable element has a descriptive data-testid."
+  "components": [
+    "book-card — kartu katalog dengan rasio sampul 3:4.2 dan fallback sampul teks",
+    "service-card — kartu layanan dengan garis aksen kiri saat hover",
+    "step-card / rail — tahapan bernomor untuk alur penerbitan",
+    "price-card — paket biaya, satu kartu ditandai is-featured",
+    "track-summary + tl — ringkasan dan lini masa pelacakan naskah",
+    "side-panel + biblio-table — data bibliografi dan informasi pendamping",
+    "cta-band — pita ajakan bertindak berwarna primary"
+  ],
+  "content_rules": {
+    "wajib": [
+      "Menu Publikasi berisi katalog buku yang telah diterbitkan beserta data bibliografinya.",
+      "Nama penerbit ditulis 'Kayaswara' sesuai legalitas; badan usaha 'CV. Kayaswara' ditampilkan pada halaman Tentang dan footer.",
+      "Setiap klaim proses harus dapat dibuktikan oleh dokumen kerja (perjanjian, catatan telaah, contoh cetak)."
+    ],
+    "dilarang": [
+      "Menawarkan, menjanjikan, atau memasarkan jasa/fasilitas pencantuman ISBN dalam bentuk apa pun.",
+      "Menjanjikan bahwa setiap naskah pasti terbit atau pasti memperoleh pengakuan lembaga eksternal.",
+      "Menampilkan data terbitan, testimoni, atau angka yang tidak nyata."
+    ],
+    "isbn": "Nomor ISBN hanya boleh muncul sebagai data bibliografi pada halaman detail buku yang memang sudah memilikinya — tidak pernah sebagai penawaran layanan."
+  }
 }

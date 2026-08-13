@@ -1,196 +1,182 @@
 <?php
 /**
- * Blog Listing Page
+ * Wawasan — kumpulan tulisan redaksi untuk penulis.
  */
-$pageTitle = 'Blog & Tips Penerbitan – ' . getSetting('site_name', 'Kayaswara');
-$siteUrl   = defined('SITE_URL') ? SITE_URL : '';
+$siteUrl   = defined('SITE_URL') ? rtrim(SITE_URL, '/') : '';
+$siteName  = html_entity_decode(getSetting('site_name', 'Kayaswara'), ENT_QUOTES, 'UTF-8');
+$pageTitle = 'Wawasan — ' . $siteName;
+$metaDesc  = 'Catatan redaksi ' . $siteName . ' seputar penulisan dan penerbitan karya akademik: penyusunan buku ajar, penyuntingan, sitasi, dan tata letak.';
 
-$perPage        = 9;
-$currentPage    = max(1, (int)($_GET['p'] ?? 1));
-$search         = sanitize($_GET['q'] ?? '');
-$activeCategory = sanitize($_GET['cat'] ?? '');
+$q      = trim((string) ($_GET['q'] ?? ''));
+$cat    = trim((string) ($_GET['kategori'] ?? ''));
+$pageNo = max(1, (int) ($_GET['p'] ?? 1));
+$perPage = 9;
 
-$categories = [
-    ''          => 'Semua',
-    'tips'      => 'Tips Menulis',
-    'tutorial'  => 'Tutorial',
-    'berita'    => 'Berita & Update',
-    'panduan'   => 'Panduan Penerbitan',
-    'indeksasi' => 'Karir Akademik',
-    'lainnya'   => 'Lainnya',
-];
-
-// Build WHERE
-$where  = "status='published'";
+$where  = ["status = 'published'"];
 $params = [];
-if ($search) {
-    $where   .= " AND title LIKE ?";
-    $params[] = '%' . $search . '%';
+if ($q !== '') {
+    $where[]  = '(title LIKE ? OR excerpt LIKE ? OR content LIKE ?)';
+    $like     = '%' . $q . '%';
+    $params[] = $like; $params[] = $like; $params[] = $like;
 }
-if ($activeCategory) {
-    $where   .= " AND category = ?";
-    $params[] = $activeCategory;
+if ($cat !== '') { $where[] = 'category = ?'; $params[] = $cat; }
+$whereSql = implode(' AND ', $where);
+
+$posts = [];
+$total = 0;
+$cats  = [];
+$featured = null;
+
+try {
+    $total = (int) (fetch("SELECT COUNT(*) c FROM blog_posts WHERE {$whereSql}", $params)['c'] ?? 0);
+    $pg    = getPagination($total, $perPage, $pageNo);
+    $limit = (int) $pg['per_page'];
+    $off   = (int) $pg['offset'];
+    $posts = fetchAll("SELECT * FROM blog_posts WHERE {$whereSql} ORDER BY created_at DESC LIMIT {$limit} OFFSET {$off}", $params);
+
+    foreach (fetchAll("SELECT category, COUNT(*) c FROM blog_posts WHERE status='published' AND category <> '' GROUP BY category ORDER BY c DESC") as $r) {
+        $cats[$r['category']] = (int) $r['c'];
+    }
+
+    if ($pageNo === 1 && $q === '' && $cat === '' && !empty($posts)) {
+        $featured = array_shift($posts);
+    }
+} catch (Exception $e) {
+    $pg = getPagination(0, $perPage, 1);
 }
 
-$total = (int) fetch("SELECT COUNT(*) as c FROM blog_posts WHERE {$where}", $params)['c'];
-
-$pagination = getPagination($total, $perPage, $currentPage);
-
-$limit  = (int) $pagination['per_page'];
-$offset = (int) $pagination['offset'];
-$posts  = fetchAll(
-    "SELECT * FROM blog_posts WHERE {$where} ORDER BY created_at DESC LIMIT {$limit} OFFSET {$offset}",
-    $params
-);
+function blogUrl(array $override = []): string {
+    $base = (defined('SITE_URL') ? rtrim(SITE_URL, '/') : '') . '/wawasan';
+    $qs = array_filter(array_merge([
+        'q'        => $_GET['q']        ?? '',
+        'kategori' => $_GET['kategori'] ?? '',
+        'p'        => $_GET['p']        ?? '',
+    ], $override), static fn($v) => $v !== '' && $v !== null);
+    return $qs ? $base . '?' . http_build_query($qs) : $base;
+}
 ?>
 
-<!-- Page Hero -->
-<div class="page-hero">
+<div class="page-head">
     <div class="container">
-        <div class="page-hero-content text-center fade-in-up">
-            <h1 class="page-hero-title">Blog & Tips Penerbitan</h1>
-            <p class="page-hero-subtitle">Artikel, panduan, tips, dan berita terkini seputar penulisan dan penerbitan buku akademik</p>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb justify-content-center">
-                    <li class="breadcrumb-item"><a href="<?= $siteUrl ?>/">Beranda</a></li>
-                    <li class="breadcrumb-item active">Blog</li>
-                </ol>
-            </nav>
-        </div>
+        <ol class="crumbs">
+            <li><a href="<?= $siteUrl ?>/">Beranda</a></li>
+            <li>Wawasan</li>
+        </ol>
+        <span class="eyebrow">Catatan Redaksi</span>
+        <h1>Wawasan</h1>
+        <p>Panduan praktis dari meja redaksi: menyusun naskah akademik, menyunting, mengelola sitasi, dan mempersiapkan buku sampai siap terbit.</p>
     </div>
 </div>
 
-<section class="section-padding bg-white">
+<section class="section">
     <div class="container">
 
-        <!-- Search Bar -->
-        <div class="blog-search-bar fade-in-up mb-5">
-            <form method="GET" action="<?= $siteUrl ?>/blog" class="d-flex justify-content-center">
-                <div class="input-group" style="max-width:500px;">
-                    <input type="text" name="q" class="form-control form-control-lg"
-                           placeholder="Cari artikel..."
-                           value="<?= htmlspecialchars($search) ?>"
-                           aria-label="Cari artikel blog">
-                    <button class="btn btn-primary" type="submit">
-                        <i class="fas fa-search"></i>
-                    </button>
-                    <?php if ($search): ?>
-                    <a href="<?= $siteUrl ?>/blog" class="btn btn-outline-secondary" title="Hapus pencarian">
-                        <i class="fas fa-times"></i>
-                    </a>
-                    <?php endif; ?>
+        <div class="catalog-toolbar reveal">
+            <div class="row g-3 align-items-center">
+                <div class="col-lg-7">
+                    <div class="filter-pills">
+                        <a href="<?= htmlspecialchars(blogUrl(['kategori' => '', 'p' => ''])) ?>" class="filter-pill <?= $cat === '' ? 'active' : '' ?>">Semua</a>
+                        <?php foreach ($cats as $c => $n): ?>
+                        <a href="<?= htmlspecialchars(blogUrl(['kategori' => $c, 'p' => ''])) ?>" class="filter-pill <?= $cat === $c ? 'active' : '' ?>">
+                            <?= htmlspecialchars($c) ?> <span class="cnt"><?= $n ?></span>
+                        </a>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
-            </form>
-            <?php if ($search): ?>
-            <p class="text-center text-muted mt-2">
-                Menampilkan <?= $total ?> hasil untuk: <strong>"<?= htmlspecialchars($search) ?>"</strong>
-            </p>
-            <?php endif; ?>
+                <div class="col-lg-5">
+                    <form method="get" action="<?= $siteUrl ?>/wawasan" class="input-group">
+                        <?php if ($cat !== ''): ?><input type="hidden" name="kategori" value="<?= htmlspecialchars($cat) ?>"><?php endif; ?>
+                        <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
+                        <input type="search" name="q" class="form-control" value="<?= htmlspecialchars($q) ?>"
+                               placeholder="Cari tulisan…" aria-label="Cari tulisan"
+                               style="border-top-left-radius:0;border-bottom-left-radius:0;">
+                        <button class="btn btn-primary" type="submit">Cari</button>
+                    </form>
+                </div>
+            </div>
         </div>
 
-        <!-- Category Filter Tabs -->
-        <div class="d-flex flex-wrap justify-content-center gap-2 mb-5 fade-in-up">
-            <?php foreach ($categories as $catKey => $catLabel): ?>
-            <?php
-                $catUrl    = $siteUrl . '/blog';
-                $catParams = [];
-                if ($search) $catParams[] = 'q=' . urlencode($search);
-                if ($catKey) $catParams[] = 'cat=' . urlencode($catKey);
-                if ($catParams) $catUrl .= '?' . implode('&', $catParams);
-                $isActiveCat = ($activeCategory === $catKey);
-            ?>
-            <a href="<?= $catUrl ?>"
-               class="btn <?= $isActiveCat ? 'btn-primary' : 'btn-outline-secondary' ?> btn-sm"
-               style="border-radius:50px;padding:6px 20px;font-size:13px;font-weight:<?= $isActiveCat ? '700' : '500' ?>;">
-                <?= htmlspecialchars($catLabel) ?>
-            </a>
-            <?php endforeach; ?>
-        </div>
+        <?php if ($featured): ?>
+        <article class="card-plain mb-4 reveal" style="padding:0;overflow:hidden;">
+            <div class="row g-0 align-items-stretch">
+                <div class="col-md-5">
+                    <a class="article-thumb h-100 d-block" href="<?= $siteUrl ?>/wawasan/<?= htmlspecialchars($featured['slug']) ?>" style="aspect-ratio:auto;min-height:240px;">
+                        <?php if (!empty($featured['image'])): ?>
+                            <img src="<?= $siteUrl ?>/assets/uploads/blog/<?= htmlspecialchars($featured['image']) ?>" alt="<?= htmlspecialchars($featured['title']) ?>">
+                        <?php else: ?>
+                            <span class="d-grid h-100 w-100" style="place-items:center;"><i class="fa-regular fa-file-lines" style="font-size:2rem;color:var(--line-strong);"></i></span>
+                        <?php endif; ?>
+                    </a>
+                </div>
+                <div class="col-md-7">
+                    <div class="p-4 p-lg-5">
+                        <span class="chip chip-gold mb-3">Tulisan Terbaru</span>
+                        <div class="article-meta">
+                            <?php if (!empty($featured['category'])): ?><span><i class="fa-solid fa-tag me-1"></i><?= htmlspecialchars($featured['category']) ?></span><?php endif; ?>
+                            <span><i class="fa-regular fa-calendar me-1"></i><?= formatDate($featured['created_at']) ?></span>
+                            <span><i class="fa-regular fa-user me-1"></i><?= htmlspecialchars($featured['author'] ?: 'Redaksi') ?></span>
+                        </div>
+                        <h2 class="h3 mb-2">
+                            <a href="<?= $siteUrl ?>/wawasan/<?= htmlspecialchars($featured['slug']) ?>" style="color:var(--ink);"><?= htmlspecialchars($featured['title']) ?></a>
+                        </h2>
+                        <p class="mb-3"><?= htmlspecialchars(truncate($featured['excerpt'] ?: strip_tags($featured['content'] ?? ''), 220)) ?></p>
+                        <a href="<?= $siteUrl ?>/wawasan/<?= htmlspecialchars($featured['slug']) ?>" class="btn-link-arrow">Baca selengkapnya<i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </article>
+        <?php endif; ?>
 
-        <!-- keep original closing div of search bar removed above -->
-        </div>
-
-        <!-- Posts Grid -->
         <?php if (!empty($posts)): ?>
         <div class="row g-4">
-            <?php foreach ($posts as $i => $post): ?>
-            <div class="col-md-6 col-lg-4">
-                <article class="blog-card fade-in-up" style="animation-delay:<?= ($i % 9) * 0.06 ?>s">
-                    <div class="blog-card-img">
-                        <?php if (!empty($post['image'])): ?>
-                            <img src="<?= $siteUrl ?>/assets/uploads/blog/<?= htmlspecialchars($post['image']) ?>"
-                                 alt="<?= htmlspecialchars($post['title']) ?>" loading="lazy">
+            <?php foreach ($posts as $i => $p): ?>
+            <div class="col-md-6 col-lg-4 reveal" data-reveal-delay="<?= ($i % 3) * 0.06 ?>">
+                <article class="article-card">
+                    <a class="article-thumb" href="<?= $siteUrl ?>/wawasan/<?= htmlspecialchars($p['slug']) ?>">
+                        <?php if (!empty($p['image'])): ?>
+                            <img src="<?= $siteUrl ?>/assets/uploads/blog/<?= htmlspecialchars($p['image']) ?>" alt="<?= htmlspecialchars($p['title']) ?>" loading="lazy">
                         <?php else: ?>
-                            <div class="blog-card-placeholder">
-                                <i class="fas fa-pen-nib"></i>
-                            </div>
+                            <i class="fa-regular fa-file-lines"></i>
                         <?php endif; ?>
-                    </div>
-                    <div class="blog-card-body">
-                        <div class="blog-card-meta">
-                            <span><i class="fas fa-calendar-alt me-1"></i><?= formatDate($post['created_at']) ?></span>
-                            <span><i class="fas fa-user me-1"></i><?= htmlspecialchars($post['author']) ?></span>
-                            <span><i class="fas fa-eye me-1"></i><?= number_format($post['views']) ?></span>
+                    </a>
+                    <div class="article-body">
+                        <div class="article-meta">
+                            <?php if (!empty($p['category'])): ?><span><i class="fa-solid fa-tag me-1"></i><?= htmlspecialchars($p['category']) ?></span><?php endif; ?>
+                            <span><i class="fa-regular fa-calendar me-1"></i><?= formatDate($p['created_at']) ?></span>
                         </div>
-                        <h2 class="blog-card-title h5">
-                            <a href="<?= $siteUrl ?>/blog/<?= htmlspecialchars($post['slug']) ?>">
-                                <?= htmlspecialchars($post['title']) ?>
-                            </a>
-                        </h2>
-                        <p class="blog-card-excerpt">
-                            <?= htmlspecialchars(truncate($post['excerpt'] ?: $post['content'], 130)) ?>
-                        </p>
-                        <a href="<?= $siteUrl ?>/blog/<?= htmlspecialchars($post['slug']) ?>" class="blog-read-more">
-                            Baca Selengkapnya <i class="fas fa-arrow-right ms-1"></i>
-                        </a>
+                        <h2 class="article-title"><a href="<?= $siteUrl ?>/wawasan/<?= htmlspecialchars($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a></h2>
+                        <p class="article-excerpt"><?= htmlspecialchars(truncate($p['excerpt'] ?: strip_tags($p['content'] ?? ''), 140)) ?></p>
+                        <a href="<?= $siteUrl ?>/wawasan/<?= htmlspecialchars($p['slug']) ?>" class="btn-link-arrow">Baca<i class="fa-solid fa-arrow-right"></i></a>
                     </div>
                 </article>
             </div>
             <?php endforeach; ?>
         </div>
 
-        <!-- Pagination -->
-        <?php if ($pagination['total_pages'] > 1): ?>
-        <nav class="mt-5" aria-label="Navigasi halaman blog">
+        <?php if (($pg['total_pages'] ?? 1) > 1): ?>
+        <nav class="mt-5" aria-label="Navigasi halaman tulisan">
             <ul class="pagination justify-content-center">
-                <?php if ($pagination['has_prev']): ?>
-                <li class="page-item">
-                    <a class="page-link" href="?<?= http_build_query(array_merge($_GET, ['p' => $pagination['prev']])) ?>">
-                        <i class="fas fa-chevron-left"></i>
-                    </a>
-                </li>
+                <?php if ($pg['has_prev']): ?>
+                <li class="page-item"><a class="page-link" href="<?= htmlspecialchars(blogUrl(['p' => $pg['prev']])) ?>"><i class="fa-solid fa-chevron-left"></i></a></li>
                 <?php endif; ?>
-
-                <?php for ($p = max(1, $pagination['current'] - 2); $p <= min($pagination['total_pages'], $pagination['current'] + 2); $p++): ?>
-                <li class="page-item <?= $p === $pagination['current'] ? 'active' : '' ?>">
-                    <a class="page-link" href="?<?= http_build_query(array_merge($_GET, ['p' => $p])) ?>"><?= $p ?></a>
-                </li>
+                <?php for ($p = 1; $p <= $pg['total_pages']; $p++): ?>
+                <li class="page-item <?= $p === $pg['current'] ? 'active' : '' ?>"><a class="page-link" href="<?= htmlspecialchars(blogUrl(['p' => $p])) ?>"><?= $p ?></a></li>
                 <?php endfor; ?>
-
-                <?php if ($pagination['has_next']): ?>
-                <li class="page-item">
-                    <a class="page-link" href="?<?= http_build_query(array_merge($_GET, ['p' => $pagination['next']])) ?>">
-                        <i class="fas fa-chevron-right"></i>
-                    </a>
-                </li>
+                <?php if ($pg['has_next']): ?>
+                <li class="page-item"><a class="page-link" href="<?= htmlspecialchars(blogUrl(['p' => $pg['next']])) ?>"><i class="fa-solid fa-chevron-right"></i></a></li>
                 <?php endif; ?>
             </ul>
         </nav>
         <?php endif; ?>
 
-        <?php else: ?>
-        <div class="empty-state text-center py-5">
-            <i class="fas fa-pen-nib fa-4x text-muted mb-3"></i>
-            <h4>
-                <?php if ($search): ?>Tidak ada artikel yang cocok<?php else: ?>Belum Ada Artikel<?php endif; ?>
-            </h4>
-            <p class="text-muted">
-                <?php if ($search): ?>
-                    Coba kata kunci lain atau <a href="<?= $siteUrl ?>/blog">lihat semua artikel</a>.
-                <?php else: ?>
-                    Artikel akan segera diterbitkan. Silakan kunjungi kembali nanti.
-                <?php endif; ?>
-            </p>
+        <?php elseif (!$featured): ?>
+        <div class="empty-state reveal">
+            <i class="fa-regular fa-file-lines"></i>
+            <h4><?= ($q !== '' || $cat !== '') ? 'Tidak ada tulisan yang cocok' : 'Belum ada tulisan' ?></h4>
+            <p><?= ($q !== '' || $cat !== '') ? 'Coba kata kunci lain atau lepaskan penyaring.' : 'Catatan redaksi akan tayang di halaman ini.' ?></p>
+            <?php if ($q !== '' || $cat !== ''): ?>
+            <a href="<?= $siteUrl ?>/wawasan" class="btn btn-outline-primary btn-sm">Tampilkan Semua Tulisan</a>
+            <?php endif; ?>
         </div>
         <?php endif; ?>
 

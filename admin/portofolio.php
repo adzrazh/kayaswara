@@ -19,9 +19,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 deleteImage('portfolio/' . $item['image']);
             }
             delete('portfolio', 'id = ?', [$id]);
-            flash('success', 'Portofolio berhasil dihapus.');
+            flash('success', 'Data kerja sama berhasil dihapus.');
         } catch (Exception $e) {
-            flash('error', 'Gagal menghapus portofolio: ' . $e->getMessage());
+            flash('error', 'Gagal menghapus data kerja sama: ' . $e->getMessage());
         }
     }
     redirect('index.php?page=portofolio');
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     if ($id > 0) {
         try {
             update('portfolio', ['status' => $new_status], 'id = ?', [$id]);
-            flash('success', 'Status portofolio berhasil diubah menjadi ' . ($new_status === 'published' ? 'Publikasi' : 'Draft') . '.');
+            flash('success', 'Status berhasil diubah menjadi ' . ($new_status === 'published' ? 'Publikasi' : 'Draft') . '.');
         } catch (Exception $e) {
             flash('error', 'Gagal mengubah status.');
         }
@@ -60,12 +60,7 @@ try {
 
 $csrf = csrf_token();
 
-$category_labels = [
-    'jurnal'      => 'Jurnal',
-    'konferensi'  => 'Konferensi',
-    'repositori'  => 'Repositori',
-    'lainnya'     => 'Lainnya',
-];
+$category_labels = getPartnerCategories();
 
 require_once ADMIN_PATH . '/includes/header.php';
 require_once ADMIN_PATH . '/includes/sidebar.php';
@@ -75,13 +70,13 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
     <!-- Page Header -->
     <div class="page-header">
         <div class="page-header-left">
-            <h2>Kelola Portofolio</h2>
-            <p>Daftar semua proyek portofolio yang ditampilkan di website.</p>
+            <h2>Kerja Sama Institusi</h2>
+            <p>Dokumentasi kolaborasi penerbitan yang tampil pada halaman Kerja Sama.</p>
         </div>
         <div class="page-header-actions">
             <a href="index.php?page=portofolio-form" class="btn btn-primary">
                 <i class="fas fa-plus"></i>
-                Tambah Portofolio
+                Tambah Kerja Sama
             </a>
         </div>
     </div>
@@ -91,8 +86,8 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
         <div class="admin-card-header">
             <h5 class="admin-card-title">
                 <i class="fas fa-briefcase"></i>
-                Daftar Portofolio
-                <span class="badge" style="background:#e2e8f0;color:#475569;font-size:11px;margin-left:4px;">
+                Daftar Kerja Sama
+                <span class="badge" style="background:#E3E0D4;color:#45544D;font-size:11px;margin-left:4px;">
                     <?= count($portfolio_items) ?> item
                 </span>
             </h5>
@@ -111,7 +106,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                             <th width="40">#</th>
                             <th width="60">Gambar</th>
                             <th>Judul</th>
-                            <th>Klien / Institusi</th>
+                            <th>Penanggung Jawab / Institusi</th>
                             <th>Kategori</th>
                             <th>Featured</th>
                             <th>Status</th>
@@ -130,8 +125,8 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                          class="table-thumbnail"
                                          onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iMzgiIHZpZXdCb3g9IjAgMCA1MCAzOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNTAiIGhlaWdodD0iMzgiIGZpbGw9IiNmMWY1ZjkiLz48dGV4dCB4PSIyNSIgeT0iMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5NGEzYjgiIGZvbnQtc2l6ZT0iMTAiPk5vIEltZzwvdGV4dD48L3N2Zz4='">
                                 <?php else: ?>
-                                    <div style="width:50px;height:38px;background:#f1f5f9;border-radius:6px;display:flex;align-items:center;justify-content:center;">
-                                        <i class="fas fa-image" style="color:#94a3b8;font-size:16px;"></i>
+                                    <div style="width:50px;height:38px;background:#F4F2EA;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+                                        <i class="fas fa-image" style="color:#A6B0A9;font-size:16px;"></i>
                                     </div>
                                 <?php endif; ?>
                             </td>
@@ -139,24 +134,24 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                 <div style="font-weight:600;max-width:200px;">
                                     <?= htmlspecialchars(truncate($item['title'], 50)) ?>
                                 </div>
-                                <div style="font-size:11px;color:#94a3b8;"><?= htmlspecialchars($item['slug']) ?></div>
+                                <div style="font-size:11px;color:#A6B0A9;"><?= htmlspecialchars($item['slug']) ?></div>
                             </td>
                             <td>
                                 <div style="font-size:13px;"><?= htmlspecialchars($item['client_name'] ?? '-') ?></div>
-                                <div style="font-size:11px;color:#94a3b8;"><?= htmlspecialchars($item['client_institution'] ?? '') ?></div>
+                                <div style="font-size:11px;color:#A6B0A9;"><?= htmlspecialchars($item['client_institution'] ?? '') ?></div>
                             </td>
                             <td>
-                                <span class="badge" style="background:#e2e8f0;color:#475569;">
+                                <span class="badge" style="background:#E3E0D4;color:#45544D;">
                                     <?= htmlspecialchars($category_labels[$item['category']] ?? $item['category']) ?>
                                 </span>
                             </td>
                             <td>
                                 <?php if ($item['is_featured']): ?>
-                                    <span class="badge" style="background:#fef3c7;color:#92400e;">
+                                    <span class="badge" style="background:#F7EEDF;color:#7A5A0C;">
                                         <i class="fas fa-star me-1"></i>Featured
                                     </span>
                                 <?php else: ?>
-                                    <span style="color:#94a3b8;font-size:12px;">—</span>
+                                    <span style="color:#A6B0A9;font-size:12px;">—</span>
                                 <?php endif; ?>
                             </td>
                             <td>
@@ -164,7 +159,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                     <?= $item['status'] === 'published' ? 'Publikasi' : 'Draft' ?>
                                 </span>
                             </td>
-                            <td style="font-size:12px;color:#64748b;white-space:nowrap;">
+                            <td style="font-size:12px;color:#77857D;white-space:nowrap;">
                                 <?= function_exists('formatDate') ? formatDate($item['created_at']) : date('d M Y', strtotime($item['created_at'])) ?>
                             </td>
                             <td>
@@ -212,10 +207,10 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
             <?php else: ?>
             <div class="empty-state">
                 <i class="fas fa-briefcase empty-state-icon"></i>
-                <h4>Belum Ada Portofolio</h4>
-                <p>Tambahkan proyek portofolio pertama Anda untuk ditampilkan di website.</p>
+                <h4>Belum Ada Data Kerja Sama</h4>
+                <p>Catat kolaborasi penerbitan bersama institusi agar tampil di situs.</p>
                 <a href="index.php?page=portofolio-form" class="btn btn-primary">
-                    <i class="fas fa-plus me-2"></i>Tambah Portofolio
+                    <i class="fas fa-plus me-2"></i>Tambah Kerja Sama
                 </a>
             </div>
             <?php endif; ?>

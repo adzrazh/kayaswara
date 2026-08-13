@@ -78,14 +78,7 @@ try {
 } catch (Exception $e) {}
 
 // Service and status labels
-$service_labels = [
-    'setup_ojs'   => 'Penerbitan Buku',
-    'migrasi'     => 'Migrasi',
-    'kustomisasi' => 'Editing & Layout',
-    'pelatihan'   => 'Pelatihan',
-    'maintenance' => 'Maintenance',
-    'lainnya'     => 'Lainnya',
-];
+$service_labels = getServiceTypes();
 
 $status_tab_labels = [
     'all'         => 'Semua',
@@ -107,8 +100,8 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
     <!-- Page Header -->
     <div class="page-header">
         <div class="page-header-left">
-            <h2>Manajemen Konsultasi</h2>
-            <p>CRM - Kelola semua permintaan konsultasi dari calon klien.</p>
+            <h2>Pengajuan Naskah</h2>
+            <p>Naskah dan pertanyaan yang masuk melalui formulir di situs.</p>
         </div>
         <div class="page-header-actions">
             <a href="index.php?page=export" class="btn btn-outline-secondary">
@@ -128,12 +121,12 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
 
         <?php
         $tab_colors = [
-            'new'         => ['bg' => '#dbeafe', 'color' => '#1d4ed8'],
-            'contacted'   => ['bg' => '#cffafe', 'color' => '#0e7490'],
-            'follow_up'   => ['bg' => '#fef3c7', 'color' => '#92400e'],
-            'negotiation' => ['bg' => '#ede9fe', 'color' => '#6d28d9'],
-            'closed_won'  => ['bg' => '#dcfce7', 'color' => '#15803d'],
-            'closed_lost' => ['bg' => '#fee2e2', 'color' => '#991b1b'],
+            'new'         => ['bg' => '#E4EDF4', 'color' => '#23566F'],
+            'contacted'   => ['bg' => '#E8F0EA', 'color' => '#1F5637'],
+            'follow_up'   => ['bg' => '#F7EEDF', 'color' => '#7A5A0C'],
+            'negotiation' => ['bg' => '#EDEAE0', 'color' => '#5A5344'],
+            'closed_won'  => ['bg' => '#E1EFE6', 'color' => '#1F5637'],
+            'closed_lost' => ['bg' => '#FBEDEC', 'color' => '#8A2C23'],
         ];
         $tab_icons = [
             'new'         => 'fa-bell',
@@ -164,7 +157,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
             <h5 class="admin-card-title">
                 <i class="fas fa-comments"></i>
                 <?= $filter_status === 'all' ? 'Semua Konsultasi' : $status_tab_labels[$filter_status] ?>
-                <span class="badge" style="background:#e2e8f0;color:#475569;font-size:11px;margin-left:4px;">
+                <span class="badge" style="background:#E3E0D4;color:#45544D;font-size:11px;margin-left:4px;">
                     <?= count($consultations) ?> data
                 </span>
             </h5>
@@ -198,9 +191,9 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                             <td><?= $i + 1 ?></td>
                             <td>
                                 <div style="font-weight:600;"><?= htmlspecialchars($k['name']) ?></div>
-                                <div style="font-size:11px;color:#64748b;"><?= htmlspecialchars($k['email']) ?></div>
+                                <div style="font-size:11px;color:#77857D;"><?= htmlspecialchars($k['email']) ?></div>
                                 <?php if (!empty($k['phone'])): ?>
-                                <div style="font-size:11px;color:#94a3b8;">
+                                <div style="font-size:11px;color:#A6B0A9;">
                                     <i class="fas fa-phone fa-xs me-1"></i><?= htmlspecialchars($k['phone']) ?>
                                 </div>
                                 <?php endif; ?>
@@ -213,7 +206,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                     <?= htmlspecialchars($service_labels[$k['service_type']] ?? $k['service_type']) ?>
                                 </span>
                                 <?php if (!empty($k['budget_range'])): ?>
-                                <div style="font-size:11px;color:#94a3b8;"><?= htmlspecialchars($k['budget_range']) ?></div>
+                                <div style="font-size:11px;color:#A6B0A9;"><?= htmlspecialchars($k['budget_range']) ?></div>
                                 <?php endif; ?>
                             </td>
                             <td>
@@ -244,17 +237,17 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                             </td>
                             <td>
                                 <?php if (!empty($k['follow_up_date'])): ?>
-                                    <span style="font-size:12px;<?= $is_overdue ? 'color:#dc2626;font-weight:700;' : 'color:#64748b;' ?>">
+                                    <span style="font-size:12px;<?= $is_overdue ? 'color:#dc2626;font-weight:700;' : 'color:#77857D;' ?>">
                                         <?php if ($is_overdue): ?>
                                             <i class="fas fa-exclamation-triangle me-1"></i>
                                         <?php endif; ?>
                                         <?= date('d M Y', strtotime($k['follow_up_date'])) ?>
                                     </span>
                                 <?php else: ?>
-                                    <span style="color:#94a3b8;font-size:12px;">—</span>
+                                    <span style="color:#A6B0A9;font-size:12px;">—</span>
                                 <?php endif; ?>
                             </td>
-                            <td style="font-size:12px;color:#64748b;white-space:nowrap;">
+                            <td style="font-size:12px;color:#77857D;white-space:nowrap;">
                                 <?= function_exists('formatDate') ? formatDate($k['created_at']) : date('d M Y', strtotime($k['created_at'])) ?>
                             </td>
                             <td>
@@ -317,7 +310,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
 
     <!-- Overdue Legend -->
     <?php if (!empty($consultations)): ?>
-    <div style="margin-top:12px;font-size:12px;color:#64748b;display:flex;align-items:center;gap:8px;">
+    <div style="margin-top:12px;font-size:12px;color:#77857D;display:flex;align-items:center;gap:8px;">
         <div style="width:14px;height:14px;background:#fff8f0;border:1px solid #fed7aa;border-radius:3px;"></div>
         <span>Baris dengan latar kuning = follow-up date telah lewat / overdue</span>
     </div>

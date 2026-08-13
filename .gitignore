@@ -1,32 +1,5 @@
--e 
-# Environment and credential files
-.env
-.env.*
-*.env
-credentials.json
-*.pem
-*.key
-.credentials
--e 
-# Environment and credential files
-.env
-.env.*
-*.env
-credentials.json
-*.pem
-*.key
-.credentials
--e 
-# Environment and credential files
-.env
-.env.*
-*.env
-credentials.json
-*.pem
-*.key
-.credentials
--e 
-# Environment and credential files
+# Kredensial & konfigurasi lokal
+config.php
 .env
 .env.*
 *.env
@@ -35,4 +8,19 @@ credentials.json
 *.key
 .credentials
 
+# Berkas yang dihasilkan saat runtime — struktur direktori tetap dilacak
+/invoices/*.pdf
+/assets/uploads/*/*
+!/assets/uploads/*/.gitkeep
+!/assets/uploads/*/.htaccess
+
+# Subdomain / deployment terpisah
 jurnal.kayaswara.com/
+
+# Berkas sistem
+.DS_Store
+Thumbs.db
+*.log
+*.bak
+*.orig
+*.swp

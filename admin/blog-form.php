@@ -135,7 +135,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
     <!-- Page Header -->
     <div class="page-header">
         <div class="page-header-left">
-            <h2><?= $is_edit ? 'Edit Artikel' : 'Tulis Artikel Baru' ?></h2>
+            <h2><?= $is_edit ? 'Ubah Tulisan' : 'Tulis Wawasan Baru' ?></h2>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.php">Dashboard</a></li>
@@ -195,12 +195,12 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                         <div class="mb-4">
                             <label class="form-label" for="slugField">Slug URL</label>
                             <div class="input-group">
-                                <span class="input-group-text" style="background:#f8fafc;font-size:12px;color:#94a3b8;">/blog/</span>
+                                <span class="input-group-text" style="background:#FCFBF7;font-size:12px;color:#A6B0A9;">/blog/</span>
                                 <input type="text" id="slugField" name="slug_preview"
                                        class="form-control"
                                        value="<?= htmlspecialchars($post['slug']) ?>"
                                        readonly
-                                       style="background:#f8fafc;color:#64748b;">
+                                       style="background:#FCFBF7;color:#77857D;">
                             </div>
                         </div>
 
@@ -264,14 +264,14 @@ Contoh:
                         </div>
 
                         <!-- HTML Preview -->
-                        <div id="htmlPreview" style="display:none;padding:20px;background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;min-height:120px;">
-                            <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#94a3b8;margin-bottom:12px;letter-spacing:0.08em;">
+                        <div id="htmlPreview" style="display:none;padding:20px;background:#fff;border:1.5px solid #E3E0D4;border-radius:10px;min-height:120px;">
+                            <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#A6B0A9;margin-bottom:12px;letter-spacing:0.08em;">
                                 <i class="fas fa-eye me-1"></i>Preview Konten
-                                <button type="button" onclick="togglePreview()" style="float:right;background:none;border:none;font-size:11px;color:#64748b;cursor:pointer;text-transform:none;font-weight:400;">
+                                <button type="button" onclick="togglePreview()" style="float:right;background:none;border:none;font-size:11px;color:#77857D;cursor:pointer;text-transform:none;font-weight:400;">
                                     Sembunyikan
                                 </button>
                             </div>
-                            <div id="previewContent" style="font-family:'Plus Jakarta Sans',sans-serif;line-height:1.7;"></div>
+                            <div id="previewContent" style="font-family:'Inter',sans-serif;line-height:1.7;"></div>
                         </div>
                     </div>
                 </div>
@@ -349,15 +349,15 @@ Contoh:
                         <!-- Current Image -->
                         <?php if ($is_edit && !empty($post['image'])): ?>
                         <div class="mb-3">
-                            <div style="font-size:12px;font-weight:600;color:#64748b;margin-bottom:8px;">Gambar Saat Ini:</div>
+                            <div style="font-size:12px;font-weight:600;color:#77857D;margin-bottom:8px;">Gambar Saat Ini:</div>
                             <img src="../assets/uploads/blog/<?= htmlspecialchars($post['image']) ?>"
                                  alt="" id="imgPreview"
-                                 style="width:100%;height:160px;object-fit:cover;border-radius:8px;border:1.5px solid #e2e8f0;">
+                                 style="width:100%;height:160px;object-fit:cover;border-radius:8px;border:1.5px solid #E3E0D4;">
                         </div>
                         <?php else: ?>
                         <div id="previewContainer" style="display:none;margin-bottom:12px;">
                             <img id="imgPreview" src="" alt="Preview"
-                                 style="width:100%;height:160px;object-fit:cover;border-radius:8px;border:1.5px solid #e2e8f0;display:none;">
+                                 style="width:100%;height:160px;object-fit:cover;border-radius:8px;border:1.5px solid #E3E0D4;display:none;">
                         </div>
                         <?php endif; ?>
 
@@ -375,13 +375,13 @@ Contoh:
                 </div>
 
                 <!-- Writing Tips -->
-                <div class="admin-card mt-4" style="background:linear-gradient(135deg,rgba(26,60,94,0.04),rgba(26,54,93,0.04));">
+                <div class="admin-card mt-4" style="background:linear-gradient(135deg,rgba(31,75,63,0.04),rgba(26,54,93,0.04));">
                     <div class="admin-card-body">
-                        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;margin-bottom:12px;">
-                            <i class="fas fa-lightbulb me-1" style="color:#B8860B;"></i>
+                        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#77857D;margin-bottom:12px;">
+                            <i class="fas fa-lightbulb me-1" style="color:#A9752F;"></i>
                             Tips Penulisan
                         </div>
-                        <ul style="font-size:12px;color:#64748b;padding-left:16px;margin:0;line-height:1.8;">
+                        <ul style="font-size:12px;color:#77857D;padding-left:16px;margin:0;line-height:1.8;">
                             <li>Gunakan judul yang menarik dan mengandung kata kunci</li>
                             <li>Tulis excerpt yang ringkas (maks. 200 karakter)</li>
                             <li>Bagi konten dengan heading H2 dan H3</li>
@@ -405,7 +405,7 @@ const excerptCount = document.getElementById("excerptCount");
 function updateExcerptCount() {
     if (excerptEl && excerptCount) {
         excerptCount.textContent = excerptEl.value.length;
-        excerptCount.style.color = excerptEl.value.length > 200 ? "#dc2626" : "#64748b";
+        excerptCount.style.color = excerptEl.value.length > 200 ? "#dc2626" : "#77857D";
     }
 }
 

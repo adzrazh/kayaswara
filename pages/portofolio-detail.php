@@ -1,186 +1,119 @@
 <?php
 /**
- * Portfolio Detail Page
+ * Detail kerja sama institusi.
  */
-$siteUrl = defined('SITE_URL') ? SITE_URL : '';
-$slug    = sanitize($_GET['slug'] ?? '');
+$siteUrl  = defined('SITE_URL') ? rtrim(SITE_URL, '/') : '';
+$siteName = html_entity_decode(getSetting('site_name', 'Kayaswara'), ENT_QUOTES, 'UTF-8');
+$slug     = preg_replace('/[^a-z0-9\-]/i', '', (string) ($_GET['slug'] ?? ''));
 
-if (empty($slug)) {
-    redirect($siteUrl . '/portofolio');
-}
-
-$item = fetch("SELECT * FROM portfolio WHERE slug = ? AND status = 'published'", [$slug]);
+$item = null;
+try {
+    $item = fetch("SELECT * FROM portfolio WHERE slug = ? AND status = 'published'", [$slug]);
+} catch (Exception $e) {}
 
 if (!$item) {
     http_response_code(404);
-    echo '<div class="container py-5 text-center"><div class="empty-state"><i class="fas fa-search fa-4x text-muted mb-3"></i><h3>Portofolio Tidak Ditemukan</h3><p class="text-muted">Portofolio yang Anda cari tidak tersedia atau telah dihapus.</p><a href="' . $siteUrl . '/portofolio" class="btn btn-primary mt-2">Lihat Semua Portofolio</a></div></div>';
+    $pageTitle = 'Data tidak ditemukan — ' . $siteName;
+    ?>
+    <div class="section">
+        <div class="container">
+            <div class="empty-state" style="max-width:620px;margin:0 auto;">
+                <i class="fa-solid fa-handshake"></i>
+                <h4>Data tidak ditemukan</h4>
+                <p>Dokumentasi kerja sama yang Anda cari tidak tersedia.</p>
+                <a href="<?= $siteUrl ?>/portofolio" class="btn btn-primary btn-sm">Kembali</a>
+            </div>
+        </div>
+    </div>
+    <?php
     return;
 }
 
-$pageTitle = htmlspecialchars($item['title']) . ' – Portofolio – ' . getSetting('site_name', 'Kayaswara');
-$metaDesc  = truncate($item['description'], 160);
+$pageTitle = $item['title'] . ' — ' . $siteName;
+$metaDesc  = truncate($item['description'] ?? $item['title'], 175);
 
-// Related items
-$related = fetchAll(
-    "SELECT * FROM portfolio WHERE status='published' AND category = ? AND id != ? ORDER BY is_featured DESC, created_at DESC LIMIT 3",
-    [$item['category'], $item['id']]
-);
+$others = [];
+try {
+    $others = fetchAll("SELECT title, slug, image, client_institution FROM portfolio WHERE status='published' AND id <> ? ORDER BY created_at DESC LIMIT 3", [$item['id']]);
+} catch (Exception $e) {}
+
+$facts = array_filter([
+    'Jenis mitra'  => getPartnerCategoryLabel($item['category']),
+    'Institusi'    => $item['client_institution'] ?? '',
+    'Penanggung jawab' => $item['client_name'] ?? '',
+    'Tahun'        => !empty($item['created_at']) ? date('Y', strtotime($item['created_at'])) : '',
+], static fn($v) => trim((string) $v) !== '');
 ?>
 
-<!-- Page Hero -->
-<div class="page-hero">
+<div class="page-head">
     <div class="container">
-        <div class="page-hero-content text-center fade-in-up">
-            <span class="category-badge category-<?= htmlspecialchars($item['category']) ?> mb-3 d-inline-block">
-                <?= ucfirst(htmlspecialchars($item['category'])) ?>
-            </span>
-            <h1 class="page-hero-title"><?= htmlspecialchars($item['title']) ?></h1>
-            <?php if (!empty($item['client_institution'])): ?>
-            <p class="page-hero-subtitle">
-                <i class="fas fa-university me-2"></i><?= htmlspecialchars($item['client_institution']) ?>
-            </p>
-            <?php endif; ?>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb justify-content-center">
-                    <li class="breadcrumb-item"><a href="<?= $siteUrl ?>/">Beranda</a></li>
-                    <li class="breadcrumb-item"><a href="<?= $siteUrl ?>/portofolio">Portofolio</a></li>
-                    <li class="breadcrumb-item active"><?= htmlspecialchars($item['title']) ?></li>
-                </ol>
-            </nav>
-        </div>
+        <ol class="crumbs">
+            <li><a href="<?= $siteUrl ?>/">Beranda</a></li>
+            <li><a href="<?= $siteUrl ?>/portofolio">Kerja Sama</a></li>
+            <li><?= htmlspecialchars(truncate($item['title'], 44)) ?></li>
+        </ol>
+        <span class="eyebrow"><?= htmlspecialchars(getPartnerCategoryLabel($item['category'])) ?></span>
+        <h1><?= htmlspecialchars($item['title']) ?></h1>
+        <?php if (!empty($item['client_institution'])): ?>
+        <p><i class="fa-solid fa-building-columns me-1"></i><?= htmlspecialchars($item['client_institution']) ?></p>
+        <?php endif; ?>
     </div>
 </div>
 
-<section class="section-padding bg-white">
+<section class="section">
     <div class="container">
         <div class="row g-5">
-            <!-- Main Content -->
-            <div class="col-lg-8">
-                <!-- Main Image -->
+            <div class="col-lg-8 reveal">
                 <?php if (!empty($item['image'])): ?>
-                <div class="portfolio-detail-image mb-4 fade-in-up">
+                <figure class="mb-4">
                     <img src="<?= $siteUrl ?>/assets/uploads/portfolio/<?= htmlspecialchars($item['image']) ?>"
-                         alt="<?= htmlspecialchars($item['title']) ?>"
-                         class="img-fluid rounded-3 shadow-md w-100"
-                         style="max-height:460px; object-fit:cover;">
-                </div>
-                <?php else: ?>
-                <div class="portfolio-detail-placeholder mb-4 fade-in-up rounded-3">
-                    <i class="fas fa-newspaper fa-5x text-muted"></i>
-                </div>
+                         alt="<?= htmlspecialchars($item['title']) ?>" class="w-100 rounded-md" style="border:1px solid var(--line);">
+                </figure>
                 <?php endif; ?>
 
-                <!-- Description -->
-                <div class="portfolio-detail-content fade-in-up">
-                    <h2 class="h4 fw-700 mb-3">Tentang Proyek</h2>
-                    <div class="article-content">
-                        <?php if (!empty($item['description'])): ?>
-                            <?= nl2br(htmlspecialchars($item['description'])) ?>
-                        <?php else: ?>
-                            <p class="text-muted">Deskripsi proyek belum tersedia.</p>
-                        <?php endif; ?>
-                    </div>
+                <h2 class="h3">Ringkasan Kerja Sama</h2>
+                <div class="rule-accent"></div>
+                <div class="prose">
+                    <?= !empty($item['description']) ? nl2br(htmlspecialchars($item['description'])) : '<p class="text-muted">Keterangan belum tersedia.</p>' ?>
                 </div>
 
-                <!-- Back Link -->
-                <div class="mt-5 fade-in-up">
-                    <a href="<?= $siteUrl ?>/portofolio" class="btn btn-outline-primary">
-                        <i class="fas fa-arrow-left me-2"></i>Kembali ke Portofolio
-                    </a>
+                <div class="mt-4">
+                    <a href="<?= $siteUrl ?>/portofolio" class="btn-link-arrow"><i class="fa-solid fa-arrow-left"></i>Kembali ke daftar kerja sama</a>
                 </div>
             </div>
 
-            <!-- Sidebar -->
-            <div class="col-lg-4">
-                <div class="sidebar-card fade-in-up">
-                    <h5 class="sidebar-card-title">Informasi Proyek</h5>
-                    <ul class="project-info-list">
-                        <?php if (!empty($item['client_name'])): ?>
-                        <li>
-                            <span class="project-info-label"><i class="fas fa-user me-2"></i>Klien</span>
-                            <span class="project-info-value"><?= htmlspecialchars($item['client_name']) ?></span>
-                        </li>
-                        <?php endif; ?>
-                        <?php if (!empty($item['client_institution'])): ?>
-                        <li>
-                            <span class="project-info-label"><i class="fas fa-university me-2"></i>Institusi</span>
-                            <span class="project-info-value"><?= htmlspecialchars($item['client_institution']) ?></span>
-                        </li>
-                        <?php endif; ?>
-                        <li>
-                            <span class="project-info-label"><i class="fas fa-tag me-2"></i>Kategori</span>
-                            <span class="category-badge category-<?= htmlspecialchars($item['category']) ?>">
-                                <?= ucfirst(htmlspecialchars($item['category'])) ?>
-                            </span>
-                        </li>
-                        <li>
-                            <span class="project-info-label"><i class="fas fa-calendar me-2"></i>Tanggal</span>
-                            <span class="project-info-value"><?= formatDate($item['created_at']) ?></span>
-                        </li>
-                        <?php if ($item['is_featured']): ?>
-                        <li>
-                            <span class="project-info-label"><i class="fas fa-star me-2"></i>Status</span>
-                            <span class="badge bg-warning text-dark"><i class="fas fa-star me-1"></i>Proyek Unggulan</span>
-                        </li>
-                        <?php endif; ?>
-                    </ul>
+            <div class="col-lg-4 reveal" data-reveal-delay="0.08">
+                <div class="side-panel">
+                    <h4>Keterangan</h4>
+                    <table class="biblio-table">
+                        <tbody>
+                        <?php foreach ($facts as $k => $v): ?>
+                        <tr><th scope="row"><?= htmlspecialchars($k) ?></th><td><?= htmlspecialchars((string) $v) ?></td></tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
                     <?php if (!empty($item['website_url'])): ?>
-                    <div class="mt-3">
-                        <a href="<?= htmlspecialchars($item['website_url']) ?>" target="_blank" rel="noopener"
-                           class="btn btn-primary w-100">
-                            <i class="fas fa-external-link-alt me-2"></i>Kunjungi Website Jurnal
-                        </a>
-                    </div>
+                    <a href="<?= htmlspecialchars($item['website_url']) ?>" target="_blank" rel="noopener" class="btn btn-outline-primary w-100 mt-3">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>Kunjungi Situs Mitra
+                    </a>
                     <?php endif; ?>
                 </div>
 
-                <!-- CTA Card -->
-                <div class="sidebar-cta-card mt-4 fade-in-up">
-                    <i class="fas fa-comments fa-2x mb-2"></i>
-                    <h5>Ingin Buku Serupa?</h5>
-                    <p>Konsultasikan kebutuhan penerbitan buku Anda dengan tim kami secara gratis.</p>
-                    <a href="<?= $siteUrl ?>/konsultasi" class="btn btn-accent w-100">
-                        Mulai Konsultasi
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Related Portfolio -->
-        <?php if (!empty($related)): ?>
-        <div class="mt-6">
-            <h3 class="h4 fw-700 mb-4">Portofolio Terkait</h3>
-            <div class="row g-4">
-                <?php foreach ($related as $rel): ?>
-                <div class="col-md-4">
-                    <div class="portfolio-card">
-                        <div class="portfolio-card-img">
-                            <?php if (!empty($rel['image'])): ?>
-                                <img src="<?= $siteUrl ?>/assets/uploads/portfolio/<?= htmlspecialchars($rel['image']) ?>"
-                                     alt="<?= htmlspecialchars($rel['title']) ?>" loading="lazy">
-                            <?php else: ?>
-                                <div class="portfolio-card-placeholder"><i class="fas fa-newspaper"></i></div>
-                            <?php endif; ?>
-                            <div class="portfolio-card-overlay">
-                                <a href="<?= $siteUrl ?>/portofolio/<?= htmlspecialchars($rel['slug']) ?>"
-                                   class="btn btn-light btn-sm"><i class="fas fa-eye me-1"></i>Lihat Detail</a>
-                            </div>
-                        </div>
-                        <div class="portfolio-card-body">
-                            <span class="category-badge category-<?= htmlspecialchars($rel['category']) ?>">
-                                <?= ucfirst(htmlspecialchars($rel['category'])) ?>
-                            </span>
-                            <h5 class="portfolio-card-title">
-                                <a href="<?= $siteUrl ?>/portofolio/<?= htmlspecialchars($rel['slug']) ?>">
-                                    <?= htmlspecialchars($rel['title']) ?>
-                                </a>
-                            </h5>
+                <?php if (!empty($others)): ?>
+                <div class="side-panel">
+                    <h4>Kerja Sama Lainnya</h4>
+                    <?php foreach ($others as $o): ?>
+                    <div class="contact-row">
+                        <span class="ic"><i class="fa-solid fa-handshake"></i></span>
+                        <div>
+                            <div class="lb"><?= htmlspecialchars($o['client_institution'] ?: 'Mitra') ?></div>
+                            <div class="vl"><a href="<?= $siteUrl ?>/portofolio/<?= htmlspecialchars($o['slug']) ?>" style="color:var(--ink);"><?= htmlspecialchars(truncate($o['title'], 60)) ?></a></div>
                         </div>
                     </div>
+                    <?php endforeach; ?>
                 </div>
-                <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         </div>
-        <?php endif; ?>
     </div>
 </section>

@@ -1,201 +1,149 @@
 <?php
 /**
- * Portfolio Page
+ * Kerja Sama Institusi — dokumentasi kolaborasi penerbitan.
  */
-$pageTitle = 'Portofolio – ' . getSetting('site_name', 'Kayaswara');
-$siteUrl   = defined('SITE_URL') ? SITE_URL : '';
+$siteUrl   = defined('SITE_URL') ? rtrim(SITE_URL, '/') : '';
+$siteName  = html_entity_decode(getSetting('site_name', 'Kayaswara'), ENT_QUOTES, 'UTF-8');
+$pageTitle = 'Kerja Sama Institusi — ' . $siteName;
+$metaDesc  = 'Dokumentasi kerja sama penerbitan ' . $siteName . ' bersama perguruan tinggi, lembaga penelitian, dan komunitas akademik.';
 
-// Pagination
-$perPage     = 9;
-$currentPage = max(1, (int)($_GET['p'] ?? 1));
-$filterCat   = in_array($_GET['cat'] ?? '', ['jurnal','konferensi','repositori','lainnya']) ? $_GET['cat'] : '';
+$partnerCats = getPartnerCategories();
 
-// Build count query
-if ($filterCat) {
-    $total = (int) fetch("SELECT COUNT(*) as c FROM portfolio WHERE status='published' AND category = ?", [$filterCat])['c'];
-} else {
-    $total = (int) fetch("SELECT COUNT(*) as c FROM portfolio WHERE status='published'")['c'];
+$cat    = (string) ($_GET['kategori'] ?? '');
+if (!isset($partnerCats[$cat])) $cat = '';
+$pageNo  = max(1, (int) ($_GET['p'] ?? 1));
+$perPage = 9;
+
+$where  = ["status = 'published'"];
+$params = [];
+if ($cat !== '') { $where[] = 'category = ?'; $params[] = $cat; }
+$whereSql = implode(' AND ', $where);
+
+$items = [];
+$total = 0;
+try {
+    $total = (int) (fetch("SELECT COUNT(*) c FROM portfolio WHERE {$whereSql}", $params)['c'] ?? 0);
+    $pg    = getPagination($total, $perPage, $pageNo);
+    $limit = (int) $pg['per_page'];
+    $off   = (int) $pg['offset'];
+    $items = fetchAll("SELECT * FROM portfolio WHERE {$whereSql} ORDER BY is_featured DESC, created_at DESC LIMIT {$limit} OFFSET {$off}", $params);
+} catch (Exception $e) {
+    $pg = getPagination(0, $perPage, 1);
 }
 
-$pagination = getPagination($total, $perPage, $currentPage);
-
-// Fetch items — inline LIMIT/OFFSET (safe: values are already cast to int)
-$limit  = (int) $pagination['per_page'];
-$offset = (int) $pagination['offset'];
-if ($filterCat) {
-    $items = fetchAll(
-        "SELECT * FROM portfolio WHERE status='published' AND category = ? ORDER BY is_featured DESC, created_at DESC LIMIT {$limit} OFFSET {$offset}",
-        [$filterCat]
-    );
-} else {
-    $items = fetchAll(
-        "SELECT * FROM portfolio WHERE status='published' ORDER BY is_featured DESC, created_at DESC LIMIT {$limit} OFFSET {$offset}"
-    );
+function partnerUrl(array $override = []): string {
+    $base = (defined('SITE_URL') ? rtrim(SITE_URL, '/') : '') . '/portofolio';
+    $qs = array_filter(array_merge([
+        'kategori' => $_GET['kategori'] ?? '',
+        'p'        => $_GET['p'] ?? '',
+    ], $override), static fn($v) => $v !== '' && $v !== null);
+    return $qs ? $base . '?' . http_build_query($qs) : $base;
 }
 ?>
 
-<!-- Page Hero -->
-<div class="page-hero">
+<div class="page-head">
     <div class="container">
-        <div class="page-hero-content text-center fade-in-up">
-            <h1 class="page-hero-title">Portofolio Kami</h1>
-            <p class="page-hero-subtitle">Buku-buku akademik yang telah kami terbitkan bersama para penulis dari kalangan dosen dan akademisi di Indonesia</p>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb justify-content-center">
-                    <li class="breadcrumb-item"><a href="<?= $siteUrl ?>/">Beranda</a></li>
-                    <li class="breadcrumb-item active">Portofolio</li>
-                </ol>
-            </nav>
-        </div>
+        <ol class="crumbs">
+            <li><a href="<?= $siteUrl ?>/">Beranda</a></li>
+            <li>Kerja Sama</li>
+        </ol>
+        <span class="eyebrow">Kolaborasi</span>
+        <h1>Kerja Sama Institusi</h1>
+        <p>Program penerbitan yang kami kerjakan bersama perguruan tinggi, lembaga penelitian, dan komunitas akademik di berbagai daerah.</p>
     </div>
 </div>
 
-<section class="section-padding bg-white">
+<section class="section">
     <div class="container">
 
-        <!-- Filter Buttons -->
-        <div class="portfolio-filter-bar fade-in-up mb-5">
-            <div class="d-flex flex-wrap justify-content-center gap-2">
-                <a href="<?= $siteUrl ?>/portofolio"
-                   class="btn btn-filter <?= $filterCat === '' ? 'active' : '' ?>">
-                    <i class="fas fa-th me-1"></i> Semua
-                </a>
-                <a href="<?= $siteUrl ?>/portofolio?cat=jurnal"
-                   class="btn btn-filter <?= $filterCat === 'jurnal' ? 'active' : '' ?>">
-                    <i class="fas fa-book me-1"></i> Buku Ajar
-                </a>
-                <a href="<?= $siteUrl ?>/portofolio?cat=konferensi"
-                   class="btn btn-filter <?= $filterCat === 'konferensi' ? 'active' : '' ?>">
-                    <i class="fas fa-book-reader me-1"></i> Buku Referensi
-                </a>
-                <a href="<?= $siteUrl ?>/portofolio?cat=repositori"
-                   class="btn btn-filter <?= $filterCat === 'repositori' ? 'active' : '' ?>">
-                    <i class="fas fa-microscope me-1"></i> Monograf
-                </a>
-                <a href="<?= $siteUrl ?>/portofolio?cat=lainnya"
-                   class="btn btn-filter <?= $filterCat === 'lainnya' ? 'active' : '' ?>">
-                    <i class="fas fa-ellipsis-h me-1"></i> Lainnya
-                </a>
+        <div class="catalog-toolbar reveal">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <div class="filter-pills">
+                    <a href="<?= htmlspecialchars(partnerUrl(['kategori' => '', 'p' => ''])) ?>" class="filter-pill <?= $cat === '' ? 'active' : '' ?>">Semua</a>
+                    <?php foreach ($partnerCats as $key => $label): ?>
+                    <a href="<?= htmlspecialchars(partnerUrl(['kategori' => $key, 'p' => ''])) ?>" class="filter-pill <?= $cat === $key ? 'active' : '' ?>">
+                        <?= htmlspecialchars($label) ?>
+                    </a>
+                    <?php endforeach; ?>
+                </div>
+                <span class="result-count"><?= $total ?> kerja sama tercatat</span>
             </div>
         </div>
 
-        <!-- Portfolio Grid -->
         <?php if (!empty($items)): ?>
-        <div class="row g-4" id="portfolioGrid">
-            <?php foreach ($items as $i => $item): ?>
-            <div class="col-md-6 col-lg-4 portfolio-item" data-category="<?= htmlspecialchars($item['category']) ?>">
-                <div class="portfolio-card fade-in-up" style="animation-delay:<?= ($i % 9) * 0.06 ?>s">
-                    <div class="portfolio-card-img">
-                        <?php if (!empty($item['image'])): ?>
-                            <img src="<?= $siteUrl ?>/assets/uploads/portfolio/<?= htmlspecialchars($item['image']) ?>"
-                                 alt="<?= htmlspecialchars($item['title']) ?>" loading="lazy">
+        <div class="row g-4">
+            <?php foreach ($items as $i => $it): ?>
+            <div class="col-md-6 col-lg-4 reveal" data-reveal-delay="<?= ($i % 3) * 0.06 ?>">
+                <article class="article-card">
+                    <a class="article-thumb" href="<?= $siteUrl ?>/portofolio/<?= htmlspecialchars($it['slug']) ?>">
+                        <?php if (!empty($it['image'])): ?>
+                            <img src="<?= $siteUrl ?>/assets/uploads/portfolio/<?= htmlspecialchars($it['image']) ?>" alt="<?= htmlspecialchars($it['title']) ?>" loading="lazy">
                         <?php else: ?>
-                            <div class="portfolio-card-placeholder">
-                                <i class="fas fa-newspaper"></i>
-                            </div>
+                            <i class="fa-solid fa-building-columns"></i>
                         <?php endif; ?>
-                        <div class="portfolio-card-overlay">
-                            <a href="<?= $siteUrl ?>/portofolio/<?= htmlspecialchars($item['slug']) ?>"
-                               class="btn btn-light btn-sm">
-                                <i class="fas fa-eye me-1"></i> Lihat Detail
-                            </a>
+                    </a>
+                    <div class="article-body">
+                        <div class="article-meta">
+                            <span class="chip chip-plain"><?= htmlspecialchars(getPartnerCategoryLabel($it['category'])) ?></span>
+                            <?php if ($it['is_featured']): ?><span class="chip chip-gold">Unggulan</span><?php endif; ?>
                         </div>
-                        <?php if ($item['is_featured']): ?>
-                        <span class="portfolio-featured-badge">
-                            <i class="fas fa-star me-1"></i>Unggulan
-                        </span>
-                        <?php endif; ?>
-                    </div>
-                    <div class="portfolio-card-body">
-                        <span class="category-badge category-<?= htmlspecialchars($item['category']) ?>">
-                            <?= ucfirst(htmlspecialchars($item['category'])) ?>
-                        </span>
-                        <h4 class="portfolio-card-title">
-                            <a href="<?= $siteUrl ?>/portofolio/<?= htmlspecialchars($item['slug']) ?>">
-                                <?= htmlspecialchars($item['title']) ?>
-                            </a>
-                        </h4>
-                        <?php if (!empty($item['client_institution'])): ?>
-                        <p class="portfolio-institution">
-                            <i class="fas fa-university me-1 text-muted"></i>
-                            <?= htmlspecialchars($item['client_institution']) ?>
+                        <h2 class="article-title">
+                            <a href="<?= $siteUrl ?>/portofolio/<?= htmlspecialchars($it['slug']) ?>"><?= htmlspecialchars($it['title']) ?></a>
+                        </h2>
+                        <?php if (!empty($it['client_institution'])): ?>
+                        <p class="text-muted mb-2" style="font-size:.86rem;">
+                            <i class="fa-solid fa-building-columns me-1"></i><?= htmlspecialchars($it['client_institution']) ?>
                         </p>
                         <?php endif; ?>
-                        <?php if (!empty($item['website_url'])): ?>
-                        <a href="<?= htmlspecialchars($item['website_url']) ?>" target="_blank" rel="noopener"
-                           class="btn btn-sm btn-outline-secondary mt-1">
-                            <i class="fas fa-external-link-alt me-1"></i> Kunjungi Website
-                        </a>
-                        <?php endif; ?>
+                        <p class="article-excerpt"><?= htmlspecialchars(truncate($it['description'] ?? '', 130)) ?></p>
+                        <a href="<?= $siteUrl ?>/portofolio/<?= htmlspecialchars($it['slug']) ?>" class="btn-link-arrow">Lihat detail<i class="fa-solid fa-arrow-right"></i></a>
                     </div>
-                </div>
+                </article>
             </div>
             <?php endforeach; ?>
         </div>
 
-        <!-- Pagination -->
-        <?php if ($pagination['total_pages'] > 1): ?>
-        <nav class="mt-5" aria-label="Navigasi halaman portofolio">
+        <?php if (($pg['total_pages'] ?? 1) > 1): ?>
+        <nav class="mt-5" aria-label="Navigasi halaman kerja sama">
             <ul class="pagination justify-content-center">
-                <?php if ($pagination['has_prev']): ?>
-                <li class="page-item">
-                    <a class="page-link" href="?<?= http_build_query(array_merge($_GET, ['p' => $pagination['prev']])) ?>">
-                        <i class="fas fa-chevron-left"></i>
-                    </a>
-                </li>
+                <?php if ($pg['has_prev']): ?>
+                <li class="page-item"><a class="page-link" href="<?= htmlspecialchars(partnerUrl(['p' => $pg['prev']])) ?>"><i class="fa-solid fa-chevron-left"></i></a></li>
                 <?php endif; ?>
-
-                <?php for ($p = 1; $p <= $pagination['total_pages']; $p++): ?>
-                <li class="page-item <?= $p === $pagination['current'] ? 'active' : '' ?>">
-                    <a class="page-link" href="?<?= http_build_query(array_merge($_GET, ['p' => $p])) ?>">
-                        <?= $p ?>
-                    </a>
-                </li>
+                <?php for ($p = 1; $p <= $pg['total_pages']; $p++): ?>
+                <li class="page-item <?= $p === $pg['current'] ? 'active' : '' ?>"><a class="page-link" href="<?= htmlspecialchars(partnerUrl(['p' => $p])) ?>"><?= $p ?></a></li>
                 <?php endfor; ?>
-
-                <?php if ($pagination['has_next']): ?>
-                <li class="page-item">
-                    <a class="page-link" href="?<?= http_build_query(array_merge($_GET, ['p' => $pagination['next']])) ?>">
-                        <i class="fas fa-chevron-right"></i>
-                    </a>
-                </li>
+                <?php if ($pg['has_next']): ?>
+                <li class="page-item"><a class="page-link" href="<?= htmlspecialchars(partnerUrl(['p' => $pg['next']])) ?>"><i class="fa-solid fa-chevron-right"></i></a></li>
                 <?php endif; ?>
             </ul>
         </nav>
         <?php endif; ?>
 
         <?php else: ?>
-        <div class="empty-state text-center py-5">
-            <i class="fas fa-images fa-4x text-muted mb-3"></i>
-            <h4>Belum Ada Portofolio</h4>
-            <p class="text-muted">
-                <?php if ($filterCat): ?>
-                    Belum ada portofolio untuk kategori "<?= ucfirst(htmlspecialchars($filterCat)) ?>".
-                    <a href="<?= $siteUrl ?>/portofolio">Lihat semua kategori</a>
-                <?php else: ?>
-                    Portofolio akan segera ditambahkan. Silakan kunjungi kembali nanti.
-                <?php endif; ?>
-            </p>
+        <div class="empty-state reveal">
+            <i class="fa-solid fa-handshake"></i>
+            <h4>Belum ada kerja sama yang ditampilkan</h4>
+            <p>Dokumentasi kolaborasi penerbitan akan tayang di halaman ini.</p>
+            <a href="<?= $siteUrl ?>/publikasi" class="btn btn-outline-primary btn-sm">Lihat Katalog Publikasi</a>
         </div>
         <?php endif; ?>
 
     </div>
 </section>
 
-<!-- CTA -->
-<section class="cta-section">
-    <div class="cta-shapes" aria-hidden="true">
-        <div class="cta-shape cta-shape-1"></div>
-        <div class="cta-shape cta-shape-2"></div>
-    </div>
-    <div class="container text-center">
-        <div class="cta-content fade-in-up">
-            <h2 class="cta-title">Ingin Buku Anda Menjadi Bagian dari Portofolio Kami?</h2>
-            <p class="cta-subtitle">Hubungi kami dan mulailah perjalanan penerbitan buku Anda bersama tim ahli kami.</p>
-            <div class="cta-actions">
-                <a href="<?= $siteUrl ?>/konsultasi" class="btn btn-accent btn-lg">
-                    <i class="fas fa-comments me-2"></i>Konsultasi Gratis
-                </a>
+<section class="section pt-0">
+    <div class="container">
+        <div class="cta-band reveal">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-8">
+                    <h2>Merencanakan program penerbitan institusi?</h2>
+                    <p>Kami dapat menyusun jadwal penerbitan bersama untuk beberapa judul sekaligus dalam satu perjanjian kerangka.</p>
+                </div>
+                <div class="col-lg-4">
+                    <div class="cta-actions justify-content-lg-end">
+                        <a href="<?= $siteUrl ?>/kirim-naskah" class="btn btn-accent btn-lg"><i class="fa-regular fa-envelope"></i>Ajukan Kerja Sama</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

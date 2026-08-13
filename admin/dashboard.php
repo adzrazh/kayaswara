@@ -9,6 +9,18 @@ $total_portfolio = 0;
 $total_blog      = 0;
 $new_konsultasi  = 0;
 $bulan_ini       = 0;
+$total_pubs      = 0;
+$published_pubs  = 0;
+
+try {
+    $r = fetch("SELECT COUNT(*) as cnt FROM publications");
+    $total_pubs = $r ? (int)$r['cnt'] : 0;
+
+    $r = fetch("SELECT COUNT(*) as cnt FROM publications WHERE status = 'published'");
+    $published_pubs = $r ? (int)$r['cnt'] : 0;
+} catch (Exception $e) {
+    // Tabel publications belum ada — jalankan migrate.php
+}
 
 try {
     $r = fetch("SELECT COUNT(*) as cnt FROM portfolio");
@@ -42,7 +54,6 @@ $chart_months  = [];
 $chart_data    = [];
 for ($i = 5; $i >= 0; $i--) {
     $ts        = strtotime("-{$i} months");
-    $label     = strftime('%b %Y', $ts) ?: date('M Y', $ts);
     $y         = date('Y', $ts);
     $m         = date('m', $ts);
     $chart_months[] = date('M Y', $ts);
@@ -60,7 +71,7 @@ for ($i = 5; $i >= 0; $i--) {
 // --- Chart Data: Status Distribution ---
 $status_labels = ['Baru', 'Dihubungi', 'Follow Up', 'Negosiasi', 'Closed Won', 'Closed Lost'];
 $status_keys   = ['new', 'contacted', 'follow_up', 'negotiation', 'closed_won', 'closed_lost'];
-$status_colors = ['#3b82f6', '#06b6d4', '#f59e0b', '#8b5cf6', '#22c55e', '#ef4444'];
+$status_colors = ['#2C6E8F', '#2F6B57', '#A9752F', '#77857D', '#1F4B3F', '#B3392E'];
 $status_data   = [];
 foreach ($status_keys as $sk) {
     try {
@@ -90,14 +101,15 @@ try {
 } catch (Exception $e) {}
 
 // Service type labels
-$service_labels = [
-    'setup_ojs'    => 'Penerbitan Buku',
-    'migrasi'      => 'Migrasi',
-    'kustomisasi'  => 'Editing & Layout',
-    'pelatihan'    => 'Pelatihan',
-    'maintenance'  => 'Maintenance',
-    'lainnya'      => 'Lainnya',
-];
+$service_labels = getServiceTypes();
+
+// --- Katalog terbaru (4 judul) ---
+$recent_pubs = [];
+try {
+    $recent_pubs = fetchAll(
+        "SELECT id, title, authors, cover, status, publish_year FROM publications ORDER BY id DESC LIMIT 4"
+    );
+} catch (Exception $e) {}
 
 require_once ADMIN_PATH . '/includes/header.php';
 require_once ADMIN_PATH . '/includes/sidebar.php';
@@ -111,7 +123,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
             <p>Selamat datang kembali, <strong><?= htmlspecialchars($_SESSION['admin_name'] ?? 'Admin') ?></strong>. Berikut ringkasan hari ini.</p>
         </div>
         <div class="page-header-actions">
-            <span class="badge" style="background:#e2e8f0;color:#475569;font-size:12px;padding:8px 14px;">
+            <span class="badge" style="background:#E3E0D4;color:#45544D;font-size:12px;padding:8px 14px;">
                 <i class="fas fa-calendar-day me-1"></i>
                 <?= date('d F Y') ?>
             </span>
@@ -121,7 +133,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
     <!-- Revenue Cards -->
     <div class="row g-4 mb-4">
         <div class="col-md-6">
-            <div style="background:linear-gradient(135deg,#065f46,#059669);border-radius:16px;padding:24px 28px;display:flex;align-items:center;gap:20px;box-shadow:0 4px 24px rgba(5,150,105,0.2);">
+            <div style="background:linear-gradient(135deg,#1F4B3F,#2F6B57);border-radius:16px;padding:24px 28px;display:flex;align-items:center;gap:20px;box-shadow:0 6px 22px rgba(31,75,63,0.18);">
                 <div style="background:rgba(255,255,255,0.15);border-radius:14px;width:60px;height:60px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                     <i class="fas fa-coins fa-xl" style="color:#fff;"></i>
                 </div>
@@ -133,7 +145,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
             </div>
         </div>
         <div class="col-md-6">
-            <div style="background:linear-gradient(135deg,#1e3a5f,#2563eb);border-radius:16px;padding:24px 28px;display:flex;align-items:center;gap:20px;box-shadow:0 4px 24px rgba(37,99,235,0.2);">
+            <div style="background:linear-gradient(135deg,#8E6126,#A9752F);border-radius:16px;padding:24px 28px;display:flex;align-items:center;gap:20px;box-shadow:0 6px 22px rgba(169,117,47,0.18);">
                 <div style="background:rgba(255,255,255,0.15);border-radius:14px;width:60px;height:60px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                     <i class="fas fa-shopping-bag fa-xl" style="color:#fff;"></i>
                 </div>
@@ -151,14 +163,16 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
         <div class="col-sm-6 col-xl-3">
             <div class="stat-card stat-card-primary">
                 <div class="stat-icon">
-                    <i class="fas fa-briefcase"></i>
+                    <i class="fas fa-book-bookmark"></i>
                 </div>
                 <div class="stat-info">
-                    <div class="stat-value"><?= $total_portfolio ?></div>
-                    <div class="stat-label">Total Portofolio</div>
-                    <div class="stat-change up">
-                        <i class="fas fa-arrow-up"></i>
-                        <a href="index.php?page=portofolio" style="color:inherit;font-size:11px;text-decoration:none;">Kelola portofolio →</a>
+                    <div class="stat-value"><?= $published_pubs ?></div>
+                    <div class="stat-label">Judul Tayang di Katalog</div>
+                    <div class="stat-change">
+                        <i class="fas fa-layer-group"></i>
+                        <a href="index.php?page=publikasi" style="color:inherit;font-size:11px;text-decoration:none;">
+                            <?= $total_pubs ?> judul tercatat →
+                        </a>
                     </div>
                 </div>
             </div>
@@ -171,10 +185,10 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                 </div>
                 <div class="stat-info">
                     <div class="stat-value"><?= $total_blog ?></div>
-                    <div class="stat-label">Total Artikel Blog</div>
-                    <div class="stat-change up">
-                        <i class="fas fa-arrow-up"></i>
-                        <a href="index.php?page=blog" style="color:inherit;font-size:11px;text-decoration:none;">Kelola blog →</a>
+                    <div class="stat-label">Tulisan Wawasan</div>
+                    <div class="stat-change">
+                        <i class="fas fa-pen"></i>
+                        <a href="index.php?page=blog" style="color:inherit;font-size:11px;text-decoration:none;">Kelola tulisan →</a>
                     </div>
                 </div>
             </div>
@@ -187,7 +201,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                 </div>
                 <div class="stat-info">
                     <div class="stat-value"><?= $new_konsultasi ?></div>
-                    <div class="stat-label">Konsultasi Baru</div>
+                    <div class="stat-label">Pengajuan Naskah Baru</div>
                     <div class="stat-change <?= $new_konsultasi > 0 ? 'up' : '' ?>">
                         <?php if ($new_konsultasi > 0): ?>
                             <i class="fas fa-exclamation-circle"></i>
@@ -207,7 +221,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                 </div>
                 <div class="stat-info">
                     <div class="stat-value"><?= $bulan_ini ?></div>
-                    <div class="stat-label">Konsultasi Bulan Ini</div>
+                    <div class="stat-label">Pengajuan Bulan Ini</div>
                     <div class="stat-change">
                         <i class="fas fa-calendar"></i>
                         <span style="font-size:11px;"><?= date('F Y') ?></span>
@@ -225,7 +239,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                 <div class="admin-card-header">
                     <h5 class="admin-card-title">
                         <i class="fas fa-chart-bar"></i>
-                        Konsultasi 6 Bulan Terakhir
+                        Pengajuan Naskah 6 Bulan Terakhir
                     </h5>
                 </div>
                 <div class="admin-card-body">
@@ -242,7 +256,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                 <div class="admin-card-header">
                     <h5 class="admin-card-title">
                         <i class="fas fa-chart-pie"></i>
-                        Distribusi Status Konsultasi
+                        Distribusi Status Pengajuan
                     </h5>
                 </div>
                 <div class="admin-card-body">
@@ -263,7 +277,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                     <?php else: ?>
                     <div class="empty-state" style="padding:40px 0;">
                         <i class="fas fa-chart-pie empty-state-icon"></i>
-                        <p>Belum ada data konsultasi</p>
+                        <p>Belum ada data pengajuan</p>
                     </div>
                     <?php endif; ?>
                 </div>
@@ -279,7 +293,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                 <div class="admin-card-header">
                     <h5 class="admin-card-title">
                         <i class="fas fa-clock"></i>
-                        Konsultasi Terbaru
+                        Pengajuan Naskah Terbaru
                     </h5>
                     <a href="index.php?page=konsultasi" class="btn btn-sm btn-outline-secondary">
                         Lihat Semua <i class="fas fa-arrow-right ms-1"></i>
@@ -303,7 +317,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                 <tr>
                                     <td>
                                         <div style="font-weight:600;"><?= htmlspecialchars($k['name']) ?></div>
-                                        <div style="font-size:12px;color:#64748b;"><?= htmlspecialchars($k['institution'] ?? '-') ?></div>
+                                        <div style="font-size:12px;color:#77857D;"><?= htmlspecialchars($k['institution'] ?? '-') ?></div>
                                     </td>
                                     <td>
                                         <span style="font-size:12.5px;">
@@ -315,7 +329,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                             <?= function_exists('getStatusLabel') ? getStatusLabel($k['status']) : htmlspecialchars($k['status']) ?>
                                         </span>
                                     </td>
-                                    <td style="font-size:12px;color:#64748b;white-space:nowrap;">
+                                    <td style="font-size:12px;color:#77857D;white-space:nowrap;">
                                         <?= function_exists('formatDate') ? formatDate($k['created_at']) : date('d M Y', strtotime($k['created_at'])) ?>
                                     </td>
                                     <td>
@@ -332,8 +346,53 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                     <?php else: ?>
                     <div class="empty-state">
                         <i class="fas fa-inbox empty-state-icon"></i>
-                        <h4>Belum Ada Konsultasi</h4>
-                        <p>Konsultasi dari calon klien akan muncul di sini.</p>
+                        <h4>Belum Ada Pengajuan</h4>
+                        <p>Naskah yang dikirim penulis melalui situs akan muncul di sini.</p>
+                    </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <div class="admin-card mt-4">
+                <div class="admin-card-header">
+                    <h5 class="admin-card-title"><i class="fas fa-book-open"></i>Katalog Terbaru</h5>
+                    <a href="index.php?page=publikasi" class="btn btn-sm btn-outline-secondary">
+                        Kelola Katalog <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+                <div class="admin-card-body">
+                    <?php if (!empty($recent_pubs)): ?>
+                    <div class="row g-3">
+                        <?php foreach ($recent_pubs as $rp): ?>
+                        <div class="col-6 col-md-3">
+                            <a href="index.php?page=publikasi-form&id=<?= (int) $rp['id'] ?>" style="display:block;">
+                                <?php if (!empty($rp['cover'])): ?>
+                                    <img src="../assets/uploads/publications/<?= htmlspecialchars($rp['cover']) ?>"
+                                         alt="Sampul" style="width:100%;aspect-ratio:3/4.2;object-fit:cover;border-radius:8px;border:1px solid var(--border-color);">
+                                <?php else: ?>
+                                    <div style="width:100%;aspect-ratio:3/4.2;border-radius:8px;border:1px solid var(--border-color);background:var(--content-bg);display:grid;place-items:center;">
+                                        <i class="fas fa-book" style="color:var(--border-strong);font-size:22px;"></i>
+                                    </div>
+                                <?php endif; ?>
+                                <div style="font-weight:600;font-size:12.5px;color:var(--text-primary);margin-top:8px;line-height:1.35;">
+                                    <?= htmlspecialchars(truncate($rp['title'], 44)) ?>
+                                </div>
+                                <div style="font-size:11.5px;color:var(--text-muted);">
+                                    <?= htmlspecialchars((string) ($rp['publish_year'] ?: '—')) ?>
+                                    · <?= $rp['status'] === 'published' ? 'Tayang' : 'Draf' ?>
+                                </div>
+                            </a>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php else: ?>
+                    <div class="empty-state" style="padding:28px 16px;">
+                        <i class="fas fa-book-open empty-state-icon"></i>
+                        <h4>Katalog Masih Kosong</h4>
+                        <p>Halaman Publikasi di situs membutuhkan minimal satu judul terbitan.</p>
+                        <a href="index.php?page=publikasi-form" class="btn btn-primary btn-sm">
+                            <i class="fas fa-plus me-1"></i>Tambah Judul
+                        </a>
                     </div>
                     <?php endif; ?>
                 </div>
@@ -351,59 +410,59 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                 </div>
                 <div class="admin-card-body">
                     <div style="display:flex;flex-direction:column;gap:10px;">
-                        <a href="index.php?page=portofolio-form" class="quick-action-btn">
-                            <div class="quick-action-icon" style="background:rgba(140,29,24,0.1);color:#1A3C5E;">
-                                <i class="fas fa-plus"></i>
+                        <a href="index.php?page=publikasi-form" class="quick-action-btn">
+                            <div class="quick-action-icon">
+                                <i class="fas fa-book-medical"></i>
                             </div>
                             <div>
-                                <div style="font-weight:700;font-size:13.5px;">Tambah Portofolio</div>
-                                <div style="font-size:12px;color:#64748b;">Unggah proyek baru</div>
-                            </div>
-                        </a>
-
-                        <a href="index.php?page=blog-form" class="quick-action-btn">
-                            <div class="quick-action-icon" style="background:rgba(22,163,74,0.1);color:#16a34a;">
-                                <i class="fas fa-pen"></i>
-                            </div>
-                            <div>
-                                <div style="font-weight:700;font-size:13.5px;">Tulis Artikel Blog</div>
-                                <div style="font-size:12px;color:#64748b;">Buat konten baru</div>
+                                <div style="font-weight:700;font-size:13.5px;">Tambah Judul ke Katalog</div>
+                                <div style="font-size:12px;color:var(--text-muted);">Catat buku yang telah terbit</div>
                             </div>
                         </a>
 
                         <a href="index.php?page=konsultasi" class="quick-action-btn">
-                            <div class="quick-action-icon">
-                                <i class="fas fa-comments"></i>
+                            <div class="quick-action-icon" style="background:rgba(169,117,47,0.12);color:#A9752F;">
+                                <i class="fas fa-inbox"></i>
                             </div>
                             <div>
-                                <div style="font-weight:700;font-size:13.5px;">Lihat Konsultasi</div>
-                                <div style="font-size:12px;color:#64748b;">
+                                <div style="font-weight:700;font-size:13.5px;">Pengajuan Naskah</div>
+                                <div style="font-size:12px;color:var(--text-muted);">
                                     <?php if ($new_konsultasi > 0): ?>
-                                        <span style="color:#B8860B;"><?= $new_konsultasi ?> baru perlu ditindak</span>
+                                        <span style="color:#A9752F;"><?= $new_konsultasi ?> naskah menunggu telaah</span>
                                     <?php else: ?>
-                                        Kelola CRM konsultasi
+                                        Tidak ada antrean baru
                                     <?php endif; ?>
                                 </div>
                             </div>
                         </a>
 
-                        <a href="index.php?page=export" class="quick-action-btn">
-                            <div class="quick-action-icon" style="background:rgba(184,134,11,0.1);color:#B8860B;">
-                                <i class="fas fa-download"></i>
+                        <a href="index.php?page=blog-form" class="quick-action-btn">
+                            <div class="quick-action-icon" style="background:rgba(46,125,79,0.1);color:#2E7D4F;">
+                                <i class="fas fa-pen"></i>
                             </div>
                             <div>
-                                <div style="font-weight:700;font-size:13.5px;">Export Data CSV</div>
-                                <div style="font-size:12px;color:#64748b;">Unduh laporan konsultasi</div>
+                                <div style="font-weight:700;font-size:13.5px;">Tulis Wawasan</div>
+                                <div style="font-size:12px;color:var(--text-muted);">Catatan redaksi untuk penulis</div>
+                            </div>
+                        </a>
+
+                        <a href="index.php?page=export" class="quick-action-btn">
+                            <div class="quick-action-icon" style="background:rgba(44,110,143,0.1);color:#2C6E8F;">
+                                <i class="fas fa-file-export"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight:700;font-size:13.5px;">Ekspor Data CSV</div>
+                                <div style="font-size:12px;color:var(--text-muted);">Unduh rekap pengajuan</div>
                             </div>
                         </a>
 
                         <a href="index.php?page=pengaturan" class="quick-action-btn">
-                            <div class="quick-action-icon" style="background:rgba(100,116,139,0.1);color:#475569;">
-                                <i class="fas fa-cog"></i>
+                            <div class="quick-action-icon" style="background:rgba(119,133,125,0.14);color:#45544D;">
+                                <i class="fas fa-sliders"></i>
                             </div>
                             <div>
                                 <div style="font-weight:700;font-size:13.5px;">Pengaturan Situs</div>
-                                <div style="font-size:12px;color:#64748b;">Konfigurasi website</div>
+                                <div style="font-size:12px;color:var(--text-muted);">Identitas penerbit &amp; kontak</div>
                             </div>
                         </a>
                     </div>
@@ -427,12 +486,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 datasets: [{
                     label: "Konsultasi",
                     data: ' . json_encode($chart_data) . ',
-                    backgroundColor: "rgba(13, 148, 136, 0.15)",
-                    borderColor: "#1A3C5E",
+                    backgroundColor: "rgba(47, 107, 87, 0.16)",
+                    borderColor: "#1F4B3F",
                     borderWidth: 2,
                     borderRadius: 8,
                     borderSkipped: false,
-                    hoverBackgroundColor: "rgba(13, 148, 136, 0.3)",
+                    hoverBackgroundColor: "rgba(47, 107, 87, 0.32)",
                 }]
             },
             options: {
@@ -443,23 +502,23 @@ document.addEventListener("DOMContentLoaded", function() {
                     tooltip: {
                         callbacks: {
                             title: function(items) { return items[0].label; },
-                            label: function(item) { return item.raw + " konsultasi"; }
+                            label: function(item) { return item.raw + " pengajuan"; }
                         }
                     }
                 },
                 scales: {
                     x: {
                         grid: { display: false },
-                        ticks: { font: { family: "Plus Jakarta Sans", size: 12 } }
+                        ticks: { font: { family: "Inter", size: 12 } }
                     },
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            font: { family: "Plus Jakarta Sans", size: 12 },
+                            font: { family: "Inter", size: 12 },
                             stepSize: 1,
                             precision: 0
                         },
-                        grid: { color: "#f1f5f9" }
+                        grid: { color: "#EDEAE0" }
                     }
                 }
             }

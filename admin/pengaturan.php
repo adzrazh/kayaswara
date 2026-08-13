@@ -92,6 +92,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'whatsapp_number'  => sanitize($_POST['whatsapp_number'] ?? ''),
             'address'          => sanitize($_POST['address'] ?? ''),
             'footer_text'      => sanitize($_POST['footer_text'] ?? ''),
+            // Identitas legal penerbit — tampil pada halaman Tentang & tagihan
+            'legal_name'       => sanitize($_POST['legal_name'] ?? ''),
+            'founded_year'     => sanitize($_POST['founded_year'] ?? ''),
+            'legal_nib'        => sanitize($_POST['legal_nib'] ?? ''),
+            'legal_akta'       => sanitize($_POST['legal_akta'] ?? ''),
+            'legal_npwp'       => sanitize($_POST['legal_npwp'] ?? ''),
+            // Tautan media sosial (dibiarkan kosong bila tidak dipakai)
+            'social_instagram' => sanitize(trim($_POST['social_instagram'] ?? '')),
+            'social_facebook'  => sanitize(trim($_POST['social_facebook'] ?? '')),
+            'social_youtube'   => sanitize(trim($_POST['social_youtube'] ?? '')),
+            'social_linkedin'  => sanitize(trim($_POST['social_linkedin'] ?? '')),
         ];
 
         if (empty($settings_umum['site_name'])) {
@@ -114,9 +125,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // --- Tab 2: Tampilan ---
     if ($form_tab === 'tampilan') {
         $settings_tampilan = [
-            'primary_color'   => sanitize($_POST['primary_color'] ?? '#1A3C5E'),
-            'secondary_color' => sanitize($_POST['secondary_color'] ?? '#1A3C5E'),
-            'accent_color'    => sanitize($_POST['accent_color'] ?? '#1A3C5E'),
+            'primary_color'   => sanitize($_POST['primary_color'] ?? '#1F4B3F'),
+            'secondary_color' => sanitize($_POST['secondary_color'] ?? '#1F4B3F'),
+            'accent_color'    => sanitize($_POST['accent_color'] ?? '#1F4B3F'),
         ];
 
         // Logo upload
@@ -259,15 +270,24 @@ try {
 // Defaults
 $defaults = [
     'site_name'        => 'Kayaswara',
-    'site_tagline'     => 'Jasa Penerbitan & Pencetakan Buku Akademik Profesional',
-    'meta_description' => 'Jasa penerbitan buku akademik profesional untuk dosen dan akademisi Indonesia.',
+    'site_tagline'     => 'Penerbit Buku Akademik',
+    'meta_description' => 'Kayaswara adalah penerbit buku akademik: buku ajar, buku referensi, monograf, dan bunga rampai karya dosen serta peneliti Indonesia.',
     'email_contact'    => '',
     'whatsapp_number'  => '',
     'address'          => '',
-    'footer_text'      => '© ' . date('Y') . ' Kayaswara. All rights reserved.',
-    'primary_color'    => '#1A3C5E',
-    'secondary_color'  => '#1A3C5E',
-    'accent_color'     => '#1A3C5E',
+    'footer_text'      => '© ' . date('Y') . ' CV. Kayaswara. Seluruh hak cipta dilindungi.',
+    'legal_name'       => 'CV. Kayaswara',
+    'founded_year'     => '',
+    'legal_nib'        => '',
+    'legal_akta'       => '',
+    'legal_npwp'       => '',
+    'social_instagram' => '',
+    'social_facebook'  => '',
+    'social_youtube'   => '',
+    'social_linkedin'  => '',
+    'primary_color'    => '#1F4B3F',
+    'secondary_color'  => '#2F6B57',
+    'accent_color'     => '#A9752F',
     'logo_path'        => '',
     'favicon_path'     => '',
     'wa_notif_enabled'  => '0',
@@ -301,7 +321,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
     <div class="page-header">
         <div class="page-header-left">
             <h2>Pengaturan Situs</h2>
-            <p>Konfigurasi identitas, tampilan, dan keamanan website Anda.</p>
+            <p>Identitas penerbit, kontak, tampilan, dan notifikasi.</p>
         </div>
     </div>
 
@@ -406,7 +426,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="form-label" for="email_contact">
-                                    <i class="fas fa-envelope me-1" style="color:#1A3C5E;"></i>
+                                    <i class="fas fa-envelope me-1" style="color:#1F4B3F;"></i>
                                     Email Kontak
                                 </label>
                                 <input type="email" id="email_contact" name="email_contact"
@@ -420,7 +440,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                     Nomor WhatsApp
                                 </label>
                                 <div class="input-group">
-                                    <span class="input-group-text" style="background:#f8fafc;font-size:12px;">+62</span>
+                                    <span class="input-group-text" style="background:#FCFBF7;font-size:12px;">+62</span>
                                     <input type="text" id="whatsapp_number" name="whatsapp_number"
                                            class="form-control"
                                            placeholder="81234567890"
@@ -444,18 +464,92 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                    value="<?= htmlspecialchars($settings['footer_text']) ?>">
                         </div>
 
+                        <div class="form-section-title">
+                            <i class="fas fa-file-contract"></i>
+                            Identitas Legal Penerbit
+                        </div>
+                        <p class="form-hint mb-3">
+                            Data ini tampil pada halaman <strong>Tentang</strong> dan dipakai pada tagihan.
+                            Kolom yang dikosongkan tidak akan ditampilkan di situs.
+                        </p>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-8">
+                                <label class="form-label" for="legal_name">Nama Badan Usaha</label>
+                                <input type="text" id="legal_name" name="legal_name" class="form-control"
+                                       placeholder="CV. Kayaswara"
+                                       value="<?= htmlspecialchars($settings['legal_name']) ?>">
+                                <div class="form-hint">Tulis persis seperti pada akta pendirian dan NIB.</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="founded_year">Tahun Berdiri</label>
+                                <input type="text" id="founded_year" name="founded_year" class="form-control"
+                                       placeholder="2023"
+                                       value="<?= htmlspecialchars($settings['founded_year']) ?>">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="legal_nib">NIB</label>
+                                <input type="text" id="legal_nib" name="legal_nib" class="form-control"
+                                       value="<?= htmlspecialchars($settings['legal_nib']) ?>">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="legal_akta">Akta Pendirian</label>
+                                <input type="text" id="legal_akta" name="legal_akta" class="form-control"
+                                       placeholder="No. 12 tanggal 3 Maret 2023"
+                                       value="<?= htmlspecialchars($settings['legal_akta']) ?>">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="legal_npwp">NPWP</label>
+                                <input type="text" id="legal_npwp" name="legal_npwp" class="form-control"
+                                       value="<?= htmlspecialchars($settings['legal_npwp']) ?>">
+                            </div>
+                        </div>
+
+                        <div class="form-section-title">
+                            <i class="fas fa-share-nodes"></i>
+                            Media Sosial
+                        </div>
+                        <p class="form-hint mb-3">Kosongkan bila belum ada — ikon hanya muncul untuk tautan yang terisi.</p>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label" for="social_instagram"><i class="fab fa-instagram me-1"></i>Instagram</label>
+                                <input type="url" id="social_instagram" name="social_instagram" class="form-control"
+                                       placeholder="https://instagram.com/…"
+                                       value="<?= htmlspecialchars($settings['social_instagram']) ?>">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="social_facebook"><i class="fab fa-facebook me-1"></i>Facebook</label>
+                                <input type="url" id="social_facebook" name="social_facebook" class="form-control"
+                                       placeholder="https://facebook.com/…"
+                                       value="<?= htmlspecialchars($settings['social_facebook']) ?>">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="social_youtube"><i class="fab fa-youtube me-1"></i>YouTube</label>
+                                <input type="url" id="social_youtube" name="social_youtube" class="form-control"
+                                       placeholder="https://youtube.com/@…"
+                                       value="<?= htmlspecialchars($settings['social_youtube']) ?>">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="social_linkedin"><i class="fab fa-linkedin me-1"></i>LinkedIn</label>
+                                <input type="url" id="social_linkedin" name="social_linkedin" class="form-control"
+                                       placeholder="https://linkedin.com/company/…"
+                                       value="<?= htmlspecialchars($settings['social_linkedin']) ?>">
+                            </div>
+                        </div>
+
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save me-2"></i>Simpan Pengaturan Umum
                         </button>
                     </div>
 
                     <div class="col-xl-4">
-                        <div style="background:linear-gradient(135deg,rgba(26,60,94,0.06),rgba(26,54,93,0.06));border-radius:14px;padding:24px;border:1px solid rgba(26,60,94,0.15);">
-                            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;margin-bottom:14px;">
-                                <i class="fas fa-lightbulb me-1" style="color:#1A3C5E;"></i>
+                        <div style="background:linear-gradient(135deg,rgba(31,75,63,0.06),rgba(26,54,93,0.06));border-radius:14px;padding:24px;border:1px solid rgba(31,75,63,0.15);">
+                            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#77857D;margin-bottom:14px;">
+                                <i class="fas fa-lightbulb me-1" style="color:#1F4B3F;"></i>
                                 Panduan
                             </div>
-                            <ul style="font-size:13px;color:#64748b;padding-left:18px;margin:0;line-height:2;">
+                            <ul style="font-size:13px;color:#77857D;padding-left:18px;margin:0;line-height:2;">
                                 <li><strong>Nama Situs</strong>: tampil di browser tab & header</li>
                                 <li><strong>Tagline</strong>: slogan singkat di bawah logo</li>
                                 <li><strong>Meta Deskripsi</strong>: untuk SEO Google (maks 160 karakter)</li>
@@ -493,7 +587,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                        value="<?= htmlspecialchars($settings['primary_color']) ?>"
                                        style="max-width:120px;"
                                        oninput="syncColor('primary_color', this.value)">
-                                <span class="input-group-text" style="font-size:12px;color:#64748b;">Navigasi, heading</span>
+                                <span class="input-group-text" style="font-size:12px;color:#77857D;">Navigasi, heading</span>
                             </div>
                         </div>
 
@@ -509,7 +603,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                        value="<?= htmlspecialchars($settings['secondary_color']) ?>"
                                        style="max-width:120px;"
                                        oninput="syncColor('secondary_color', this.value)">
-                                <span class="input-group-text" style="font-size:12px;color:#64748b;">Aksen, tombol sekunder</span>
+                                <span class="input-group-text" style="font-size:12px;color:#77857D;">Aksen, tombol sekunder</span>
                             </div>
                         </div>
 
@@ -525,7 +619,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                        value="<?= htmlspecialchars($settings['accent_color']) ?>"
                                        style="max-width:120px;"
                                        oninput="syncColor('accent_color', this.value)">
-                                <span class="input-group-text" style="font-size:12px;color:#64748b;">CTA, badge highlight</span>
+                                <span class="input-group-text" style="font-size:12px;color:#77857D;">CTA, badge highlight</span>
                             </div>
                         </div>
 
@@ -541,7 +635,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                             <div class="mb-2 d-flex align-items-center gap-3">
                                 <img src="../assets/uploads/site/<?= htmlspecialchars($settings['logo_path']) ?>"
                                      alt="Current Logo" id="logoPreview"
-                                     style="height:60px;max-width:200px;object-fit:contain;border-radius:8px;border:1.5px solid #e2e8f0;padding:8px;background:#fff;">
+                                     style="height:60px;max-width:200px;object-fit:contain;border-radius:8px;border:1.5px solid #E3E0D4;padding:8px;background:#fff;">
                                 <form method="POST" style="display:inline;" onsubmit="return confirm('Hapus logo? Ikon default akan digunakan.');">
                                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                                     <input type="hidden" name="action" value="delete_logo">
@@ -552,7 +646,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                             </div>
                             <?php else: ?>
                             <div class="mb-2" id="logoPreviewWrap" style="display:none;">
-                                <img id="logoPreview" src="" alt="" style="height:60px;max-width:200px;object-fit:contain;border-radius:8px;border:1.5px solid #e2e8f0;padding:8px;background:#fff;">
+                                <img id="logoPreview" src="" alt="" style="height:60px;max-width:200px;object-fit:contain;border-radius:8px;border:1.5px solid #E3E0D4;padding:8px;background:#fff;">
                             </div>
                             <?php endif; ?>
                             <input type="file" id="logo" name="logo"
@@ -568,11 +662,11 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                             <div class="mb-2">
                                 <img src="../assets/uploads/site/<?= htmlspecialchars($settings['favicon_path']) ?>"
                                      alt="Favicon" id="faviconPreview"
-                                     style="width:32px;height:32px;object-fit:contain;border-radius:4px;border:1.5px solid #e2e8f0;">
+                                     style="width:32px;height:32px;object-fit:contain;border-radius:4px;border:1.5px solid #E3E0D4;">
                             </div>
                             <?php else: ?>
                             <div class="mb-2" id="faviconPreviewWrap" style="display:none;">
-                                <img id="faviconPreview" src="" alt="" style="width:32px;height:32px;object-fit:contain;border-radius:4px;border:1.5px solid #e2e8f0;">
+                                <img id="faviconPreview" src="" alt="" style="width:32px;height:32px;object-fit:contain;border-radius:4px;border:1.5px solid #E3E0D4;">
                             </div>
                             <?php endif; ?>
                             <input type="file" id="favicon" name="favicon"
@@ -602,7 +696,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                     <h4 id="previewTitle" style="color:<?= $settings['primary_color'] ?>;font-weight:800;margin-bottom:4px;font-size:18px;">
                                         Kayaswara
                                     </h4>
-                                    <p id="previewSubtitle" style="color:#64748b;font-size:13px;margin:0;">
+                                    <p id="previewSubtitle" style="color:#77857D;font-size:13px;margin:0;">
                                         Penerbit Naskah Akademik
                                     </p>
                                 </div>
@@ -620,12 +714,12 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                     <span id="previewBadge" style="background:<?= $settings['accent_color'] ?>;color:#fff;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;">
                                         #1 Penerbit Akademik
                                     </span>
-                                    <span style="background:#f1f5f9;color:#475569;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;">
+                                    <span style="background:#F4F2EA;color:#45544D;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;">
                                         Terpercaya
                                     </span>
                                 </div>
 
-                                <div style="height:1px;background:#e2e8f0;margin:16px 0;"></div>
+                                <div style="height:1px;background:#E3E0D4;margin:16px 0;"></div>
 
                                 <!-- Nav Preview -->
                                 <div id="previewNav" style="background:<?= $settings['primary_color'] ?>;border-radius:8px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;">
@@ -639,18 +733,18 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
 
                                 <div style="margin-top:12px;display:flex;gap:8px;">
                                     <!-- Card preview -->
-                                    <div style="flex:1;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;">
+                                    <div style="flex:1;border:1px solid #E3E0D4;border-radius:8px;overflow:hidden;">
                                         <div style="height:4px;background:<?= $settings['secondary_color'] ?>;"></div>
                                         <div style="padding:10px;font-size:12px;">
                                             <div style="font-weight:700;color:<?= $settings['primary_color'] ?>;margin-bottom:4px;">Penerbitan Buku</div>
-                                            <div style="color:#64748b;font-size:11px;">Instalasi & konfigurasi</div>
+                                            <div style="color:#77857D;font-size:11px;">Instalasi & konfigurasi</div>
                                         </div>
                                     </div>
-                                    <div style="flex:1;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;">
+                                    <div style="flex:1;border:1px solid #E3E0D4;border-radius:8px;overflow:hidden;">
                                         <div style="height:4px;background:<?= $settings['accent_color'] ?>;"></div>
                                         <div style="padding:10px;font-size:12px;">
                                             <div style="font-weight:700;color:<?= $settings['primary_color'] ?>;margin-bottom:4px;">Editing</div>
-                                            <div style="color:#64748b;font-size:11px;">Editing & Layout</div>
+                                            <div style="color:#77857D;font-size:11px;">Editing & Layout</div>
                                         </div>
                                     </div>
                                 </div>
@@ -661,17 +755,17 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                         <div style="display:flex;gap:8px;margin-top:16px;">
                             <div style="text-align:center;flex:1;">
                                 <div id="swatchPrimary" style="height:40px;border-radius:8px;background:<?= $settings['primary_color'] ?>;margin-bottom:4px;"></div>
-                                <div style="font-size:11px;color:#64748b;">Primer</div>
+                                <div style="font-size:11px;color:#77857D;">Primer</div>
                                 <div id="hexPrimaryDisplay" style="font-size:11px;font-weight:700;color:#374151;"><?= $settings['primary_color'] ?></div>
                             </div>
                             <div style="text-align:center;flex:1;">
                                 <div id="swatchSecondary" style="height:40px;border-radius:8px;background:<?= $settings['secondary_color'] ?>;margin-bottom:4px;"></div>
-                                <div style="font-size:11px;color:#64748b;">Sekunder</div>
+                                <div style="font-size:11px;color:#77857D;">Sekunder</div>
                                 <div id="hexSecondaryDisplay" style="font-size:11px;font-weight:700;color:#374151;"><?= $settings['secondary_color'] ?></div>
                             </div>
                             <div style="text-align:center;flex:1;">
                                 <div id="swatchAccent" style="height:40px;border-radius:8px;background:<?= $settings['accent_color'] ?>;margin-bottom:4px;"></div>
-                                <div style="font-size:11px;color:#64748b;">Aksen</div>
+                                <div style="font-size:11px;color:#77857D;">Aksen</div>
                                 <div id="hexAccentDisplay" style="font-size:11px;font-weight:700;color:#374151;"><?= $settings['accent_color'] ?></div>
                             </div>
                         </div>
@@ -688,14 +782,14 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                 <div class="row g-4">
                     <div class="col-xl-8">
                         <!-- Enable/Disable Toggle -->
-                        <div style="background:linear-gradient(135deg,rgba(22,163,74,0.06),rgba(26,60,94,0.06));border-radius:14px;padding:20px 24px;margin-bottom:24px;border:1px solid rgba(22,163,74,0.15);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+                        <div style="background:linear-gradient(135deg,rgba(22,163,74,0.06),rgba(31,75,63,0.06));border-radius:14px;padding:20px 24px;margin-bottom:24px;border:1px solid rgba(22,163,74,0.15);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
                             <div style="display:flex;align-items:center;gap:12px;">
                                 <div style="width:44px;height:44px;background:#16a34a;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.2rem;">
                                     <i class="fab fa-whatsapp"></i>
                                 </div>
                                 <div>
-                                    <div style="font-weight:700;font-size:15px;color:#1e293b;">Notifikasi WhatsApp Otomatis</div>
-                                    <div style="font-size:12px;color:#64748b;">Kirim update progres pesanan langsung ke WhatsApp klien</div>
+                                    <div style="font-weight:700;font-size:15px;color:#16211C;">Notifikasi WhatsApp Otomatis</div>
+                                    <div style="font-size:12px;color:#77857D;">Kirim update progres pesanan langsung ke WhatsApp klien</div>
                                 </div>
                             </div>
                             <div class="form-check form-switch">
@@ -730,7 +824,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label" for="wa_api_token">
-                                        <i class="fas fa-key me-1" style="color:#1A3C5E;"></i>
+                                        <i class="fas fa-key me-1" style="color:#1F4B3F;"></i>
                                         API Token <span class="required">*</span>
                                     </label>
                                     <div class="input-group">
@@ -749,7 +843,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                             <!-- Custom URL (hidden unless custom selected) -->
                             <div class="mb-4" id="customUrlGroup" style="<?= ($settings['wa_api_provider'] ?? '') !== 'custom' ? 'display:none;' : '' ?>">
                                 <label class="form-label" for="wa_api_url">
-                                    <i class="fas fa-link me-1" style="color:#1A3C5E;"></i>
+                                    <i class="fas fa-link me-1" style="color:#1F4B3F;"></i>
                                     URL Endpoint API
                                 </label>
                                 <input type="url" id="wa_api_url" name="wa_api_url"
@@ -781,7 +875,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                 <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#16a34a;margin-bottom:8px;">
                                     <i class="fab fa-whatsapp me-1"></i> Preview Template Default
                                 </div>
-                                <div style="font-size:13px;color:#374151;white-space:pre-line;line-height:1.6;font-family:'Plus Jakarta Sans',sans-serif;">Halo Ahmad Yani! 👋
+                                <div style="font-size:13px;color:#374151;white-space:pre-line;line-height:1.6;font-family:'Inter',sans-serif;">Halo Ahmad Yani! 👋
 
 Update pesanan Anda (*KYSWR-06042026-001*):
 
@@ -800,7 +894,7 @@ _Kayaswara_</div>
                                 <div style="flex:1;min-width:200px;">
                                     <label class="form-label mb-1" style="font-size:13px;">Tes Kirim Notifikasi</label>
                                     <div class="input-group">
-                                        <span class="input-group-text" style="background:#f8fafc;font-size:12px;">+62</span>
+                                        <span class="input-group-text" style="background:#FCFBF7;font-size:12px;">+62</span>
                                         <input type="text" id="wa_test_phone" class="form-control" placeholder="81234567890">
                                         <button type="button" class="btn btn-outline-success" onclick="testWaNotif()" id="waTestBtn">
                                             <i class="fab fa-whatsapp me-1"></i>Kirim Tes
@@ -812,16 +906,16 @@ _Kayaswara_</div>
                         </div>
 
                         <!-- ===== Email / SMTP Settings ===== -->
-                        <hr style="margin:28px 0;border-color:#e2e8f0;">
+                        <hr style="margin:28px 0;border-color:#E3E0D4;">
 
-                        <div style="background:linear-gradient(135deg,rgba(59,130,246,0.06),rgba(26,60,94,0.06));border-radius:14px;padding:20px 24px;margin-bottom:24px;border:1px solid rgba(59,130,246,0.15);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+                        <div style="background:linear-gradient(135deg,rgba(59,130,246,0.06),rgba(31,75,63,0.06));border-radius:14px;padding:20px 24px;margin-bottom:24px;border:1px solid rgba(59,130,246,0.15);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
                             <div style="display:flex;align-items:center;gap:12px;">
                                 <div style="width:44px;height:44px;background:#3b82f6;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.2rem;">
                                     <i class="fas fa-envelope"></i>
                                 </div>
                                 <div>
-                                    <div style="font-weight:700;font-size:15px;color:#1e293b;">Notifikasi Email (SMTP)</div>
-                                    <div style="font-size:12px;color:#64748b;">Kirim email konfirmasi pesanan ke klien secara otomatis</div>
+                                    <div style="font-weight:700;font-size:15px;color:#16211C;">Notifikasi Email (SMTP)</div>
+                                    <div style="font-size:12px;color:#77857D;">Kirim email konfirmasi pesanan ke klien secara otomatis</div>
                                 </div>
                             </div>
                             <div class="form-check form-switch">
@@ -905,12 +999,12 @@ _Kayaswara_</div>
 
                     <!-- Right: Guide -->
                     <div class="col-xl-4">
-                        <div style="background:linear-gradient(135deg,rgba(22,163,74,0.06),rgba(26,60,94,0.06));border-radius:14px;padding:24px;border:1px solid rgba(22,163,74,0.15);">
-                            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;margin-bottom:14px;">
-                                <i class="fas fa-lightbulb me-1" style="color:#1A3C5E;"></i>
+                        <div style="background:linear-gradient(135deg,rgba(22,163,74,0.06),rgba(31,75,63,0.06));border-radius:14px;padding:24px;border:1px solid rgba(22,163,74,0.15);">
+                            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#77857D;margin-bottom:14px;">
+                                <i class="fas fa-lightbulb me-1" style="color:#1F4B3F;"></i>
                                 Panduan Setup
                             </div>
-                            <ol style="font-size:13px;color:#64748b;padding-left:18px;margin:0;line-height:2.2;">
+                            <ol style="font-size:13px;color:#77857D;padding-left:18px;margin:0;line-height:2.2;">
                                 <li>Daftar di <a href="https://fonnte.com" target="_blank" rel="noopener" style="color:#16a34a;font-weight:600;">Fonnte.com</a> atau <a href="https://wablas.com" target="_blank" rel="noopener" style="color:#16a34a;font-weight:600;">Wablas.com</a></li>
                                 <li>Hubungkan nomor WhatsApp Anda</li>
                                 <li>Salin <strong>API Token</strong> dari dashboard provider</li>
@@ -920,10 +1014,10 @@ _Kayaswara_</div>
 
                             <div style="height:1px;background:rgba(22,163,74,0.15);margin:16px 0;"></div>
 
-                            <div style="font-size:12px;font-weight:700;color:#64748b;margin-bottom:8px;">
+                            <div style="font-size:12px;font-weight:700;color:#77857D;margin-bottom:8px;">
                                 <i class="fas fa-info-circle me-1"></i> Kapan Notifikasi Dikirim?
                             </div>
-                            <ul style="font-size:12px;color:#64748b;padding-left:16px;margin:0;line-height:2;">
+                            <ul style="font-size:12px;color:#77857D;padding-left:16px;margin:0;line-height:2;">
                                 <li>Saat milestone diubah ke <strong>Sedang Dikerjakan</strong></li>
                                 <li>Saat milestone diubah ke <strong>Selesai</strong></li>
                                 <li>Tidak dikirim saat di-reset ke Menunggu</li>
@@ -932,7 +1026,7 @@ _Kayaswara_</div>
 
                             <div style="height:1px;background:rgba(22,163,74,0.15);margin:16px 0;"></div>
 
-                            <div style="font-size:12px;font-weight:700;color:#64748b;margin-bottom:8px;">
+                            <div style="font-size:12px;font-weight:700;color:#77857D;margin-bottom:8px;">
                                 <i class="fas fa-history me-1"></i> Log Notifikasi
                             </div>
                             <?php
@@ -949,12 +1043,12 @@ _Kayaswara_</div>
                                 <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(0,0,0,0.05);font-size:11px;">
                                     <span style="width:8px;height:8px;border-radius:50%;background:<?= $log['status'] === 'sent' ? '#16a34a' : '#dc2626' ?>;flex-shrink:0;"></span>
                                     <span style="color:#374151;font-weight:600;"><?= htmlspecialchars(substr($log['recipient'], 0, 6)) ?>***</span>
-                                    <span style="color:#94a3b8;margin-left:auto;white-space:nowrap;"><?= date('d/m H:i', strtotime($log['created_at'])) ?></span>
+                                    <span style="color:#A6B0A9;margin-left:auto;white-space:nowrap;"><?= date('d/m H:i', strtotime($log['created_at'])) ?></span>
                                 </div>
                                 <?php endforeach; ?>
                             </div>
                             <?php else: ?>
-                            <p style="font-size:12px;color:#94a3b8;margin:0;">Belum ada log notifikasi.</p>
+                            <p style="font-size:12px;color:#A6B0A9;margin:0;">Belum ada log notifikasi.</p>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -963,15 +1057,15 @@ _Kayaswara_</div>
                 <!-- Email Preview Section -->
                 <?php
                 $prev_site = html_entity_decode(getSetting('site_name', 'Kayaswara'), ENT_QUOTES, 'UTF-8');
-                $prev_color = getSetting('primary_color', '#1A3C5E');
+                $prev_color = getSetting('primary_color', '#1F4B3F');
                 $prev_tracking = 'TRK-20260409';
                 $prev_url = (defined('SITE_URL') ? rtrim(SITE_URL, '/') : '') . '/tracking';
                 ?>
                 <div class="row mt-4">
                     <div class="col-12">
-                        <div style="background:#fff;border-radius:14px;border:1px solid #e2e8f0;overflow:hidden;">
-                            <div style="padding:18px 24px 0;border-bottom:1px solid #f1f5f9;">
-                                <div style="font-size:13px;font-weight:700;color:#1e293b;margin-bottom:12px;">
+                        <div style="background:#fff;border-radius:14px;border:1px solid #E3E0D4;overflow:hidden;">
+                            <div style="padding:18px 24px 0;border-bottom:1px solid #F4F2EA;">
+                                <div style="font-size:13px;font-weight:700;color:#16211C;margin-bottom:12px;">
                                     <i class="fas fa-eye me-2" style="color:<?= htmlspecialchars($prev_color) ?>;"></i>
                                     Preview Email ke Pelanggan
                                 </div>
@@ -988,71 +1082,71 @@ _Kayaswara_</div>
                                     </li>
                                 </ul>
                             </div>
-                            <div style="padding:24px;background:#f8fafc;">
+                            <div style="padding:24px;background:#FCFBF7;">
 
                                 <!-- Tab: Konfirmasi Pesanan -->
                                 <div id="emailTab-konfirmasi">
-                                    <div style="max-width:560px;margin:0 auto;background:#fff;border-radius:10px;border:1px solid #e2e8f0;overflow:hidden;font-family:Arial,sans-serif;font-size:14px;color:#374151;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+                                    <div style="max-width:560px;margin:0 auto;background:#fff;border-radius:10px;border:1px solid #E3E0D4;overflow:hidden;font-family:Arial,sans-serif;font-size:14px;color:#374151;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
                                         <div style="background:<?= htmlspecialchars($prev_color) ?>;padding:24px 28px;text-align:center;">
                                             <div style="color:#fff;font-size:20px;font-weight:800;letter-spacing:-0.3px;"><?= htmlspecialchars($prev_site) ?></div>
                                             <div style="color:rgba(255,255,255,0.75);font-size:12px;margin-top:4px;">Konfirmasi Pesanan</div>
                                         </div>
                                         <div style="padding:28px;">
                                             <p style="margin:0 0 16px;">Yth. <strong>Budi Santoso</strong>,</p>
-                                            <p style="margin:0 0 16px;color:#64748b;">Terima kasih telah mempercayakan kebutuhan penerbitan buku Anda kepada kami. Pesanan Anda telah berhasil dibuat dengan detail berikut:</p>
-                                            <div style="background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;padding:16px 20px;margin-bottom:20px;">
-                                                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#94a3b8;margin-bottom:12px;">Detail Pesanan</div>
+                                            <p style="margin:0 0 16px;color:#77857D;">Terima kasih telah mempercayakan kebutuhan penerbitan buku Anda kepada kami. Pesanan Anda telah berhasil dibuat dengan detail berikut:</p>
+                                            <div style="background:#FCFBF7;border-radius:8px;border:1px solid #E3E0D4;padding:16px 20px;margin-bottom:20px;">
+                                                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#A6B0A9;margin-bottom:12px;">Detail Pesanan</div>
                                                 <table style="width:100%;border-collapse:collapse;font-size:13px;">
-                                                    <tr><td style="padding:4px 0;color:#64748b;width:40%;">Kode Tracking</td><td style="padding:4px 0;font-weight:700;color:<?= htmlspecialchars($prev_color) ?>;"><?= $prev_tracking ?></td></tr>
-                                                    <tr><td style="padding:4px 0;color:#64748b;">Layanan</td><td style="padding:4px 0;font-weight:600;">Penerbitan Buku Lengkap</td></tr>
-                                                    <tr><td style="padding:4px 0;color:#64748b;">Paket</td><td style="padding:4px 0;font-weight:600;">Profesional</td></tr>
-                                                    <tr><td style="padding:4px 0;color:#64748b;">Institusi</td><td style="padding:4px 0;">Universitas Indonesia</td></tr>
-                                                    <tr><td style="padding:4px 0;color:#64748b;">No. HP/WA</td><td style="padding:4px 0;">081234567890</td></tr>
-                                                    <tr><td style="padding:4px 0;color:#64748b;">Estimasi Biaya</td><td style="padding:4px 0;font-weight:700;">Rp 2.500.000</td></tr>
-                                                    <tr><td style="padding:4px 0;color:#64748b;">Status</td><td style="padding:4px 0;"><span style="background:#fef3c7;color:#92400e;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600;">Menunggu</span></td></tr>
+                                                    <tr><td style="padding:4px 0;color:#77857D;width:40%;">Kode Tracking</td><td style="padding:4px 0;font-weight:700;color:<?= htmlspecialchars($prev_color) ?>;"><?= $prev_tracking ?></td></tr>
+                                                    <tr><td style="padding:4px 0;color:#77857D;">Layanan</td><td style="padding:4px 0;font-weight:600;">Penerbitan Buku Lengkap</td></tr>
+                                                    <tr><td style="padding:4px 0;color:#77857D;">Paket</td><td style="padding:4px 0;font-weight:600;">Profesional</td></tr>
+                                                    <tr><td style="padding:4px 0;color:#77857D;">Institusi</td><td style="padding:4px 0;">Universitas Indonesia</td></tr>
+                                                    <tr><td style="padding:4px 0;color:#77857D;">No. HP/WA</td><td style="padding:4px 0;">081234567890</td></tr>
+                                                    <tr><td style="padding:4px 0;color:#77857D;">Estimasi Biaya</td><td style="padding:4px 0;font-weight:700;">Rp 2.500.000</td></tr>
+                                                    <tr><td style="padding:4px 0;color:#77857D;">Status</td><td style="padding:4px 0;"><span style="background:#F7EEDF;color:#7A5A0C;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600;">Menunggu</span></td></tr>
                                                 </table>
                                             </div>
                                             <div style="background:#f0fdf4;border-radius:8px;border:1px solid #bbf7d0;padding:12px 16px;margin-bottom:20px;font-size:13px;">
-                                                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#94a3b8;margin-bottom:8px;">Deskripsi Kebutuhan</div>
+                                                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#A6B0A9;margin-bottom:8px;">Deskripsi Kebutuhan</div>
                                                 <p style="margin:0;color:#374151;">Penerbitan buku ajar Manajemen Pendidikan, termasuk editing, layout, dan desain cover.</p>
                                             </div>
                                             <div style="text-align:center;margin:24px 0;">
                                                 <a href="<?= htmlspecialchars($prev_url) ?>" style="background:<?= htmlspecialchars($prev_color) ?>;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:700;font-size:14px;display:inline-block;">
                                                     <i class="fas fa-search"></i> Pantau Pesanan
                                                 </a>
-                                                <div style="margin-top:10px;font-size:12px;color:#94a3b8;">Masukkan kode: <strong><?= $prev_tracking ?></strong></div>
+                                                <div style="margin-top:10px;font-size:12px;color:#A6B0A9;">Masukkan kode: <strong><?= $prev_tracking ?></strong></div>
                                             </div>
-                                            <p style="margin:0;color:#64748b;font-size:13px;">Tim kami akan segera menghubungi Anda untuk konfirmasi lebih lanjut.</p>
+                                            <p style="margin:0;color:#77857D;font-size:13px;">Tim kami akan segera menghubungi Anda untuk konfirmasi lebih lanjut.</p>
                                         </div>
-                                        <div style="background:#f8fafc;padding:16px 28px;text-align:center;border-top:1px solid #e2e8f0;">
-                                            <div style="font-size:12px;color:#94a3b8;">© <?= date('Y') ?> <?= htmlspecialchars($prev_site) ?> — Email otomatis, tidak perlu dibalas.</div>
+                                        <div style="background:#FCFBF7;padding:16px 28px;text-align:center;border-top:1px solid #E3E0D4;">
+                                            <div style="font-size:12px;color:#A6B0A9;">© <?= date('Y') ?> <?= htmlspecialchars($prev_site) ?> — Email otomatis, tidak perlu dibalas.</div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Tab: Milestone Update -->
                                 <div id="emailTab-milestone" style="display:none;">
-                                    <div style="max-width:560px;margin:0 auto;background:#fff;border-radius:10px;border:1px solid #e2e8f0;overflow:hidden;font-family:Arial,sans-serif;font-size:14px;color:#374151;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+                                    <div style="max-width:560px;margin:0 auto;background:#fff;border-radius:10px;border:1px solid #E3E0D4;overflow:hidden;font-family:Arial,sans-serif;font-size:14px;color:#374151;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
                                         <div style="background:<?= htmlspecialchars($prev_color) ?>;padding:24px 28px;text-align:center;">
                                             <div style="color:#fff;font-size:20px;font-weight:800;letter-spacing:-0.3px;"><?= htmlspecialchars($prev_site) ?></div>
                                             <div style="color:rgba(255,255,255,0.75);font-size:12px;margin-top:4px;">Update Progress Pesanan</div>
                                         </div>
                                         <div style="padding:28px;">
                                             <p style="margin:0 0 16px;">Yth. <strong>Budi Santoso</strong>,</p>
-                                            <p style="margin:0 0 20px;color:#64748b;">Kami ingin menginformasikan bahwa salah satu tahapan pesanan Anda telah selesai.</p>
+                                            <p style="margin:0 0 20px;color:#77857D;">Kami ingin menginformasikan bahwa salah satu tahapan pesanan Anda telah selesai.</p>
                                             <div style="background:#f0fdf4;border-radius:8px;border:1px solid #bbf7d0;padding:16px 20px;margin-bottom:20px;">
-                                                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#94a3b8;margin-bottom:12px;">Update Pesanan</div>
+                                                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#A6B0A9;margin-bottom:12px;">Update Pesanan</div>
                                                 <table style="width:100%;border-collapse:collapse;font-size:13px;">
-                                                    <tr><td style="padding:4px 0;color:#64748b;width:40%;">Kode Tracking</td><td style="padding:4px 0;font-weight:700;color:<?= htmlspecialchars($prev_color) ?>;"><?= $prev_tracking ?></td></tr>
-                                                    <tr><td style="padding:4px 0;color:#64748b;">Tahapan Selesai</td><td style="padding:4px 0;font-weight:700;">✅ Layout & Typesetting</td></tr>
-                                                    <tr><td style="padding:4px 0;color:#64748b;">Progres</td><td style="padding:4px 0;">
+                                                    <tr><td style="padding:4px 0;color:#77857D;width:40%;">Kode Tracking</td><td style="padding:4px 0;font-weight:700;color:<?= htmlspecialchars($prev_color) ?>;"><?= $prev_tracking ?></td></tr>
+                                                    <tr><td style="padding:4px 0;color:#77857D;">Tahapan Selesai</td><td style="padding:4px 0;font-weight:700;">✅ Layout & Typesetting</td></tr>
+                                                    <tr><td style="padding:4px 0;color:#77857D;">Progres</td><td style="padding:4px 0;">
                                                         <div style="display:flex;align-items:center;gap:8px;">
-                                                            <div style="flex:1;background:#e2e8f0;border-radius:20px;height:8px;">
+                                                            <div style="flex:1;background:#E3E0D4;border-radius:20px;height:8px;">
                                                                 <div style="width:33%;background:<?= htmlspecialchars($prev_color) ?>;border-radius:20px;height:8px;"></div>
                                                             </div>
                                                             <span style="font-weight:700;font-size:12px;">33%</span>
                                                         </div>
-                                                        <div style="font-size:12px;color:#64748b;margin-top:4px;">1 dari 3 tahap selesai</div>
+                                                        <div style="font-size:12px;color:#77857D;margin-top:4px;">1 dari 3 tahap selesai</div>
                                                     </td></tr>
                                                 </table>
                                             </div>
@@ -1060,18 +1154,18 @@ _Kayaswara_</div>
                                                 <a href="<?= htmlspecialchars($prev_url) ?>" style="background:<?= htmlspecialchars($prev_color) ?>;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:700;font-size:14px;display:inline-block;">
                                                     <i class="fas fa-search"></i> Lihat Detail Progress
                                                 </a>
-                                                <div style="margin-top:10px;font-size:12px;color:#94a3b8;">Masukkan kode: <strong><?= $prev_tracking ?></strong></div>
+                                                <div style="margin-top:10px;font-size:12px;color:#A6B0A9;">Masukkan kode: <strong><?= $prev_tracking ?></strong></div>
                                             </div>
-                                            <p style="margin:0;color:#64748b;font-size:13px;">Tim kami akan terus bekerja pada tahapan berikutnya. Kami akan menginformasikan kembali setiap ada tahapan yang selesai.</p>
+                                            <p style="margin:0;color:#77857D;font-size:13px;">Tim kami akan terus bekerja pada tahapan berikutnya. Kami akan menginformasikan kembali setiap ada tahapan yang selesai.</p>
                                         </div>
-                                        <div style="background:#f8fafc;padding:16px 28px;text-align:center;border-top:1px solid #e2e8f0;">
-                                            <div style="font-size:12px;color:#94a3b8;">© <?= date('Y') ?> <?= htmlspecialchars($prev_site) ?> — Email otomatis, tidak perlu dibalas.</div>
+                                        <div style="background:#FCFBF7;padding:16px 28px;text-align:center;border-top:1px solid #E3E0D4;">
+                                            <div style="font-size:12px;color:#A6B0A9;">© <?= date('Y') ?> <?= htmlspecialchars($prev_site) ?> — Email otomatis, tidak perlu dibalas.</div>
                                         </div>
                                     </div>
                                 </div>
 
                             </div>
-                            <div style="padding:12px 24px;background:#f8fafc;border-top:1px solid #e2e8f0;font-size:12px;color:#94a3b8;">
+                            <div style="padding:12px 24px;background:#FCFBF7;border-top:1px solid #E3E0D4;font-size:12px;color:#A6B0A9;">
                                 <i class="fas fa-info-circle me-1"></i>
                                 Preview menggunakan data contoh. Warna header mengikuti warna utama yang diatur di tab Tampilan.
                             </div>
@@ -1096,17 +1190,17 @@ _Kayaswara_</div>
                 <div class="col-xl-6 col-lg-8">
                     <div style="background:linear-gradient(135deg,rgba(220,38,38,0.04),rgba(26,54,93,0.04));border-radius:14px;padding:24px;margin-bottom:24px;border:1px solid rgba(220,38,38,0.1);">
                         <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
-                            <div style="width:40px;height:40px;background:rgba(26,54,93,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#1A3C5E;">
+                            <div style="width:40px;height:40px;background:rgba(26,54,93,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#1F4B3F;">
                                 <i class="fas fa-shield-alt fa-lg"></i>
                             </div>
                             <div>
-                                <div style="font-weight:700;font-size:14px;color:#1e293b;">Ubah Password Admin</div>
-                                <div style="font-size:12px;color:#64748b;">
+                                <div style="font-weight:700;font-size:14px;color:#16211C;">Ubah Password Admin</div>
+                                <div style="font-size:12px;color:#77857D;">
                                     Akun: <strong><?= htmlspecialchars($_SESSION['admin_user'] ?? '') ?></strong>
                                 </div>
                             </div>
                         </div>
-                        <p style="font-size:13px;color:#64748b;margin:0;">
+                        <p style="font-size:13px;color:#77857D;margin:0;">
                             Pastikan password baru Anda kuat dan unik. Minimal 8 karakter,
                             kombinasi huruf, angka, dan karakter spesial.
                         </p>
@@ -1118,7 +1212,7 @@ _Kayaswara_</div>
 
                         <div class="mb-4">
                             <label class="form-label" for="old_password">
-                                <i class="fas fa-lock me-1" style="color:#64748b;"></i>
+                                <i class="fas fa-lock me-1" style="color:#77857D;"></i>
                                 Password Lama <span class="required">*</span>
                             </label>
                             <div class="input-group">
@@ -1134,7 +1228,7 @@ _Kayaswara_</div>
 
                         <div class="mb-4">
                             <label class="form-label" for="new_password">
-                                <i class="fas fa-key me-1" style="color:#1A3C5E;"></i>
+                                <i class="fas fa-key me-1" style="color:#1F4B3F;"></i>
                                 Password Baru <span class="required">*</span>
                             </label>
                             <div class="input-group">
@@ -1150,10 +1244,10 @@ _Kayaswara_</div>
                             </div>
                             <!-- Password strength indicator -->
                             <div style="margin-top:8px;">
-                                <div style="height:4px;background:#e2e8f0;border-radius:2px;overflow:hidden;">
+                                <div style="height:4px;background:#E3E0D4;border-radius:2px;overflow:hidden;">
                                     <div id="strengthBar" style="height:100%;width:0%;transition:all 0.3s;border-radius:2px;"></div>
                                 </div>
-                                <div id="strengthText" style="font-size:11px;color:#94a3b8;margin-top:4px;"></div>
+                                <div id="strengthText" style="font-size:11px;color:#A6B0A9;margin-top:4px;"></div>
                             </div>
                         </div>
 
@@ -1282,9 +1376,9 @@ function checkPasswordStrength(password) {
     const levels = [
         { pct: "20%",  color: "#dc2626", label: "Sangat Lemah" },
         { pct: "40%",  color: "#f59e0b", label: "Lemah" },
-        { pct: "60%",  color: "#1A3C5E", label: "Sedang" },
+        { pct: "60%",  color: "#1F4B3F", label: "Sedang" },
         { pct: "80%",  color: "#16a34a", label: "Kuat" },
-        { pct: "100%", color: "#15803d", label: "Sangat Kuat" },
+        { pct: "100%", color: "#1F5637", label: "Sangat Kuat" },
     ];
 
     const level = levels[Math.min(score, 4)];

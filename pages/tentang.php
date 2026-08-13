@@ -1,192 +1,205 @@
 <?php
 /**
- * Tentang (About) Page – Kayaswara Publishing
+ * Tentang Kayaswara — profil penerbit, identitas legal, prinsip redaksi.
  */
-$pageTitle = 'Tentang Kami – ' . getSetting('site_name', 'Kayaswara');
-$siteUrl   = defined('SITE_URL') ? SITE_URL : '';
+$siteUrl   = defined('SITE_URL') ? rtrim(SITE_URL, '/') : '';
+$siteName  = html_entity_decode(getSetting('site_name', 'Kayaswara'), ENT_QUOTES, 'UTF-8');
+$legalName = html_entity_decode(getSetting('legal_name', 'CV. Kayaswara'), ENT_QUOTES, 'UTF-8');
+$pageTitle = 'Tentang Kami — ' . $siteName;
+$metaDesc  = 'Profil ' . $legalName . ', penerbit buku akademik: identitas penerbit, prinsip redaksi, dan lini terbitan.';
+
+$address    = getSetting('address', '');
+$email      = getSetting('email_contact', '');
+$whatsapp   = getSetting('whatsapp_number', '');
+$waDigits   = $whatsapp ? preg_replace('/\D/', '', $whatsapp) : '';
+$foundedYr  = getSetting('founded_year', '');
+$legalNib   = getSetting('legal_nib', '');
+$legalAkta  = getSetting('legal_akta', '');
+$legalNpwp  = getSetting('legal_npwp', '');
+
+$identity = array_filter([
+    'Nama penerbit'   => $siteName,
+    'Badan usaha'     => $legalName,
+    'Bidang usaha'    => 'Penerbitan buku',
+    'Tahun berdiri'   => $foundedYr,
+    'NIB'             => $legalNib,
+    'Akta pendirian'  => $legalAkta,
+    'NPWP'            => $legalNpwp,
+    'Alamat redaksi'  => $address,
+], static fn($v) => trim((string) $v) !== '');
+
+$principles = [
+    ['fa-scale-balanced', 'Telaah sebelum terbit', 'Kelayakan naskah dinilai lebih dahulu. Keputusan terbit tidak ditentukan oleh besarnya biaya yang dibayarkan penulis.'],
+    ['fa-file-signature', 'Kesepakatan tertulis', 'Lingkup pekerjaan, jadwal, dan biaya dituangkan dalam dokumen yang dapat dibaca ulang kedua pihak.'],
+    ['fa-shield-halved', 'Menjaga hak penulis', 'Hak cipta isi buku tetap milik penulis. Naskah tidak dibagikan kepada pihak di luar tim redaksi yang menangani.'],
+    ['fa-book-bookmark', 'Katalog yang terbuka', 'Setiap terbitan dicatat lengkap dengan data bibliografinya dan dapat ditelusuri publik di halaman katalog.'],
+    ['fa-recycle', 'Produksi seperlunya', 'Jumlah cetak disesuaikan kebutuhan nyata untuk menekan sisa produksi; berkas digital disiapkan sebagai pendamping.'],
+    ['fa-handshake-angle', 'Pendampingan, bukan sekadar jasa', 'Penulis dilibatkan pada setiap keputusan penting: hasil suntingan, rancangan sampul, dan persetujuan akhir.'],
+];
+
+$imprints = getPublicationCategories();
+unset($imprints['lainnya']);
+
+$team = [
+    ['Pemimpin Redaksi', 'Menentukan arah lini terbitan dan mengambil keputusan akhir atas hasil telaah naskah.', 'fa-user-tie'],
+    ['Dewan Telaah', 'Menilai kelayakan naskah sesuai bidang keilmuan masing-masing.', 'fa-users-viewfinder'],
+    ['Penyunting Naskah', 'Mengerjakan penyuntingan substansi dan bahasa, serta menyusun catatan revisi.', 'fa-pen-fancy'],
+    ['Tata Letak & Desain', 'Menata isi buku dan merancang sampul sampai berkas siap cetak.', 'fa-palette'],
+];
+
+// Statistik nyata dari basis data
+$bookCount = 0; $authorCount = 0; $yearSpan = '';
+try {
+    $bookCount = (int) (fetch("SELECT COUNT(*) c FROM publications WHERE status='published'")['c'] ?? 0);
+    $row = fetch("SELECT MIN(publish_year) a, MAX(publish_year) b FROM publications WHERE status='published' AND publish_year > 0");
+    if ($row && $row['a']) $yearSpan = $row['a'] == $row['b'] ? $row['a'] : $row['a'] . '–' . $row['b'];
+} catch (Exception $e) {}
+try {
+    $authorCount = (int) (fetch("SELECT COUNT(DISTINCT authors) c FROM publications WHERE status='published'")['c'] ?? 0);
+} catch (Exception $e) {}
 ?>
 
-<!-- Page Hero -->
-<div class="page-hero">
+<div class="page-head">
     <div class="container">
-        <div class="page-hero-content text-center fade-in-up">
-            <h1 class="page-hero-title">Tentang Kami</h1>
-            <p class="page-hero-subtitle">Mengenal lebih dekat Kayaswara — mitra penerbitan buku akademik Anda</p>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb justify-content-center">
-                    <li class="breadcrumb-item"><a href="<?= $siteUrl ?>/">Beranda</a></li>
-                    <li class="breadcrumb-item active">Tentang Kami</li>
-                </ol>
-            </nav>
-        </div>
+        <ol class="crumbs">
+            <li><a href="<?= $siteUrl ?>/">Beranda</a></li>
+            <li>Tentang</li>
+        </ol>
+        <span class="eyebrow">Profil Penerbit</span>
+        <h1>Tentang <?= htmlspecialchars($siteName) ?></h1>
+        <p>Penerbit buku akademik yang bekerja dengan dosen, peneliti, dan mahasiswa pascasarjana di Indonesia.</p>
     </div>
 </div>
 
-<!-- ABOUT INTRO -->
-<section class="section-padding bg-white">
+<section class="section">
     <div class="container">
-        <div class="row align-items-center g-5">
-            <div class="col-lg-6 fade-in-up">
-                <span class="section-badge">Siapa Kami</span>
-                <h2 class="section-title">Mitra Penerbitan Buku Akademik Indonesia</h2>
-                <p class="text-muted mb-3">
-                    CV. Kayaswara adalah penyedia jasa penerbitan buku akademik profesional yang berfokus pada buku ajar, buku referensi, monograf, dan karya ilmiah lainnya untuk komunitas akademik Indonesia.
-                </p>
-                <p class="text-muted mb-3">
-                    Kami hadir sebagai respons terhadap kebutuhan dosen, peneliti, dan akademisi Indonesia untuk menerbitkan buku berkualitas tinggi secara mudah, cepat, dan terjangkau — dengan standar penerbitan profesional.
-                </p>
-                <p class="text-muted">
-                    Dalam perjalanan kami, Kayaswara telah membantu puluhan penulis dari berbagai bidang keilmuan — mulai dari pendidikan, kesehatan, teknik, hukum, ekonomi, hingga ilmu sosial dan humaniora — menerbitkan karya mereka.
-                </p>
-            </div>
-            <div class="col-lg-6 fade-in-right">
-                <div class="about-visual">
-                    <div class="about-visual-grid">
-                        <div class="about-stat-block" data-testid="about-stat-naskah">
-                            <div class="about-stat-num">75+</div>
-                            <div class="about-stat-lab">Naskah Terbit</div>
-                        </div>
-                        <div class="about-stat-block accent" data-testid="about-stat-penulis">
-                            <div class="about-stat-num">40+</div>
-                            <div class="about-stat-lab">Penulis Dilayani</div>
-                        </div>
-                        <div class="about-stat-block secondary" data-testid="about-stat-tahun">
-                            <div class="about-stat-num">3+</div>
-                            <div class="about-stat-lab">Tahun Pengalaman</div>
-                        </div>
-                        <div class="about-stat-block" data-testid="about-stat-kepuasan">
-                            <div class="about-stat-num">98%</div>
-                            <div class="about-stat-lab">Kepuasan Penulis</div>
-                        </div>
-                    </div>
+        <div class="row g-5 align-items-start">
+            <div class="col-lg-7 reveal">
+                <span class="eyebrow">Siapa Kami</span>
+                <h2>Menjaga jarak antara naskah dan meja cetak</h2>
+                <div class="rule-accent"></div>
+                <div class="prose">
+                    <p>
+                        <?= htmlspecialchars($legalName) ?> adalah badan usaha yang bergerak di bidang penerbitan buku.
+                        Kami menerbitkan buku ajar, buku referensi, monograf, dan bunga rampai — jenis terbitan yang
+                        pembacanya menuntut ketelitian: mahasiswa yang memakainya untuk kuliah, dan peneliti yang
+                        mengutipnya untuk karya berikutnya.
+                    </p>
+                    <p>
+                        Karena itu kami menaruh satu tahap yang tidak dapat dilewati siapa pun: telaah redaksi.
+                        Naskah dibaca lebih dahulu, dinilai kelayakannya, lalu diputuskan. Sebagian naskah kami terima,
+                        sebagian dikembalikan disertai catatan perbaikan. Cara ini membuat proses terasa lebih panjang,
+                        tetapi menjaga agar setiap judul yang keluar dari katalog kami pantas dipertanggungjawabkan.
+                    </p>
+                    <p>
+                        Setelah naskah diterima, pekerjaan berlanjut ke penyuntingan, tata letak, desain sampul,
+                        produksi, hingga pencatatan pada katalog penerbit. Penulis dilibatkan di tiap titik keputusan
+                        dan dapat memantau posisi naskahnya secara daring.
+                    </p>
                 </div>
             </div>
-        </div>
-    </div>
-</section>
 
-<!-- VISION & MISSION -->
-<section class="section-padding" style="background: var(--bg-light);">
-    <div class="container">
-        <div class="section-header text-center fade-in-up mb-5">
-            <span class="section-badge">Arah & Tujuan</span>
-            <h2 class="section-title">Visi & Misi Kami</h2>
-        </div>
-        <div class="row g-4">
-            <div class="col-md-6">
-                <div class="vm-card vm-card-vision fade-in-up">
-                    <div class="vm-card-icon"><i class="fas fa-eye"></i></div>
-                    <h3>Visi</h3>
-                    <p>Menjadi mitra penerbitan buku akademik terdepan di Indonesia yang mendorong akselerasi publikasi karya ilmiah, meningkatkan kualitas buku pendidikan nasional, dan berkontribusi pada kemajuan ekosistem pengetahuan akademik bangsa.</p>
+            <div class="col-lg-5 reveal" data-reveal-delay="0.1">
+                <div class="side-panel">
+                    <h4>Identitas Penerbit</h4>
+                    <table class="biblio-table">
+                        <tbody>
+                        <?php foreach ($identity as $label => $value): ?>
+                            <tr>
+                                <th scope="row"><?= htmlspecialchars($label) ?></th>
+                                <td><?= nl2br(htmlspecialchars((string) $value)) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
                 </div>
-            </div>
-            <div class="col-md-6">
-                <div class="vm-card vm-card-mission fade-in-up" style="animation-delay:0.1s">
-                    <div class="vm-card-icon"><i class="fas fa-bullseye"></i></div>
-                    <h3>Misi</h3>
-                    <ul class="vm-mission-list">
-                        <li>Menyediakan layanan penerbitan buku akademik berkualitas tinggi, terjangkau, dan mudah diakses oleh seluruh akademisi Indonesia.</li>
-                        <li>Mendampingi penulis dari proses penulisan hingga distribusi buku dengan standar profesional.</li>
-                        <li>Mendukung peningkatan karir akademik dosen melalui penerbitan buku yang diakui secara nasional.</li>
-                        <li>Terus berinovasi menghadirkan solusi penerbitan modern untuk mendukung ekosistem publikasi ilmiah yang berkelanjutan.</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 
-<!-- WHY CHOOSE US -->
-<section class="section-padding bg-white">
-    <div class="container">
-        <div class="section-header text-center fade-in-up mb-5">
-            <span class="section-badge">Keunggulan Kami</span>
-            <h2 class="section-title">Mengapa Kami Berbeda</h2>
-            <p class="section-subtitle">Lima alasan utama mengapa puluhan penulis mempercayakan penerbitan buku mereka kepada Kayaswara</p>
-        </div>
-        <div class="row g-4">
-            <?php
-            $whyUs = [
-                ['icon' => 'fas fa-book-open',        'title' => 'Fokus Buku Akademik',               'desc' => 'Kami tidak menerbitkan semua jenis buku. Fokus eksklusif kami pada buku akademik menjadikan kami ahli yang memahami kebutuhan spesifik buku ajar, referensi, dan monograf secara mendalam.'],
-                ['icon' => 'fas fa-users-cog',         'title' => 'Tim Berlatar Belakang Akademik',    'desc' => 'Tim kami memiliki pengalaman langsung di dunia akademik — sebagai peneliti dan penulis. Pemahaman ini membantu kami memberikan solusi yang benar-benar relevan untuk kebutuhan penerbitan Anda.'],
-                ['icon' => 'fas fa-graduation-cap',    'title' => 'Memahami Regulasi Akademik',        'desc' => 'Kami memahami kebutuhan penerbitan buku dosen, dan standar penerbitan buku yang diakui untuk kenaikan jabatan akademik.'],
-                ['icon' => 'fas fa-handshake',         'title' => 'Pendampingan Jangka Panjang',       'desc' => 'Hubungan kami dengan penulis tidak berhenti setelah buku terbit. Kami memberikan pendampingan berkelanjutan termasuk konsultasi, distribusi, dan cetak ulang.'],
-                ['icon' => 'fas fa-shield-alt',        'title' => 'Transparansi & Kepercayaan',        'desc' => 'Anda selalu mendapatkan informasi yang jelas tentang proses, biaya, dan timeline. Penulis memiliki kontrol penuh atas naskahnya di setiap tahap penerbitan.'],
-            ];
-            foreach ($whyUs as $i => $item):
-            ?>
-            <div class="col-md-6 col-lg-4">
-                <div class="why-card fade-in-up" style="animation-delay:<?= $i * 0.08 ?>s">
-                    <div class="why-card-icon"><i class="<?= $item['icon'] ?>"></i></div>
-                    <h4 class="why-card-title"><?= $item['title'] ?></h4>
-                    <p class="why-card-desc"><?= $item['desc'] ?></p>
-                </div>
-            </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-</section>
-
-<!-- TEAM -->
-<section class="section-padding" style="background: var(--bg-light);">
-    <div class="container">
-        <div class="section-header text-center fade-in-up mb-5">
-            <span class="section-badge">Tim Kami</span>
-            <h2 class="section-title">Kenali Tim di Balik Kayaswara</h2>
-            <p class="section-subtitle">Didukung oleh profesional berpengalaman yang berdedikasi untuk kesuksesan buku Anda</p>
-        </div>
-        <div class="row g-4 justify-content-center">
-            <?php
-            $team = [
-                ['name' => 'Tim Manajemen', 'role' => 'Founder & Pengelola', 'desc' => 'Mengelola seluruh operasional penerbitan dan memastikan setiap buku diterbitkan dengan standar kualitas tertinggi.', 'icon' => 'fas fa-user-tie'],
-                ['name' => 'Tim Editor',   'role' => 'Editor & Proofreader', 'desc' => 'Tim editor berpengalaman yang memastikan setiap naskah bebas kesalahan dan sesuai standar penulisan akademik.', 'icon' => 'fas fa-user-edit'],
-                ['name' => 'Tim Desain',   'role' => 'Layout & Cover Designer', 'desc' => 'Bertanggung jawab atas desain cover, layout buku, dan produksi visual yang menarik dan profesional.', 'icon' => 'fas fa-user-cog'],
-                ['name' => 'Tim Konsultan', 'role' => 'Konsultan Penerbitan', 'desc' => 'Mendampingi penulis dari awal hingga akhir — mulai dari konsultasi, review naskah, hingga distribusi buku.', 'icon' => 'fas fa-user-friends'],
-            ];
-            foreach ($team as $i => $member):
-            ?>
-            <div class="col-sm-6 col-lg-3">
-                <div class="team-card fade-in-up" style="animation-delay:<?= $i * 0.1 ?>s">
-                    <div class="team-avatar"><i class="<?= $member['icon'] ?>"></i></div>
-                    <div class="team-info">
-                        <h5 class="team-name"><?= $member['name'] ?></h5>
-                        <span class="team-role"><?= $member['role'] ?></span>
-                        <p class="team-desc"><?= $member['desc'] ?></p>
-                    </div>
-                </div>
-            </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-</section>
-
-<!-- Testimonial -->
-<section class="section-padding bg-white">
-    <div class="container">
-        <div class="section-header text-center fade-in-up mb-5">
-            <span class="section-badge">Apa Kata Penulis Kami</span>
-            <h2 class="section-title">Testimoni</h2>
-        </div>
-        <div class="row g-4">
-            <?php
-            $testimonials = [
-                ['text' => '"Proses penerbitan buku ajar saya di Kayaswara sangat cepat dan profesional. Tim editor sangat teliti, desain cover-nya memuaskan. Sangat direkomendasikan untuk sesama dosen yang ingin menerbitkan buku."', 'name' => 'Dr. Hendra Kusuma, M.Si.', 'role' => 'Dosen – Universitas Negeri Semarang'],
-                ['text' => '"Saya mengonversi disertasi saya menjadi buku referensi melalui Kayaswara. Prosesnya didampingi dari awal — mulai dari restrukturisasi konten, editing, hingga terbit. Hasilnya sangat profesional dan memuaskan."', 'name' => 'Prof. Dr. Siti Aminah, M.Pd.', 'role' => 'Guru Besar – Universitas Islam Indonesia'],
-                ['text' => '"Kayaswara membantu saya menerbitkan buku pertama saya. Sebagai penulis pemula, saya sangat terbantu dengan konsultasi dan pendampingan yang diberikan. Sekarang buku saya sudah tersedia di toko buku online!"', 'name' => 'Dr. Agus Setiawan, M.T.', 'role' => 'Dosen – Institut Teknologi Sepuluh Nopember'],
-            ];
-            foreach ($testimonials as $i => $t):
-            ?>
-            <div class="col-md-4">
-                <div class="testimonial-card fade-in-up" style="animation-delay:<?= $i * 0.1 ?>s">
-                    <div class="testimonial-quote-icon"><i class="fas fa-quote-left"></i></div>
-                    <p class="testimonial-text"><?= $t['text'] ?></p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar"><i class="fas fa-user-circle"></i></div>
+                <div class="side-panel">
+                    <h4>Hubungi Redaksi</h4>
+                    <?php if ($email): ?>
+                    <div class="contact-row">
+                        <span class="ic"><i class="fa-regular fa-envelope"></i></span>
                         <div>
-                            <div class="testimonial-name"><?= $t['name'] ?></div>
-                            <div class="testimonial-role"><?= $t['role'] ?></div>
+                            <div class="lb">Surel</div>
+                            <div class="vl"><a href="mailto:<?= htmlspecialchars($email) ?>"><?= htmlspecialchars($email) ?></a></div>
                         </div>
                     </div>
+                    <?php endif; ?>
+                    <?php if ($whatsapp): ?>
+                    <div class="contact-row">
+                        <span class="ic"><i class="fa-brands fa-whatsapp"></i></span>
+                        <div>
+                            <div class="lb">WhatsApp</div>
+                            <div class="vl"><a href="https://wa.me/<?= htmlspecialchars($waDigits) ?>" target="_blank" rel="noopener"><?= htmlspecialchars($whatsapp) ?></a></div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                    <div class="contact-row">
+                        <span class="ic"><i class="fa-regular fa-clock"></i></span>
+                        <div>
+                            <div class="lb">Jam kerja</div>
+                            <div class="vl">Senin–Jumat, 08.00–17.00 WIB</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Angka -->
+<?php if ($bookCount > 0): ?>
+<section class="section-sm paper-grain">
+    <div class="container">
+        <div class="row g-3 justify-content-center">
+            <div class="col-6 col-lg-3 reveal">
+                <div class="figure-card">
+                    <div class="num" data-count-to="<?= $bookCount ?>"><?= $bookCount ?></div>
+                    <div class="lbl">Judul dalam katalog</div>
+                </div>
+            </div>
+            <?php if ($authorCount > 0): ?>
+            <div class="col-6 col-lg-3 reveal" data-reveal-delay="0.06">
+                <div class="figure-card">
+                    <div class="num" data-count-to="<?= $authorCount ?>"><?= $authorCount ?></div>
+                    <div class="lbl">Penulis & tim penulis</div>
+                </div>
+            </div>
+            <?php endif; ?>
+            <div class="col-6 col-lg-3 reveal" data-reveal-delay="0.12">
+                <div class="figure-card">
+                    <div class="num"><?= count($imprints) ?></div>
+                    <div class="lbl">Lini terbitan</div>
+                </div>
+            </div>
+            <?php if ($yearSpan !== ''): ?>
+            <div class="col-6 col-lg-3 reveal" data-reveal-delay="0.18">
+                <div class="figure-card">
+                    <div class="num" style="font-size:1.6rem;"><?= htmlspecialchars($yearSpan) ?></div>
+                    <div class="lbl">Rentang tahun terbit</div>
+                </div>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
+
+<!-- Prinsip -->
+<section class="section">
+    <div class="container">
+        <div class="section-head center reveal">
+            <span class="eyebrow eyebrow-center">Prinsip Redaksi</span>
+            <h2>Enam hal yang kami pegang</h2>
+            <p>Bukan slogan — enam hal ini menentukan bagaimana keputusan diambil di meja redaksi.</p>
+        </div>
+        <div class="row g-4">
+            <?php foreach ($principles as $i => [$icon, $title, $desc]): ?>
+            <div class="col-md-6 col-lg-4 reveal" data-reveal-delay="<?= ($i % 3) * 0.07 ?>">
+                <div class="card-plain">
+                    <div class="service-icon"><i class="fa-solid <?= $icon ?>"></i></div>
+                    <h3 class="h6 mb-2"><?= $title ?></h3>
+                    <p class="mb-0" style="font-size:.92rem;"><?= $desc ?></p>
                 </div>
             </div>
             <?php endforeach; ?>
@@ -194,23 +207,68 @@ $siteUrl   = defined('SITE_URL') ? SITE_URL : '';
     </div>
 </section>
 
-<!-- CTA -->
-<section class="cta-section">
-    <div class="cta-shapes" aria-hidden="true">
-        <div class="cta-shape cta-shape-1"></div>
-        <div class="cta-shape cta-shape-2"></div>
+<!-- Lini terbitan -->
+<section class="section paper-grain">
+    <div class="container">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-5 reveal">
+                <span class="eyebrow">Lini Terbitan</span>
+                <h2>Apa saja yang kami terbitkan</h2>
+                <div class="rule-accent"></div>
+                <p>Fokus kami adalah terbitan ilmiah. Naskah di luar lini berikut dapat tetap diajukan, dan akan dinilai kasus per kasus oleh redaksi.</p>
+                <a href="<?= $siteUrl ?>/publikasi" class="btn btn-outline-primary mt-2">
+                    <i class="fa-solid fa-book-open"></i>Lihat Katalog
+                </a>
+            </div>
+            <div class="col-lg-7 reveal" data-reveal-delay="0.1">
+                <div class="legal-grid">
+                    <?php foreach ($imprints as $key => $label): ?>
+                    <div class="legal-cell">
+                        <div class="lb">Lini</div>
+                        <div class="vl"><?= htmlspecialchars($label) ?></div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="container text-center">
-        <div class="cta-content fade-in-up">
-            <h2 class="cta-title">Bergabunglah bersama 40+ Penulis yang Telah Menerbitkan Buku Bersama Kami</h2>
-            <p class="cta-subtitle">Mulailah perjalanan penerbitan buku Anda bersama tim ahli kami.</p>
-            <div class="cta-actions">
-                <a href="<?= $siteUrl ?>/konsultasi" class="btn btn-accent btn-lg">
-                    <i class="fas fa-comments me-2"></i>Konsultasi Gratis
-                </a>
-                <a href="<?= $siteUrl ?>/portofolio" class="btn btn-outline-light btn-lg">
-                    <i class="fas fa-book me-2"></i>Lihat Portofolio
-                </a>
+</section>
+
+<!-- Struktur redaksi -->
+<section class="section">
+    <div class="container">
+        <div class="section-head center reveal">
+            <span class="eyebrow eyebrow-center">Struktur Kerja</span>
+            <h2>Siapa mengerjakan apa</h2>
+            <p>Naskah berpindah tangan secara terstruktur, bukan ditangani satu orang dari awal sampai akhir.</p>
+        </div>
+        <div class="row g-4">
+            <?php foreach ($team as $i => [$role, $desc, $icon]): ?>
+            <div class="col-md-6 col-lg-3 reveal" data-reveal-delay="<?= $i * 0.07 ?>">
+                <div class="person-card">
+                    <div class="person-avatar"><i class="fa-solid <?= $icon ?>"></i></div>
+                    <h3 class="h6 mb-1"><?= $role ?></h3>
+                    <p><?= $desc ?></p>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+
+<section class="section pt-0">
+    <div class="container">
+        <div class="cta-band reveal">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-8">
+                    <h2>Ingin berdiskusi dengan redaksi?</h2>
+                    <p>Kirim naskah atau kerangkanya, atau hubungi kami langsung pada jam kerja.</p>
+                </div>
+                <div class="col-lg-4">
+                    <div class="cta-actions justify-content-lg-end">
+                        <a href="<?= $siteUrl ?>/kirim-naskah" class="btn btn-accent btn-lg"><i class="fa-regular fa-paper-plane"></i>Kirim Naskah</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -24,12 +24,12 @@ if ($is_edit) {
     try {
         $existing = fetch("SELECT * FROM portfolio WHERE id = ?", [$id]);
         if (!$existing) {
-            flash('error', 'Portofolio tidak ditemukan.');
+            flash('error', 'Data kerja sama tidak ditemukan.');
             redirect('index.php?page=portofolio');
         }
         $item = array_merge($item, $existing);
     } catch (Exception $e) {
-        flash('error', 'Gagal memuat data portofolio.');
+        flash('error', 'Gagal memuat data kerja sama.');
         redirect('index.php?page=portofolio');
     }
 }
@@ -54,15 +54,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Validate
     if (empty($item['title'])) {
-        $errors[] = 'Judul portofolio wajib diisi.';
+        $errors[] = 'Judul kerja sama wajib diisi.';
     }
 
     if (empty($item['description'])) {
-        $errors[] = 'Deskripsi portofolio wajib diisi.';
+        $errors[] = 'Deskripsi kerja sama wajib diisi.';
     }
 
     // Valid categories
-    $valid_categories = ['jurnal', 'konferensi', 'repositori', 'lainnya'];
+    $valid_categories = array_keys(getPartnerCategories());
     if (!in_array($item['category'], $valid_categories)) {
         $errors[] = 'Kategori tidak valid.';
     }
@@ -132,10 +132,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($is_edit) {
                 update('portfolio', $data, 'id = ?', [$id]);
-                flash('success', 'Portofolio "' . $item['title'] . '" berhasil diperbarui.');
+                flash('success', 'Kerja sama "' . $item['title'] . '" berhasil diperbarui.');
             } else {
                 insert('portfolio', $data);
-                flash('success', 'Portofolio "' . $item['title'] . '" berhasil ditambahkan.');
+                flash('success', 'Kerja sama "' . $item['title'] . '" berhasil ditambahkan.');
             }
 
             redirect('index.php?page=portofolio');
@@ -155,11 +155,11 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
     <!-- Page Header -->
     <div class="page-header">
         <div class="page-header-left">
-            <h2><?= $is_edit ? 'Edit Portofolio' : 'Tambah Portofolio' ?></h2>
+            <h2><?= $is_edit ? 'Ubah Kerja Sama' : 'Tambah Kerja Sama' ?></h2>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.php">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="index.php?page=portofolio">Portofolio</a></li>
+                    <li class="breadcrumb-item"><a href="index.php?page=portofolio">Kerja Sama</a></li>
                     <li class="breadcrumb-item active"><?= $is_edit ? 'Edit' : 'Tambah' ?></li>
                 </ol>
             </nav>
@@ -193,7 +193,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                     <div class="admin-card-header">
                         <h5 class="admin-card-title">
                             <i class="fas fa-info-circle"></i>
-                            Informasi Portofolio
+                            Informasi Kerja Sama
                         </h5>
                     </div>
                     <div class="admin-card-body">
@@ -217,12 +217,12 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                 <small class="text-muted fw-normal">(auto-generate dari judul)</small>
                             </label>
                             <div class="input-group">
-                                <span class="input-group-text" style="background:#f8fafc;font-size:12px;color:#94a3b8;">/portofolio/</span>
+                                <span class="input-group-text" style="background:#FCFBF7;font-size:12px;color:#A6B0A9;">/portofolio/</span>
                                 <input type="text" id="slug" name="slug_preview"
                                        class="form-control"
                                        value="<?= htmlspecialchars($item['slug']) ?>"
                                        readonly
-                                       style="background:#f8fafc;color:#64748b;">
+                                       style="background:#FCFBF7;color:#77857D;">
                             </div>
                             <div class="form-hint">Slug dihasilkan otomatis dari judul.</div>
                         </div>
@@ -308,28 +308,27 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
 
                         <!-- Category -->
                         <div class="mb-3">
-                            <label class="form-label" for="category">Kategori</label>
+                            <label class="form-label" for="category">Jenis Mitra</label>
                             <select id="category" name="category" class="form-select">
-                                <option value="jurnal" <?= $item['category'] === 'jurnal' ? 'selected' : '' ?>>Jurnal</option>
-                                <option value="konferensi" <?= $item['category'] === 'konferensi' ? 'selected' : '' ?>>Konferensi</option>
-                                <option value="repositori" <?= $item['category'] === 'repositori' ? 'selected' : '' ?>>Repositori</option>
-                                <option value="lainnya" <?= $item['category'] === 'lainnya' ? 'selected' : '' ?>>Lainnya</option>
+                                <?php foreach (getPartnerCategories() as $pcKey => $pcLabel): ?>
+                                <option value="<?= $pcKey ?>" <?= $item['category'] === $pcKey ? 'selected' : '' ?>><?= htmlspecialchars($pcLabel) ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
 
                         <!-- Featured -->
                         <div class="mb-3">
-                            <div class="form-check" style="padding:14px 16px;background:#f8fafc;border-radius:8px;border:1.5px solid #e2e8f0;">
+                            <div class="form-check" style="padding:14px 16px;background:#FCFBF7;border-radius:8px;border:1.5px solid #E3E0D4;">
                                 <input class="form-check-input" type="checkbox"
                                        id="is_featured" name="is_featured" value="1"
                                        <?= $item['is_featured'] ? 'checked' : '' ?>
                                        style="width:18px;height:18px;margin-top:2px;">
                                 <label class="form-check-label ms-2" for="is_featured">
                                     <span style="font-weight:600;font-size:13.5px;">
-                                        <i class="fas fa-star me-1" style="color:#B8860B;"></i>
+                                        <i class="fas fa-star me-1" style="color:#A9752F;"></i>
                                         Tampilkan sebagai Featured
                                     </span>
-                                    <div style="font-size:12px;color:#64748b;">Ditampilkan di bagian utama halaman portofolio</div>
+                                    <div style="font-size:12px;color:#77857D;">Ditampilkan di bagian utama halaman portofolio</div>
                                 </label>
                             </div>
                         </div>
@@ -359,7 +358,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                         <!-- Current Image Preview -->
                         <?php if ($is_edit && !empty($item['image'])): ?>
                         <div class="mb-3">
-                            <div style="font-size:12px;font-weight:600;color:#64748b;margin-bottom:8px;">Gambar Saat Ini:</div>
+                            <div style="font-size:12px;font-weight:600;color:#77857D;margin-bottom:8px;">Gambar Saat Ini:</div>
                             <div class="img-preview-wrap" id="currentImgWrap">
                                 <img src="../assets/uploads/portfolio/<?= htmlspecialchars($item['image']) ?>"
                                      alt="Current"
@@ -370,7 +369,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                         </div>
                         <?php else: ?>
                         <div id="previewContainer" style="display:none;margin-bottom:12px;">
-                            <div style="font-size:12px;font-weight:600;color:#64748b;margin-bottom:8px;">Preview:</div>
+                            <div style="font-size:12px;font-weight:600;color:#77857D;margin-bottom:8px;">Preview:</div>
                             <div class="img-preview-wrap">
                                 <img id="imgPreview" src="" alt="Preview"
                                      class="img-preview" style="width:100%;height:160px;display:none;">

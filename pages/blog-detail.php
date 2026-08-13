@@ -1,162 +1,154 @@
 <?php
 /**
- * Blog Detail Page
+ * Detail tulisan Wawasan.
  */
-$siteUrl = defined('SITE_URL') ? SITE_URL : '';
-$slug    = sanitize($_GET['slug'] ?? '');
+$siteUrl  = defined('SITE_URL') ? rtrim(SITE_URL, '/') : '';
+$siteName = html_entity_decode(getSetting('site_name', 'Kayaswara'), ENT_QUOTES, 'UTF-8');
+$slug     = preg_replace('/[^a-z0-9\-]/i', '', (string) ($_GET['slug'] ?? ''));
 
-if (empty($slug)) {
-    redirect($siteUrl . '/blog');
-}
-
-$post = fetch("SELECT * FROM blog_posts WHERE slug = ? AND status = 'published'", [$slug]);
+$post = null;
+try {
+    $post = fetch("SELECT * FROM blog_posts WHERE slug = ? AND status = 'published'", [$slug]);
+} catch (Exception $e) {}
 
 if (!$post) {
     http_response_code(404);
-    echo '<div class="container py-5 text-center"><div class="empty-state"><i class="fas fa-search fa-4x text-muted mb-3"></i><h3>Artikel Tidak Ditemukan</h3><p class="text-muted">Artikel yang Anda cari tidak tersedia atau telah dihapus.</p><a href="' . $siteUrl . '/blog" class="btn btn-primary mt-2">Lihat Semua Artikel</a></div></div>';
+    $pageTitle = 'Tulisan tidak ditemukan — ' . $siteName;
+    ?>
+    <div class="section">
+        <div class="container">
+            <div class="empty-state" style="max-width:620px;margin:0 auto;">
+                <i class="fa-regular fa-file-lines"></i>
+                <h4>Tulisan tidak ditemukan</h4>
+                <p>Tulisan yang Anda cari tidak tersedia atau telah dipindahkan.</p>
+                <a href="<?= $siteUrl ?>/wawasan" class="btn btn-primary btn-sm">Kembali ke Wawasan</a>
+            </div>
+        </div>
+    </div>
+    <?php
     return;
 }
 
-// Increment views
-update('blog_posts', ['views' => $post['views'] + 1], 'id = ?', [$post['id']]);
+try { query("UPDATE blog_posts SET views = views + 1 WHERE id = ?", [$post['id']]); } catch (Exception $e) {}
 
-$pageTitle = htmlspecialchars($post['title']) . ' – Blog – ' . getSetting('site_name', 'Kayaswara');
-$metaDesc  = truncate($post['excerpt'] ?: $post['content'], 160);
+$pageTitle = $post['title'] . ' — ' . $siteName;
+$metaDesc  = truncate($post['excerpt'] ?: strip_tags($post['content'] ?? ''), 175);
+$shareUrl  = $siteUrl . '/wawasan/' . $post['slug'];
 
-// Related posts
-$related = fetchAll(
-    "SELECT * FROM blog_posts WHERE status='published' AND id != ? ORDER BY created_at DESC LIMIT 3",
-    [$post['id']]
-);
+$related = [];
+try {
+    $related = fetchAll(
+        "SELECT title, slug, image, created_at, category FROM blog_posts
+         WHERE status='published' AND id <> ? " . (!empty($post['category']) ? "AND category = ? " : '') .
+        "ORDER BY created_at DESC LIMIT 3",
+        !empty($post['category']) ? [$post['id'], $post['category']] : [$post['id']]
+    );
+    if (count($related) < 3) {
+        $related = fetchAll("SELECT title, slug, image, created_at, category FROM blog_posts WHERE status='published' AND id <> ? ORDER BY created_at DESC LIMIT 3", [$post['id']]);
+    }
+} catch (Exception $e) {}
 
-// Share URL
-$shareUrl = urlencode($siteUrl . '/blog/' . $slug);
-$shareTitle = urlencode($post['title']);
-$waNumber = getSetting('whatsapp_number', '');
+$readMinutes = max(1, (int) ceil(str_word_count(strip_tags($post['content'] ?? '')) / 200));
 ?>
 
-<!-- Page Hero -->
-<div class="page-hero page-hero-blog">
+<div class="page-head">
     <div class="container">
-        <div class="page-hero-content text-center fade-in-up" style="max-width:760px; margin:0 auto;">
-            <div class="blog-detail-meta mb-3">
-                <span><i class="fas fa-calendar-alt me-1"></i><?= formatDate($post['created_at']) ?></span>
-                <span class="mx-2">·</span>
-                <span><i class="fas fa-user me-1"></i><?= htmlspecialchars($post['author']) ?></span>
-                <span class="mx-2">·</span>
-                <span><i class="fas fa-eye me-1"></i><?= number_format($post['views'] + 1) ?> kali dibaca</span>
-            </div>
-            <h1 class="page-hero-title" style="font-size:clamp(1.6rem,4vw,2.5rem);">
-                <?= htmlspecialchars($post['title']) ?>
-            </h1>
-            <?php if (!empty($post['excerpt'])): ?>
-            <p class="page-hero-subtitle"><?= htmlspecialchars($post['excerpt']) ?></p>
-            <?php endif; ?>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb justify-content-center">
-                    <li class="breadcrumb-item"><a href="<?= $siteUrl ?>/">Beranda</a></li>
-                    <li class="breadcrumb-item"><a href="<?= $siteUrl ?>/blog">Blog</a></li>
-                    <li class="breadcrumb-item active"><?= htmlspecialchars(truncate($post['title'], 40)) ?></li>
-                </ol>
-            </nav>
-        </div>
+        <ol class="crumbs">
+            <li><a href="<?= $siteUrl ?>/">Beranda</a></li>
+            <li><a href="<?= $siteUrl ?>/wawasan">Wawasan</a></li>
+            <li><?= htmlspecialchars(truncate($post['title'], 44)) ?></li>
+        </ol>
+        <?php if (!empty($post['category'])): ?>
+        <span class="eyebrow"><?= htmlspecialchars($post['category']) ?></span>
+        <?php endif; ?>
+        <h1><?= htmlspecialchars($post['title']) ?></h1>
+        <p>
+            <i class="fa-regular fa-user me-1"></i><?= htmlspecialchars($post['author'] ?: 'Redaksi') ?>
+            <span class="mx-2">·</span>
+            <i class="fa-regular fa-calendar me-1"></i><?= formatDate($post['created_at'], 'd F Y') ?>
+            <span class="mx-2">·</span>
+            <i class="fa-regular fa-clock me-1"></i><?= $readMinutes ?> menit baca
+        </p>
     </div>
 </div>
 
-<section class="section-padding bg-white">
+<section class="section">
     <div class="container">
         <div class="row g-5 justify-content-center">
-            <!-- Main Content -->
             <div class="col-lg-8">
+                <article class="reveal">
+                    <?php if (!empty($post['image'])): ?>
+                    <figure class="mb-4">
+                        <img src="<?= $siteUrl ?>/assets/uploads/blog/<?= htmlspecialchars($post['image']) ?>"
+                             alt="<?= htmlspecialchars($post['title']) ?>"
+                             class="w-100 rounded-md" style="border:1px solid var(--line);">
+                    </figure>
+                    <?php endif; ?>
 
-                <!-- Featured Image -->
-                <?php if (!empty($post['image'])): ?>
-                <div class="mb-5 fade-in-up">
-                    <img src="<?= $siteUrl ?>/assets/uploads/blog/<?= htmlspecialchars($post['image']) ?>"
-                         alt="<?= htmlspecialchars($post['title']) ?>"
-                         class="img-fluid rounded-3 shadow w-100"
-                         style="max-height:420px; object-fit:cover;">
-                </div>
-                <?php endif; ?>
+                    <?php if (!empty($post['excerpt'])): ?>
+                    <p class="lead serif" style="font-size:1.15rem;color:var(--ink);"><?= htmlspecialchars($post['excerpt']) ?></p>
+                    <hr class="hr-soft">
+                    <?php endif; ?>
 
-                <!-- Article Content -->
-                <div class="article-content fade-in-up">
-                    <?= sanitizeHtml($post['content']) ?>
-                </div>
-
-                <!-- Share Buttons -->
-                <div class="share-section mt-5 fade-in-up">
-                    <h6 class="share-title"><i class="fas fa-share-alt me-2"></i>Bagikan Artikel Ini</h6>
-                    <div class="share-buttons">
-                        <?php if (!empty($waNumber)): ?>
-                        <a href="https://api.whatsapp.com/send?phone=<?= htmlspecialchars(preg_replace('/\D/', '', $waNumber)) ?>&text=<?= $shareTitle ?>%20<?= $shareUrl ?>"
-                           class="share-btn share-btn-whatsapp" target="_blank" rel="noopener" title="Bagikan via WhatsApp">
-                            <i class="fab fa-whatsapp me-2"></i>WhatsApp
-                        </a>
-                        <?php else: ?>
-                        <a href="https://api.whatsapp.com/send?text=<?= $shareTitle ?>%20<?= $shareUrl ?>"
-                           class="share-btn share-btn-whatsapp" target="_blank" rel="noopener" title="Bagikan via WhatsApp">
-                            <i class="fab fa-whatsapp me-2"></i>WhatsApp
-                        </a>
-                        <?php endif; ?>
-                        <a href="https://twitter.com/intent/tweet?text=<?= $shareTitle ?>&url=<?= $shareUrl ?>"
-                           class="share-btn share-btn-twitter" target="_blank" rel="noopener" title="Bagikan via Twitter/X">
-                            <i class="fab fa-x-twitter me-2"></i>Twitter
-                        </a>
-                        <a href="https://www.facebook.com/sharer/sharer.php?u=<?= $shareUrl ?>"
-                           class="share-btn share-btn-facebook" target="_blank" rel="noopener" title="Bagikan via Facebook">
-                            <i class="fab fa-facebook-f me-2"></i>Facebook
-                        </a>
-                        <a href="https://www.linkedin.com/sharing/share-offsite/?url=<?= $shareUrl ?>"
-                           class="share-btn share-btn-linkedin" target="_blank" rel="noopener" title="Bagikan via LinkedIn">
-                            <i class="fab fa-linkedin-in me-2"></i>LinkedIn
-                        </a>
+                    <div class="prose">
+                        <?= sanitizeHtml($post['content'] ?? '') ?>
                     </div>
-                </div>
 
-                <!-- Back to Blog -->
-                <div class="mt-5 fade-in-up">
-                    <a href="<?= $siteUrl ?>/blog" class="btn btn-outline-primary">
-                        <i class="fas fa-arrow-left me-2"></i>Kembali ke Blog
-                    </a>
-                </div>
-            </div>
-        </div>
+                    <hr class="hr-soft">
 
-        <!-- Related Posts -->
-        <?php if (!empty($related)): ?>
-        <div class="mt-6">
-            <h3 class="h4 fw-700 mb-4">Artikel Terkait</h3>
-            <div class="row g-4">
-                <?php foreach ($related as $rel): ?>
-                <div class="col-md-4">
-                    <article class="blog-card">
-                        <div class="blog-card-img">
-                            <?php if (!empty($rel['image'])): ?>
-                                <img src="<?= $siteUrl ?>/assets/uploads/blog/<?= htmlspecialchars($rel['image']) ?>"
-                                     alt="<?= htmlspecialchars($rel['title']) ?>" loading="lazy">
-                            <?php else: ?>
-                                <div class="blog-card-placeholder"><i class="fas fa-pen-nib"></i></div>
-                            <?php endif; ?>
-                        </div>
-                        <div class="blog-card-body">
-                            <div class="blog-card-meta">
-                                <span><i class="fas fa-calendar-alt me-1"></i><?= formatDate($rel['created_at']) ?></span>
-                            </div>
-                            <h4 class="blog-card-title h6">
-                                <a href="<?= $siteUrl ?>/blog/<?= htmlspecialchars($rel['slug']) ?>">
-                                    <?= htmlspecialchars($rel['title']) ?>
-                                </a>
-                            </h4>
-                            <a href="<?= $siteUrl ?>/blog/<?= htmlspecialchars($rel['slug']) ?>" class="blog-read-more">
-                                Baca <i class="fas fa-arrow-right ms-1"></i>
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                        <a href="<?= $siteUrl ?>/wawasan" class="btn-link-arrow">
+                            <i class="fa-solid fa-arrow-left"></i>Kembali ke Wawasan
+                        </a>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="text-muted small">Bagikan:</span>
+                            <a class="btn btn-ghost btn-sm" target="_blank" rel="noopener"
+                               href="https://api.whatsapp.com/send?text=<?= rawurlencode($post['title'] . ' — ' . $shareUrl) ?>" aria-label="Bagikan via WhatsApp">
+                                <i class="fa-brands fa-whatsapp"></i>
+                            </a>
+                            <a class="btn btn-ghost btn-sm" target="_blank" rel="noopener"
+                               href="https://www.facebook.com/sharer/sharer.php?u=<?= rawurlencode($shareUrl) ?>" aria-label="Bagikan via Facebook">
+                                <i class="fa-brands fa-facebook-f"></i>
+                            </a>
+                            <a class="btn btn-ghost btn-sm" target="_blank" rel="noopener"
+                               href="https://www.linkedin.com/sharing/share-offsite/?url=<?= rawurlencode($shareUrl) ?>" aria-label="Bagikan via LinkedIn">
+                                <i class="fa-brands fa-linkedin-in"></i>
                             </a>
                         </div>
-                    </article>
+                    </div>
+                </article>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="reveal" data-reveal-delay="0.08" style="position:sticky;top:110px;">
+                    <div class="side-panel">
+                        <h4>Kirim Naskah Anda</h4>
+                        <p style="font-size:.93rem;">Sudah punya naskah yang siap ditelaah redaksi? Kirimkan berkasnya hari ini.</p>
+                        <a href="<?= $siteUrl ?>/kirim-naskah" class="btn btn-primary w-100">
+                            <i class="fa-regular fa-paper-plane"></i>Kirim Naskah
+                        </a>
+                    </div>
+
+                    <?php if (!empty($related)): ?>
+                    <div class="side-panel">
+                        <h4>Tulisan Lain</h4>
+                        <?php foreach ($related as $r): ?>
+                        <div class="contact-row">
+                            <span class="ic"><i class="fa-regular fa-file-lines"></i></span>
+                            <div>
+                                <div class="lb"><?= formatDate($r['created_at']) ?></div>
+                                <div class="vl">
+                                    <a href="<?= $siteUrl ?>/wawasan/<?= htmlspecialchars($r['slug']) ?>" style="color:var(--ink);">
+                                        <?= htmlspecialchars(truncate($r['title'], 62)) ?>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php endif; ?>
                 </div>
-                <?php endforeach; ?>
             </div>
         </div>
-        <?php endif; ?>
     </div>
 </section>

@@ -1,25 +1,25 @@
 <?php
 /**
- * Konsultasi (Consultation) Page — CV. Kayaswara
- * Handles AJAX POST submission with file upload.
+ * Kirim Naskah — formulir pengajuan naskah ke redaksi.
+ * Menangani POST (AJAX) dan menyimpan ke tabel `consultations`.
  */
-$siteUrl = defined('SITE_URL') ? SITE_URL : '';
-$pageTitle = 'Konsultasi Gratis – ' . getSetting('site_name', 'Kayaswara');
+$siteUrl   = defined('SITE_URL') ? rtrim(SITE_URL, '/') : '';
+$siteName  = html_entity_decode(getSetting('site_name', 'Kayaswara'), ENT_QUOTES, 'UTF-8');
+$pageTitle = 'Kirim Naskah — ' . $siteName;
+$metaDesc  = 'Kirimkan naskah buku akademik Anda ke redaksi ' . $siteName . ' untuk ditelaah. Tanggapan awal dalam 1×24 jam kerja.';
 
-// ──────────────────────────────────────────
-// HANDLE AJAX / POST SUBMISSION
-// ──────────────────────────────────────────
+// ──────────────────────────────────────────────────────────────
+// POST — validasi, unggah berkas, simpan
+// ──────────────────────────────────────────────────────────────
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json; charset=utf-8');
 
-    // Verify CSRF
     if (!verify_csrf($_POST['csrf_token'] ?? '')) {
-        echo json_encode(['success' => false, 'message' => 'Token keamanan tidak valid. Silakan muat ulang halaman dan coba lagi.']);
+        echo json_encode(['success' => false, 'message' => 'Sesi Anda telah berakhir. Muat ulang halaman lalu kirim kembali.']);
         exit;
     }
 
-    // Validate fields
-    $errors = [];
+    $errors      = [];
     $name        = sanitize($_POST['name'] ?? '');
     $email       = sanitize($_POST['email'] ?? '');
     $phone       = sanitize($_POST['phone'] ?? '');
@@ -28,49 +28,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $budgetRange = sanitize($_POST['budget_range'] ?? '');
     $message     = sanitize($_POST['message'] ?? '');
 
-    $validServices = ['setup_ojs','migrasi','kustomisasi','pelatihan','maintenance','lainnya'];
-    $validBudgets  = ['< 3 juta', '3 - 6 juta', '6 - 10 juta', '> 10 juta', 'Belum tahu'];
+    $validServices = array_keys(getServiceTypes());
 
-    if (empty($name) || strlen($name) < 2)      $errors[] = 'Nama lengkap wajib diisi (minimal 2 karakter).';
-    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Alamat email tidak valid.';
-    if (!in_array($serviceType, $validServices)) $errors[] = 'Jenis layanan tidak valid.';
-    if (strlen($message) < 10)                  $errors[] = 'Pesan minimal 10 karakter.';
+    if (empty($name) || mb_strlen($name) < 2) $errors[] = 'Nama lengkap wajib diisi (minimal 2 karakter).';
+    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Alamat surel tidak valid.';
+    if (!in_array($serviceType, $validServices, true)) $errors[] = 'Jenis layanan tidak dikenali.';
+    if (mb_strlen($message) < 10) $errors[] = 'Deskripsi naskah minimal 10 karakter.';
 
-    // Handle file upload
+    // Lampiran naskah
     $uploadedFile = '';
     $uploadedOrigName = '';
     if (!empty($_FILES['manuscript_file']) && $_FILES['manuscript_file']['error'] === UPLOAD_ERR_OK) {
         $file = $_FILES['manuscript_file'];
 
-        // Validate file size (max 20MB)
-        $maxSize = 20 * 1024 * 1024;
-        if ($file['size'] > $maxSize) {
-            $errors[] = 'Ukuran file maksimal 20MB.';
+        if ($file['size'] > 20 * 1024 * 1024) {
+            $errors[] = 'Ukuran berkas maksimal 20MB.';
         }
 
-        // Validate file type
-        $allowedExt = ['pdf','doc','docx','odt','rtf','txt','zip','rar'];
+        $allowedExt = ['pdf', 'doc', 'docx', 'odt', 'rtf', 'txt', 'zip', 'rar'];
         $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-        if (!in_array($ext, $allowedExt)) {
-            $errors[] = 'Format file tidak didukung. Gunakan: PDF, DOC, DOCX, ODT, RTF, TXT, ZIP, atau RAR.';
+        if (!in_array($ext, $allowedExt, true)) {
+            $errors[] = 'Format berkas tidak didukung. Gunakan PDF, DOC, DOCX, ODT, RTF, TXT, ZIP, atau RAR.';
         }
 
         if (empty($errors)) {
-            // Create upload directory
-            $uploadDir = __DIR__ . '/../assets/uploads/consultations/';
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
-            }
+            $uploadDir = dirname(__DIR__) . '/assets/uploads/consultations/';
+            if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
 
-            // Generate unique filename
             $safeName = date('Ymd_His') . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
-            $destPath = $uploadDir . $safeName;
-
-            if (move_uploaded_file($file['tmp_name'], $destPath)) {
-                $uploadedFile = $safeName;
+            if (move_uploaded_file($file['tmp_name'], $uploadDir . $safeName)) {
+                $uploadedFile     = $safeName;
                 $uploadedOrigName = $file['name'];
             } else {
-                $errors[] = 'Gagal mengunggah file. Silakan coba lagi.';
+                $errors[] = 'Berkas gagal diunggah. Silakan coba lagi.';
             }
         }
     }
@@ -80,9 +70,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Insert
     try {
-        $insertData = [
+        $data = [
             'name'         => $name,
             'email'        => $email,
             'phone'        => $phone,
@@ -93,417 +82,294 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'status'       => 'new',
             'priority'     => 'medium',
         ];
-
-        // Add file info if uploaded
         if (!empty($uploadedFile)) {
-            $insertData['attachment_file'] = $uploadedFile;
-            $insertData['attachment_name'] = $uploadedOrigName;
+            $data['attachment_file'] = $uploadedFile;
+            $data['attachment_name'] = $uploadedOrigName;
         }
-
-        $id = insert('consultations', $insertData);
+        insert('consultations', $data);
 
         echo json_encode([
             'success' => true,
-            'message' => 'Terima kasih! Pesan konsultasi Anda telah kami terima.' . (!empty($uploadedFile) ? ' File naskah berhasil diunggah.' : '') . ' Tim kami akan menghubungi Anda dalam 1x24 jam kerja.',
+            'message' => 'Pengajuan naskah Anda telah kami terima.',
         ]);
     } catch (Exception $e) {
-        error_log('Consultation insert error: ' . $e->getMessage());
-        echo json_encode(['success' => false, 'message' => 'Terjadi kesalahan sistem. Silakan coba lagi atau hubungi kami langsung via WhatsApp.']);
+        error_log('Manuscript submission error: ' . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Terjadi gangguan pada sistem. Silakan coba lagi atau hubungi kami langsung.']);
     }
     exit;
 }
 
-// Pre-fill paket from query string
-$prePaket = sanitize($_GET['paket'] ?? '');
-$serviceMap = ['basic' => 'setup_ojs', 'starter' => 'setup_ojs', 'professional' => 'kustomisasi', 'premium' => 'maintenance', 'enterprise' => 'maintenance'];
-$preService = isset($serviceMap[$prePaket]) ? $serviceMap[$prePaket] : 'setup_ojs';
+// ──────────────────────────────────────────────────────────────
+// GET — tampilan formulir
+// ──────────────────────────────────────────────────────────────
+$services   = getServiceTypes();
+$prePaket   = sanitize($_GET['paket'] ?? '');
+$serviceMap = ['basic' => 'setup_ojs', 'professional' => 'kustomisasi', 'premium' => 'migrasi'];
+$preService = $serviceMap[$prePaket] ?? 'setup_ojs';
 
-$waNumber = getSetting('whatsapp_number', '');
+$email    = getSetting('email_contact', '');
+$whatsapp = getSetting('whatsapp_number', '');
+$waDigits = $whatsapp ? preg_replace('/\D/', '', $whatsapp) : '';
+
+$expectations = [
+    ['Berkas diperiksa kelengkapannya', 'Redaksi memastikan naskah dan data penulis lengkap. Bila ada yang kurang, kami menghubungi Anda lebih dahulu.', '1×24 jam kerja'],
+    ['Naskah ditelaah redaksi', 'Penilaian keaslian, kedalaman kajian, struktur, dan kesesuaian dengan lini terbitan kami.', '5–10 hari kerja'],
+    ['Hasil telaah disampaikan', 'Diterima, diterima dengan revisi, atau belum layak terbit — seluruhnya disertai catatan tertulis.', 'Setelah telaah'],
+    ['Penawaran & perjanjian', 'Bila naskah diterima, lingkup pekerjaan, jadwal, dan biaya dikirim untuk Anda setujui.', '2–3 hari kerja'],
+];
 ?>
 
-<!-- Page Hero -->
-<div class="page-hero">
+<div class="page-head">
     <div class="container">
-        <div class="page-hero-content text-center fade-in-up">
-            <h1 class="page-hero-title">Konsultasi Gratis</h1>
-            <p class="page-hero-subtitle">Ceritakan kebutuhan penerbitan buku Anda kepada kami. Tanpa biaya, tanpa komitmen — kami siap membantu.</p>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb justify-content-center">
-                    <li class="breadcrumb-item"><a href="<?= $siteUrl ?>/">Beranda</a></li>
-                    <li class="breadcrumb-item active">Konsultasi</li>
-                </ol>
-            </nav>
-        </div>
+        <ol class="crumbs">
+            <li><a href="<?= $siteUrl ?>/">Beranda</a></li>
+            <li>Kirim Naskah</li>
+        </ol>
+        <span class="eyebrow">Pengajuan Naskah</span>
+        <h1>Kirim Naskah ke Redaksi</h1>
+        <p>Isi formulir berikut dan lampirkan berkas naskah Anda. Tidak ada biaya apa pun pada tahap telaah.</p>
     </div>
 </div>
 
-<section class="section-padding bg-white">
+<section class="section">
     <div class="container">
-        <div class="row g-5 justify-content-center">
+        <div class="row g-5">
 
-            <!-- Form Column -->
-            <div class="col-lg-7">
-                <div class="konsultasi-form-card fade-in-up">
-                    <div class="konsultasi-form-header">
-                        <h3><i class="fas fa-comments me-2"></i>Formulir Konsultasi</h3>
-                        <p class="mb-0 opacity-75">Semua kolom bertanda <span class="text-accent fw-bold">*</span> wajib diisi</p>
+            <!-- Formulir -->
+            <div class="col-lg-7 reveal">
+                <div class="form-panel">
+                    <div class="form-panel-head">
+                        <h3>Formulir Pengajuan Naskah</h3>
+                        <p>Kolom bertanda <span class="text-accent fw-700">*</span> wajib diisi.</p>
                     </div>
-                    <div class="konsultasi-form-body">
+                    <div class="form-panel-body">
 
-                        <!-- Alert Container (AJAX) -->
-                        <div id="formAlert" class="d-none mb-4" role="alert"></div>
+                        <div id="formAlert" class="alert alert-danger d-none" role="alert"></div>
 
-                        <!-- Success State -->
                         <div id="formSuccess" class="d-none text-center py-4">
-                            <div class="success-icon-wrap mb-3">
-                                <i class="fas fa-check-circle fa-4x" style="color: #10b981;"></i>
+                            <div style="font-size:3rem;color:var(--secondary);"><i class="fa-solid fa-circle-check"></i></div>
+                            <h3 class="h4 mt-3 mb-2">Naskah Anda Sudah Kami Terima</h3>
+                            <p class="text-muted mb-4">
+                                Redaksi akan memeriksa kelengkapan berkas dan menghubungi Anda dalam
+                                <strong>1×24 jam kerja</strong> melalui surel atau WhatsApp.
+                            </p>
+                            <div class="d-flex flex-wrap gap-2 justify-content-center">
+                                <a href="<?= $siteUrl ?>/proses" class="btn btn-outline-primary"><i class="fa-solid fa-diagram-project"></i>Lihat Alur Penerbitan</a>
+                                <?php if ($waDigits): ?>
+                                <a href="https://wa.me/<?= htmlspecialchars($waDigits) ?>" target="_blank" rel="noopener" class="btn btn-primary">
+                                    <i class="fa-brands fa-whatsapp"></i>Hubungi Redaksi
+                                </a>
+                                <?php endif; ?>
                             </div>
-                            <h4 class="fw-700 mb-2">Pesan Terkirim!</h4>
-                            <p class="text-muted">Terima kasih telah menghubungi kami. Tim kami akan membalas dalam <strong>1x24 jam kerja</strong>.</p>
-                            <?php if (!empty($waNumber)): ?>
-                            <p class="text-muted mb-0">Atau hubungi kami langsung via WhatsApp:</p>
-                            <a href="https://wa.me/<?= htmlspecialchars(preg_replace('/\D/', '', $waNumber)) ?>"
-                               class="btn btn-accent mt-2" target="_blank" rel="noopener">
-                                <i class="fab fa-whatsapp me-2"></i>Chat Sekarang
-                            </a>
-                            <?php endif; ?>
                         </div>
 
-                        <form id="konsultasiForm" novalidate enctype="multipart/form-data">
+                        <form id="manuscriptForm" novalidate enctype="multipart/form-data">
                             <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
 
-                            <div class="row g-3">
-                                <!-- Nama -->
+                            <div class="form-step"><span>1</span>Identitas Penulis</div>
+                            <div class="row g-3 mb-4">
                                 <div class="col-md-6">
-                                    <label for="inp_name" class="form-label" data-testid="label-name">
-                                        Nama Lengkap <span class="text-accent">*</span>
-                                    </label>
-                                    <input type="text" id="inp_name" name="name" class="form-control"
-                                           placeholder="Dr. Nama Lengkap, M.Pd." required minlength="2" data-testid="input-name">
+                                    <label for="f_name" class="form-label">Nama lengkap &amp; gelar <span class="req">*</span></label>
+                                    <input type="text" class="form-control" id="f_name" name="name" required minlength="2"
+                                           placeholder="Dr. Nama Lengkap, M.Pd.">
                                     <div class="invalid-feedback">Nama lengkap wajib diisi.</div>
                                 </div>
-
-                                <!-- Email -->
                                 <div class="col-md-6">
-                                    <label for="inp_email" class="form-label">
-                                        Email <span class="text-accent">*</span>
-                                    </label>
-                                    <input type="email" id="inp_email" name="email" class="form-control"
-                                           placeholder="nama@institusi.ac.id" required data-testid="input-email">
-                                    <div class="invalid-feedback">Masukkan alamat email yang valid.</div>
+                                    <label for="f_email" class="form-label">Surel <span class="req">*</span></label>
+                                    <input type="email" class="form-control" id="f_email" name="email" required
+                                           placeholder="nama@institusi.ac.id">
+                                    <div class="invalid-feedback">Masukkan alamat surel yang valid.</div>
                                 </div>
-
-                                <!-- WhatsApp -->
                                 <div class="col-md-6">
-                                    <label for="inp_phone" class="form-label">
-                                        No. WhatsApp
-                                    </label>
+                                    <label for="f_phone" class="form-label">Nomor WhatsApp</label>
                                     <div class="input-group">
-                                        <span class="input-group-text">
-                                            <i class="fab fa-whatsapp text-success"></i>
-                                        </span>
-                                        <input type="tel" id="inp_phone" name="phone" class="form-control"
-                                               placeholder="08xx-xxxx-xxxx" data-testid="input-phone">
+                                        <span class="input-group-text"><i class="fa-brands fa-whatsapp"></i></span>
+                                        <input type="tel" class="form-control" id="f_phone" name="phone" placeholder="08xx-xxxx-xxxx">
                                     </div>
-                                    <div class="form-text">Untuk respons lebih cepat via WhatsApp</div>
+                                    <div class="form-text">Untuk tanggapan yang lebih cepat.</div>
                                 </div>
-
-                                <!-- Institusi -->
                                 <div class="col-md-6">
-                                    <label for="inp_institution" class="form-label">Institusi / Lembaga</label>
-                                    <input type="text" id="inp_institution" name="institution" class="form-control"
-                                           placeholder="Nama universitas / lembaga" data-testid="input-institution">
-                                </div>
-
-                                <!-- Jenis Layanan -->
-                                <div class="col-md-6">
-                                    <label for="inp_service" class="form-label">
-                                        Jenis Layanan <span class="text-accent">*</span>
-                                    </label>
-                                    <select id="inp_service" name="service_type" class="form-select" required data-testid="select-service">
-                                        <option value="setup_ojs" <?= $preService === 'setup_ojs' ? 'selected' : '' ?>>Penerbitan Buku</option>
-                                        <option value="kustomisasi" <?= $preService === 'kustomisasi' ? 'selected' : '' ?>>Editing & Layout</option>
-                                        <option value="migrasi">Konversi KTI ke Buku</option>
-                                        <option value="pelatihan">Desain Cover Buku</option>
-                                        <option value="maintenance" <?= $preService === 'maintenance' ? 'selected' : '' ?>>Distribusi & Pemasaran</option>
-                                        <option value="lainnya">Lainnya / Saya tidak yakin</option>
-                                    </select>
-                                </div>
-
-                                <!-- Budget -->
-                                <div class="col-md-6">
-                                    <label for="inp_budget" class="form-label">Estimasi Anggaran</label>
-                                    <select id="inp_budget" name="budget_range" class="form-select" data-testid="select-budget">
-                                        <option value="">Pilih estimasi anggaran</option>
-                                        <option value="< 3 juta">Di bawah Rp 3.000.000</option>
-                                        <option value="3 - 6 juta">Rp 3.000.000 - Rp 6.000.000</option>
-                                        <option value="6 - 10 juta">Rp 6.000.000 - Rp 10.000.000</option>
-                                        <option value="> 10 juta">Di atas Rp 10.000.000</option>
-                                        <option value="Belum tahu">Belum tahu / Fleksibel</option>
-                                    </select>
-                                </div>
-
-                                <!-- Pesan -->
-                                <div class="col-12">
-                                    <label for="inp_message" class="form-label">
-                                        Pesan / Kebutuhan Anda <span class="text-accent">*</span>
-                                    </label>
-                                    <textarea id="inp_message" name="message" class="form-control"
-                                              rows="5" required minlength="10" data-testid="input-message"
-                                              placeholder="Ceritakan tentang naskah atau buku yang ingin Anda terbitkan, jenis buku (ajar/referensi/monograf), jumlah halaman, dan pertanyaan lainnya..."></textarea>
-                                    <div class="invalid-feedback">Pesan wajib diisi (minimal 10 karakter).</div>
-                                    <div class="form-text">
-                                        Semakin detail informasi yang Anda berikan, semakin tepat rekomendasi layanan yang akan kami berikan.
-                                    </div>
-                                </div>
-
-                                <!-- FILE UPLOAD -->
-                                <div class="col-12">
-                                    <label for="inp_file" class="form-label">
-                                        <i class="fas fa-paperclip me-1"></i> Upload Naskah / File Pendukung
-                                    </label>
-                                    <div class="file-upload-area" id="fileDropArea" data-testid="file-upload-area">
-                                        <input type="file" id="inp_file" name="manuscript_file" class="file-upload-input"
-                                               accept=".pdf,.doc,.docx,.odt,.rtf,.txt,.zip,.rar" data-testid="input-file">
-                                        <div class="file-upload-content" id="fileUploadContent">
-                                            <i class="fas fa-cloud-upload-alt fa-2x mb-2" style="color: var(--primary); opacity: 0.6;"></i>
-                                            <p class="mb-1 fw-600">Klik atau seret file ke sini</p>
-                                            <p class="small text-muted mb-0">PDF, DOC, DOCX, ODT, RTF, TXT, ZIP, RAR (maks. 20MB)</p>
-                                        </div>
-                                        <div class="file-upload-preview d-none" id="filePreview">
-                                            <div class="d-flex align-items-center gap-2">
-                                                <i class="fas fa-file-alt" style="color: var(--primary); font-size: 1.5rem;"></i>
-                                                <div>
-                                                    <div class="fw-600 small" id="fileName"></div>
-                                                    <div class="text-muted" style="font-size: 0.72rem;" id="fileSize"></div>
-                                                </div>
-                                                <button type="button" class="btn btn-sm ms-auto" id="fileRemoveBtn" style="color: #DC2626;" data-testid="file-remove-btn">
-                                                    <i class="fas fa-times"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-text">
-                                        Opsional. Upload naskah awal, draft buku, atau file pendukung lainnya agar tim kami bisa melakukan review awal.
-                                    </div>
-                                </div>
-
-                                <!-- Privacy note -->
-                                <div class="col-12">
-                                    <div class="privacy-note">
-                                        <i class="fas fa-shield-alt me-2 text-success"></i>
-                                        Informasi dan file Anda akan dijaga kerahasiaannya dan tidak akan disebarkan kepada pihak ketiga manapun.
-                                    </div>
-                                </div>
-
-                                <!-- Submit -->
-                                <div class="col-12">
-                                    <button type="submit" id="submitBtn" class="btn btn-accent btn-lg w-100" data-testid="submit-konsultasi">
-                                        <i class="fas fa-paper-plane me-2"></i>Kirim Pesan Konsultasi
-                                    </button>
+                                    <label for="f_inst" class="form-label">Institusi / afiliasi</label>
+                                    <input type="text" class="form-control" id="f_inst" name="institution" placeholder="Universitas / lembaga">
                                 </div>
                             </div>
+
+                            <div class="form-step"><span>2</span>Tentang Naskah</div>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label for="f_service" class="form-label">Kebutuhan utama <span class="req">*</span></label>
+                                    <select class="form-select" id="f_service" name="service_type" required>
+                                        <?php foreach ($services as $val => $label): ?>
+                                        <option value="<?= $val ?>" <?= $preService === $val ? 'selected' : '' ?>><?= htmlspecialchars($label) ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="f_budget" class="form-label">Perkiraan anggaran</label>
+                                    <select class="form-select" id="f_budget" name="budget_range">
+                                        <option value="">Belum menentukan</option>
+                                        <option value="&lt; 3 juta">Di bawah Rp 3.000.000</option>
+                                        <option value="3 - 6 juta">Rp 3.000.000 – Rp 6.000.000</option>
+                                        <option value="6 - 10 juta">Rp 6.000.000 – Rp 10.000.000</option>
+                                        <option value="&gt; 10 juta">Di atas Rp 10.000.000</option>
+                                        <option value="Belum tahu">Fleksibel / menunggu penawaran</option>
+                                    </select>
+                                    <div class="form-text">Membantu kami menyusun lingkup pekerjaan yang realistis.</div>
+                                </div>
+                                <div class="col-12">
+                                    <label for="f_message" class="form-label">Deskripsi naskah <span class="req">*</span></label>
+                                    <textarea class="form-control" id="f_message" name="message" rows="6" required minlength="10"
+                                              placeholder="Jelaskan singkat: jenis naskah (buku ajar / referensi / monograf / bunga rampai), bidang ilmu, perkiraan jumlah halaman, tingkat kesiapan naskah, dan target pembaca."></textarea>
+                                    <div class="invalid-feedback">Deskripsi naskah wajib diisi (minimal 10 karakter).</div>
+                                    <div class="form-text">Semakin rinci keterangan Anda, semakin tepat penilaian awal redaksi.</div>
+                                </div>
+                            </div>
+
+                            <div class="form-step"><span>3</span>Berkas Naskah</div>
+                            <div class="mb-4">
+                                <div class="file-drop" id="fileDrop">
+                                    <input type="file" id="f_file" name="manuscript_file"
+                                           accept=".pdf,.doc,.docx,.odt,.rtf,.txt,.zip,.rar"
+                                           aria-label="Unggah berkas naskah">
+                                    <div data-drop-idle>
+                                        <div class="file-drop-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                                        <p class="mb-1 fw-600">Klik atau seret berkas ke sini</p>
+                                        <p class="mb-0 small text-muted">PDF, DOC, DOCX, ODT, RTF, TXT, ZIP, RAR — maksimal 20MB</p>
+                                    </div>
+                                    <div class="file-chip d-none" data-drop-picked>
+                                        <i class="fa-regular fa-file-lines" style="font-size:1.35rem;color:var(--primary);"></i>
+                                        <div>
+                                            <div class="fw-600" style="font-size:.9rem;" data-drop-name></div>
+                                            <div class="text-muted" style="font-size:.78rem;" data-drop-size></div>
+                                        </div>
+                                        <button type="button" class="file-chip-remove" data-drop-remove aria-label="Hapus berkas">
+                                            <i class="fa-solid fa-xmark"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="form-text mt-2">
+                                    Opsional pada tahap ini, tetapi naskah yang dilampirkan dapat langsung masuk antrean telaah.
+                                </div>
+                            </div>
+
+                            <div class="privacy-note mb-4">
+                                <i class="fa-solid fa-lock"></i>
+                                <span>
+                                    Berkas dan data Anda hanya diakses tim redaksi yang menangani, tidak dibagikan kepada
+                                    pihak ketiga, dan tidak digunakan di luar keperluan telaah serta penerbitan.
+                                </span>
+                            </div>
+
+                            <button type="submit" id="submitBtn" class="btn btn-primary btn-lg w-100">
+                                <i class="fa-regular fa-paper-plane"></i>Kirim Naskah
+                            </button>
                         </form>
                     </div>
                 </div>
             </div>
 
-            <!-- Info Sidebar -->
-            <div class="col-lg-5">
-                <!-- Contact Info -->
-                <div class="konsultasi-info-card fade-in-up">
-                    <h5><i class="fas fa-address-book me-2"></i>Cara Lain Menghubungi Kami</h5>
-                    <div class="konsultasi-contact-items">
-                        <?php if (!empty($waNumber)): ?>
-                        <div class="konsultasi-contact-item">
-                            <div class="konsultasi-contact-icon whatsapp-icon">
-                                <i class="fab fa-whatsapp"></i>
-                            </div>
-                            <div>
-                                <div class="fw-600">WhatsApp</div>
-                                <a href="https://wa.me/<?= htmlspecialchars(preg_replace('/\D/', '', $waNumber)) ?>"
-                                   target="_blank" rel="noopener"><?= htmlspecialchars($waNumber) ?></a>
-                                <div class="text-muted small">Respons cepat, Mon-Fri 08-17 WIB</div>
-                            </div>
+            <!-- Sisi kanan -->
+            <div class="col-lg-5 reveal" data-reveal-delay="0.1">
+                <div class="side-panel">
+                    <h4>Setelah Anda Menekan Kirim</h4>
+                    <div class="rail mt-3">
+                        <?php foreach ($expectations as $i => [$t, $d, $when]): ?>
+                        <div class="rail-item">
+                            <span class="rail-dot"><?= $i + 1 ?></span>
+                            <h3 class="h6 mb-1"><?= $t ?></h3>
+                            <p class="mb-1" style="font-size:.9rem;"><?= $d ?></p>
+                            <span class="rail-note"><i class="fa-regular fa-clock"></i><?= $when ?></span>
                         </div>
-                        <?php endif; ?>
-                        <?php $emailContact = getSetting('email_contact', ''); if ($emailContact): ?>
-                        <div class="konsultasi-contact-item">
-                            <div class="konsultasi-contact-icon email-icon">
-                                <i class="fas fa-envelope"></i>
-                            </div>
-                            <div>
-                                <div class="fw-600">Email</div>
-                                <a href="mailto:<?= htmlspecialchars($emailContact) ?>"><?= htmlspecialchars($emailContact) ?></a>
-                                <div class="text-muted small">Balasan dalam 1x24 jam kerja</div>
-                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+                <div class="side-panel">
+                    <h4>Cara Lain Menghubungi Kami</h4>
+                    <?php if ($email): ?>
+                    <div class="contact-row">
+                        <span class="ic"><i class="fa-regular fa-envelope"></i></span>
+                        <div>
+                            <div class="lb">Surel redaksi</div>
+                            <div class="vl"><a href="mailto:<?= htmlspecialchars($email) ?>"><?= htmlspecialchars($email) ?></a></div>
                         </div>
-                        <?php else: ?>
-                        <div class="konsultasi-contact-item">
-                            <div class="konsultasi-contact-icon email-icon">
-                                <i class="fas fa-envelope"></i>
-                            </div>
-                            <div>
-                                <div class="fw-600">Email</div>
-                                <span>kayaswara.jurnal@gmail.com</span>
-                                <div class="text-muted small">Balasan dalam 1x24 jam kerja</div>
-                            </div>
+                    </div>
+                    <?php endif; ?>
+                    <?php if ($whatsapp): ?>
+                    <div class="contact-row">
+                        <span class="ic"><i class="fa-brands fa-whatsapp"></i></span>
+                        <div>
+                            <div class="lb">WhatsApp</div>
+                            <div class="vl"><a href="https://wa.me/<?= htmlspecialchars($waDigits) ?>" target="_blank" rel="noopener"><?= htmlspecialchars($whatsapp) ?></a></div>
                         </div>
-                        <?php endif; ?>
-                        <div class="konsultasi-contact-item">
-                            <div class="konsultasi-contact-icon clock-icon">
-                                <i class="fas fa-clock"></i>
-                            </div>
-                            <div>
-                                <div class="fw-600">Jam Operasional</div>
-                                <span>Senin - Jumat: 08.00 - 17.00 WIB</span>
-                                <div class="text-muted small">Sabtu: 09.00 - 13.00 WIB</div>
-                            </div>
+                    </div>
+                    <?php endif; ?>
+                    <div class="contact-row">
+                        <span class="ic"><i class="fa-regular fa-clock"></i></span>
+                        <div>
+                            <div class="lb">Jam kerja</div>
+                            <div class="vl">Senin–Jumat, 08.00–17.00 WIB</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Expectations -->
-                <div class="konsultasi-expect-card mt-4 fade-in-up" style="animation-delay:0.1s">
-                    <h5><i class="fas fa-list-check me-2"></i>Yang Akan Terjadi Selanjutnya</h5>
-                    <ol class="konsultasi-expect-list">
-                        <li>
-                            <span class="expect-num">1</span>
-                            <div>
-                                <strong>Tim kami review naskah Anda</strong>
-                                <p>Jika Anda mengunggah file, tim kami akan melakukan review awal naskah terlebih dahulu.</p>
-                            </div>
-                        </li>
-                        <li>
-                            <span class="expect-num">2</span>
-                            <div>
-                                <strong>Kami menghubungi Anda</strong>
-                                <p>Dalam 1x24 jam kerja via WhatsApp atau email untuk mendiskusikan kebutuhan Anda.</p>
-                            </div>
-                        </li>
-                        <li>
-                            <span class="expect-num">3</span>
-                            <div>
-                                <strong>Penawaran tertulis</strong>
-                                <p>Anda akan menerima proposal lengkap dengan rincian biaya, scope of work, dan timeline.</p>
-                            </div>
-                        </li>
-                        <li>
-                            <span class="expect-num">4</span>
-                            <div>
-                                <strong>Mulai bekerja</strong>
-                                <p>Jika cocok, proyek dimulai sesuai jadwal yang disepakati bersama.</p>
-                            </div>
-                        </li>
-                    </ol>
+                <div class="notice mt-4">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span>
+                        Belum yakin naskah Anda sudah lengkap? Periksa
+                        <a href="<?= $siteUrl ?>/proses#ketentuan">ketentuan naskah</a> terlebih dahulu.
+                    </span>
                 </div>
             </div>
+
         </div>
     </div>
 </section>
 
 <script>
-// File Upload UX
-(function() {
-    const fileInput = document.getElementById('inp_file');
-    const dropArea = document.getElementById('fileDropArea');
-    const content = document.getElementById('fileUploadContent');
-    const preview = document.getElementById('filePreview');
-    const nameEl = document.getElementById('fileName');
-    const sizeEl = document.getElementById('fileSize');
-    const removeBtn = document.getElementById('fileRemoveBtn');
-
-    function formatSize(bytes) {
-        if (bytes < 1024) return bytes + ' B';
-        if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-        return (bytes / 1048576).toFixed(1) + ' MB';
-    }
-
-    function showPreview(file) {
-        nameEl.textContent = file.name;
-        sizeEl.textContent = formatSize(file.size);
-        content.classList.add('d-none');
-        preview.classList.remove('d-none');
-    }
-
-    function clearFile() {
-        fileInput.value = '';
-        content.classList.remove('d-none');
-        preview.classList.add('d-none');
-    }
-
-    fileInput.addEventListener('change', function() {
-        if (this.files.length > 0) showPreview(this.files[0]);
-    });
-
-    removeBtn.addEventListener('click', clearFile);
-
-    // Drag & drop
-    ['dragenter', 'dragover'].forEach(ev => {
-        dropArea.addEventListener(ev, function(e) {
-            e.preventDefault();
-            dropArea.style.borderColor = 'var(--primary)';
-            dropArea.style.background = 'rgba(26,60,94,0.03)';
-        });
-    });
-    ['dragleave', 'drop'].forEach(ev => {
-        dropArea.addEventListener(ev, function(e) {
-            e.preventDefault();
-            dropArea.style.borderColor = '';
-            dropArea.style.background = '';
-        });
-    });
-    dropArea.addEventListener('drop', function(e) {
-        if (e.dataTransfer.files.length > 0) {
-            fileInput.files = e.dataTransfer.files;
-            showPreview(e.dataTransfer.files[0]);
-        }
-    });
-})();
-
-// AJAX Form Submission
-document.getElementById('konsultasiForm').addEventListener('submit', function(e) {
+document.getElementById('manuscriptForm').addEventListener('submit', function (e) {
     e.preventDefault();
 
-    const form    = this;
-    const btn     = document.getElementById('submitBtn');
-    const alert   = document.getElementById('formAlert');
-    const success = document.getElementById('formSuccess');
+    var form    = this;
+    var btn     = document.getElementById('submitBtn');
+    var alertEl = document.getElementById('formAlert');
+    var okEl    = document.getElementById('formSuccess');
 
     if (!form.checkValidity()) {
         form.classList.add('was-validated');
+        var firstInvalid = form.querySelector(':invalid');
+        if (firstInvalid) firstInvalid.focus();
         return;
     }
 
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Mengirim...';
-    alert.className = 'd-none';
-
-    const formData = new FormData(form);
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Mengirim…';
+    alertEl.classList.add('d-none');
 
     fetch(window.location.href, {
         method: 'POST',
         headers: { 'X-Requested-With': 'XMLHttpRequest' },
-        body: formData
+        body: new FormData(form)
     })
-    .then(r => r.json())
-    .then(data => {
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
         if (data.success) {
             form.classList.add('d-none');
-            success.classList.remove('d-none');
-            success.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            okEl.classList.remove('d-none');
+            okEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
         } else {
-            alert.className = 'alert alert-danger mb-4';
-            alert.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>' + data.message;
+            alertEl.textContent = data.message;
+            alertEl.classList.remove('d-none');
+            alertEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
             btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Kirim Pesan Konsultasi';
+            btn.innerHTML = '<i class="fa-regular fa-paper-plane"></i>Kirim Naskah';
         }
     })
-    .catch(() => {
-        alert.className = 'alert alert-danger mb-4';
-        alert.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Terjadi kesalahan jaringan. Silakan coba lagi.';
+    .catch(function () {
+        alertEl.textContent = 'Koneksi terputus. Periksa jaringan Anda lalu coba lagi.';
+        alertEl.classList.remove('d-none');
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Kirim Pesan Konsultasi';
+        btn.innerHTML = '<i class="fa-regular fa-paper-plane"></i>Kirim Naskah';
     });
 });
 </script>

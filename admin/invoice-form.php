@@ -24,13 +24,8 @@ if ($existing) {
 
 $csrf = csrf_token();
 
-$serviceOptions = [
-    'setup_ojs' => 'Penerbitan Buku', 'migrasi' => 'Konversi KTI',
-    'kustomisasi' => 'Editing & Layout', 'pelatihan' => 'Desain Cover',
-    'maintenance' => 'Distribusi & Pemasaran', 'indeksasi_doaj' => 'Cek Plagiasi',
-    'indeksasi_sinta' => 'Konsultasi Penulisan', 'lainnya' => 'Lainnya',
-];
-$packageOptions = ['basic' => 'Basic', 'professional' => 'Professional', 'premium' => 'Premium', 'custom' => 'Custom'];
+$serviceOptions = getServiceTypes();
+$packageOptions = getPackageTiers();
 
 // Compute addons total from order
 $orderAddons = [];
@@ -111,7 +106,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
 <div class="admin-content">
     <div class="page-header">
         <div class="page-header-left">
-            <h2>Buat Invoice</h2>
+            <h2>Buat Tagihan</h2>
             <nav aria-label="breadcrumb"><ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item"><a href="index.php?page=pesanan">Pesanan</a></li>
                 <li class="breadcrumb-item"><a href="index.php?page=pesanan-detail&id=<?= $order_id ?>"><?= htmlspecialchars($order['tracking_code']) ?></a></li>
@@ -146,30 +141,30 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                     <div style="padding:20px;">
                         <div class="row g-3">
                             <div class="col-sm-6">
-                                <div style="font-size:12px;color:#94a3b8;margin-bottom:4px;">Nama Klien</div>
+                                <div style="font-size:12px;color:#A6B0A9;margin-bottom:4px;">Nama Klien</div>
                                 <div style="font-weight:600;"><?= htmlspecialchars($order['client_name']) ?></div>
                             </div>
                             <div class="col-sm-6">
-                                <div style="font-size:12px;color:#94a3b8;margin-bottom:4px;">Kode Tracking</div>
+                                <div style="font-size:12px;color:#A6B0A9;margin-bottom:4px;">Kode Tracking</div>
                                 <div style="font-weight:700;color:var(--primary);"><?= htmlspecialchars($order['tracking_code']) ?></div>
                             </div>
                             <div class="col-sm-6">
-                                <div style="font-size:12px;color:#94a3b8;margin-bottom:4px;">Layanan</div>
+                                <div style="font-size:12px;color:#A6B0A9;margin-bottom:4px;">Layanan</div>
                                 <div><?= htmlspecialchars($serviceOptions[$order['service_type']] ?? $order['service_type']) ?></div>
                             </div>
                             <div class="col-sm-6">
-                                <div style="font-size:12px;color:#94a3b8;margin-bottom:4px;">Paket</div>
+                                <div style="font-size:12px;color:#A6B0A9;margin-bottom:4px;">Paket</div>
                                 <div><?= htmlspecialchars($packageOptions[$order['package_tier']] ?? $order['package_tier']) ?></div>
                             </div>
                             <?php if ($order['client_email']): ?>
                             <div class="col-sm-6">
-                                <div style="font-size:12px;color:#94a3b8;margin-bottom:4px;">Email Klien</div>
+                                <div style="font-size:12px;color:#A6B0A9;margin-bottom:4px;">Email Klien</div>
                                 <div><?= htmlspecialchars($order['client_email']) ?></div>
                             </div>
                             <?php endif; ?>
                             <?php if ($order['client_institution']): ?>
                             <div class="col-sm-6">
-                                <div style="font-size:12px;color:#94a3b8;margin-bottom:4px;">Institusi</div>
+                                <div style="font-size:12px;color:#A6B0A9;margin-bottom:4px;">Institusi</div>
                                 <div><?= htmlspecialchars($order['client_institution']) ?></div>
                             </div>
                             <?php endif; ?>
@@ -193,7 +188,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                 <div class="form-hint">Harga sebelum diskon dan pajak (paket + add-ons, jika ada).</div>
                                 <?php if (!empty($orderAddons)): ?>
                                 <div style="margin-top:8px;background:#f0fdf4;border-radius:8px;padding:10px 12px;border:1px solid #bbf7d0;font-size:12px;">
-                                    <div style="font-weight:700;color:#15803d;margin-bottom:6px;"><i class="fas fa-layer-group me-1"></i>Rincian Otomatis:</div>
+                                    <div style="font-weight:700;color:#1F5637;margin-bottom:6px;"><i class="fas fa-layer-group me-1"></i>Rincian Otomatis:</div>
                                     <div style="display:flex;justify-content:space-between;color:#374151;margin-bottom:3px;">
                                         <span>Harga Paket</span>
                                         <span>Rp <?= number_format((int)($order['price'] ?? 0), 0, ',', '.') ?></span>
@@ -204,7 +199,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                         <span>Rp <?= number_format((int)($_a['price'] ?? 0), 0, ',', '.') ?></span>
                                     </div>
                                     <?php endforeach; ?>
-                                    <div style="display:flex;justify-content:space-between;font-weight:700;color:#1e293b;border-top:1px solid #bbf7d0;margin-top:4px;padding-top:4px;">
+                                    <div style="display:flex;justify-content:space-between;font-weight:700;color:#16211C;border-top:1px solid #bbf7d0;margin-top:4px;padding-top:4px;">
                                         <span>Total Subtotal</span>
                                         <span>Rp <?= number_format($defaults['subtotal'], 0, ',', '.') ?></span>
                                     </div>
@@ -259,30 +254,30 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                     <div style="padding:24px;">
                         <table style="width:100%;font-size:14px;border-collapse:collapse;">
                             <tr>
-                                <td style="padding:6px 0;color:#64748b;">Subtotal</td>
+                                <td style="padding:6px 0;color:#77857D;">Subtotal</td>
                                 <td style="padding:6px 0;text-align:right;font-weight:600;" id="previewSubtotal">Rp 0</td>
                             </tr>
                             <tr id="discountRow" style="display:none;">
-                                <td style="padding:6px 0;color:#64748b;">Diskon</td>
+                                <td style="padding:6px 0;color:#77857D;">Diskon</td>
                                 <td style="padding:6px 0;text-align:right;color:#dc2626;" id="previewDiscount">-Rp 0</td>
                             </tr>
                             <tr id="pph23Row" style="display:none;">
-                                <td style="padding:6px 0;color:#64748b;">PPh 23 (2%)*</td>
-                                <td style="padding:6px 0;text-align:right;color:#B8860B;" id="previewPph23">-Rp 0</td>
+                                <td style="padding:6px 0;color:#77857D;">PPh 23 (2%)*</td>
+                                <td style="padding:6px 0;text-align:right;color:#A9752F;" id="previewPph23">-Rp 0</td>
                             </tr>
                             <tr>
-                                <td colspan="2"><hr style="margin:8px 0;border-color:#e2e8f0;"></td>
+                                <td colspan="2"><hr style="margin:8px 0;border-color:#E3E0D4;"></td>
                             </tr>
                             <tr>
-                                <td style="padding:6px 0;font-weight:800;font-size:15px;color:#1e293b;">Total Dibayar</td>
+                                <td style="padding:6px 0;font-weight:800;font-size:15px;color:#16211C;">Total Dibayar</td>
                                 <td style="padding:6px 0;text-align:right;font-weight:800;font-size:15px;color:var(--primary);" id="previewTotal">Rp 0</td>
                             </tr>
                             <tr id="dpRow" style="display:none;">
-                                <td style="padding:4px 0;font-size:12px;color:#94a3b8;">Minimal DP (50%)</td>
-                                <td style="padding:4px 0;text-align:right;font-size:12px;color:#94a3b8;" id="previewDp">Rp 0</td>
+                                <td style="padding:4px 0;font-size:12px;color:#A6B0A9;">Minimal DP (50%)</td>
+                                <td style="padding:4px 0;text-align:right;font-size:12px;color:#A6B0A9;" id="previewDp">Rp 0</td>
                             </tr>
                         </table>
-                        <div id="pph23Note" style="display:none;margin-top:12px;padding:10px 14px;background:#fef3c7;border-radius:8px;font-size:12px;color:#92400e;">
+                        <div id="pph23Note" style="display:none;margin-top:12px;padding:10px 14px;background:#F7EEDF;border-radius:8px;font-size:12px;color:#7A5A0C;">
                             *) PPh 23 dipotong oleh pembeli badan usaha
                         </div>
 

@@ -6,30 +6,37 @@
     RewriteCond %{REQUEST_FILENAME} -d
     RewriteRule ^ - [L]
 
-    # Skip admin directory (has its own routing)
+    # Admin has its own router
     RewriteRule ^admin(/.*)?$ - [L]
-
-    # Skip install.php
     RewriteRule ^install\.php$ - [L]
 
-    # Frontend routing
+    # Public routes
     RewriteRule ^$ index.php [L]
-    RewriteRule ^home/?$ index.php?page=home [L,QSA]
+    RewriteRule ^(home|beranda)/?$ index.php?page=home [L,QSA]
+
+    RewriteRule ^(publikasi|katalog)/?$ index.php?page=publikasi [L,QSA]
+    RewriteRule ^(publikasi|katalog)/([a-z0-9-]+)/?$ index.php?page=publikasi-detail&slug=$2 [L,QSA]
+
     RewriteRule ^layanan/?$ index.php?page=layanan [L,QSA]
+    RewriteRule ^proses/?$ index.php?page=proses [L,QSA]
+    RewriteRule ^(biaya|harga)/?$ index.php?page=harga [L,QSA]
+    RewriteRule ^tentang/?$ index.php?page=tentang [L,QSA]
+
+    RewriteRule ^(wawasan|blog)/?$ index.php?page=blog [L,QSA]
+    RewriteRule ^(wawasan|blog)/([a-z0-9-]+)/?$ index.php?page=blog-detail&slug=$2 [L,QSA]
+
     RewriteRule ^portofolio/?$ index.php?page=portofolio [L,QSA]
     RewriteRule ^portofolio/([a-z0-9-]+)/?$ index.php?page=portofolio-detail&slug=$1 [L,QSA]
-    RewriteRule ^blog/?$ index.php?page=blog [L,QSA]
-    RewriteRule ^blog/([a-z0-9-]+)/?$ index.php?page=blog-detail&slug=$1 [L,QSA]
-    RewriteRule ^harga/?$ index.php?page=harga [L,QSA]
-    RewriteRule ^tentang/?$ index.php?page=tentang [L,QSA]
-    RewriteRule ^konsultasi/?$ index.php?page=konsultasi [L,QSA]
-    RewriteRule ^tracking/?$ index.php?page=tracking [L,QSA]
+
+    RewriteRule ^(kirim-naskah|konsultasi)/?$ index.php?page=konsultasi [L,QSA]
+    RewriteRule ^(lacak|tracking)/?$ index.php?page=tracking [L,QSA]
+
     RewriteRule ^kebijakan-privasi/?$ index.php?page=kebijakan-privasi [L,QSA]
     RewriteRule ^kebijakan-refund/?$ index.php?page=kebijakan-refund [L,QSA]
     RewriteRule ^invoice/([a-f0-9]{10,})/?$ index.php?page=invoice&token=$1 [L,QSA]
 
-    # Catch all — route to front controller
-    RewriteRule ^(.*)$ index.php?page=$1 [L,QSA]
+    # Anything else → front controller (renders 404)
+    RewriteRule ^(.*)$ index.php?page=404 [L,QSA]
 </IfModule>
 
 # Block direct access to sensitive files
@@ -39,7 +46,7 @@
     </Files>
 </IfModule>
 
-# Block access to install.php after installation
+# Block install.php once the site is installed
 <IfModule mod_rewrite.c>
     RewriteCond %{DOCUMENT_ROOT}/%{REQUEST_URI} -f
     RewriteCond %{REQUEST_URI} install\.php$
@@ -52,14 +59,29 @@
     Options -Indexes
 </IfModule>
 
-# Block access to hidden files (.git, .env, etc.)
+# Block hidden files (.git, .env, …)
 <IfModule mod_rewrite.c>
     RewriteRule (^|/)\. - [F,L]
 </IfModule>
 
-# Block access to backup and log files
+# Block backup / log / dump files
 <FilesMatch "\.(sql|log|bak|old|orig|swp)$">
     <IfModule mod_authz_core.c>
         Require all denied
     </IfModule>
 </FilesMatch>
+
+# Compression & caching for static assets (shared hosting friendly)
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript application/javascript application/json image/svg+xml
+</IfModule>
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 7 days"
+    ExpiresByType application/javascript "access plus 7 days"
+    ExpiresByType image/jpeg "access plus 30 days"
+    ExpiresByType image/png "access plus 30 days"
+    ExpiresByType image/webp "access plus 30 days"
+    ExpiresByType image/svg+xml "access plus 30 days"
+</IfModule>

@@ -79,8 +79,8 @@ $pdfDir  = defined('ROOT_PATH') ? ROOT_PATH . '/invoices' : dirname(__DIR__) . '
 $pdfFile = $pdfDir . '/' . preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ','',$inv['invoice_number'])) . '.pdf';
 $pdfExists = file_exists($pdfFile);
 
-$serviceOpts = ['setup_ojs'=>'Penerbitan Buku','migrasi'=>'Konversi KTI','kustomisasi'=>'Editing & Layout','pelatihan'=>'Desain Cover','maintenance'=>'Distribusi & Pemasaran','indeksasi_doaj'=>'Cek Plagiasi','indeksasi_sinta'=>'Konsultasi Penulisan','lainnya'=>'Lainnya'];
-$packageOpts = ['basic'=>'Basic','professional'=>'Professional','premium'=>'Premium','custom'=>'Custom'];
+$serviceOpts = getServiceTypes();
+$packageOpts = getPackageTiers();
 
 require_once ADMIN_PATH . '/includes/header.php';
 require_once ADMIN_PATH . '/includes/sidebar.php';
@@ -120,21 +120,21 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                 <div style="padding:24px;">
                     <div class="row g-4">
                         <div class="col-md-6">
-                            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#94a3b8;margin-bottom:12px;">Info Invoice</div>
+                            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#A6B0A9;margin-bottom:12px;">Info Invoice</div>
                             <?php foreach ([
                                 ['Nomor Invoice', htmlspecialchars($inv['invoice_number'])],
                                 ['Tanggal Dibuat', date('d F Y', strtotime($inv['created_at']))],
                                 ['Jatuh Tempo', $inv['due_date'] ? date('d F Y', strtotime($inv['due_date'])) : '-'],
                                 ['Dibayar Pada', $inv['paid_at'] ? date('d F Y H:i', strtotime($inv['paid_at'])) : '-'],
                             ] as [$lbl, $val]): ?>
-                            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:13px;">
-                                <span style="color:#64748b;"><?= $lbl ?></span>
+                            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #F4F2EA;font-size:13px;">
+                                <span style="color:#77857D;"><?= $lbl ?></span>
                                 <span style="font-weight:600;"><?= $val ?></span>
                             </div>
                             <?php endforeach; ?>
                         </div>
                         <div class="col-md-6">
-                            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#94a3b8;margin-bottom:12px;">Klien</div>
+                            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#A6B0A9;margin-bottom:12px;">Klien</div>
                             <?php foreach (array_filter([
                                 ['Nama', htmlspecialchars($order['client_name'])],
                                 ['Institusi', $order['client_institution'] ? htmlspecialchars($order['client_institution']) : null],
@@ -143,8 +143,8 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                 ['Layanan', htmlspecialchars($serviceOpts[$order['service_type']] ?? $order['service_type'])],
                                 ['Paket', htmlspecialchars($packageOpts[$order['package_tier']] ?? $order['package_tier'])],
                             ], fn($r) => $r[1] !== null) as [$lbl, $val]): ?>
-                            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:13px;">
-                                <span style="color:#64748b;"><?= $lbl ?></span>
+                            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #F4F2EA;font-size:13px;">
+                                <span style="color:#77857D;"><?= $lbl ?></span>
                                 <span style="font-weight:600;"><?= $val ?></span>
                             </div>
                             <?php endforeach; ?>
@@ -152,7 +152,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                     </div>
 
                     <!-- Amount Table -->
-                    <div style="margin-top:24px;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;">
+                    <div style="margin-top:24px;border:1px solid #E3E0D4;border-radius:10px;overflow:hidden;">
                         <table style="width:100%;border-collapse:collapse;font-size:13px;">
                             <thead>
                                 <tr style="background:var(--primary);color:#fff;">
@@ -162,28 +162,28 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr style="border-bottom:1px solid #f1f5f9;">
+                                <tr style="border-bottom:1px solid #F4F2EA;">
                                     <td style="padding:12px 16px;font-weight:600;">
                                         <?= htmlspecialchars(($serviceOpts[$order['service_type']] ?? $order['service_type']) . ' – ' . ($packageOpts[$order['package_tier']] ?? $order['package_tier'])) ?>
                                         <?php if (!empty($order['description'])): ?>
-                                        <div style="font-size:11px;color:#94a3b8;margin-top:3px;"><?= htmlspecialchars(mb_substr(strip_tags($order['description']), 0, 100)) ?><?= mb_strlen(strip_tags($order['description'])) > 100 ? '…' : '' ?></div>
+                                        <div style="font-size:11px;color:#A6B0A9;margin-top:3px;"><?= htmlspecialchars(mb_substr(strip_tags($order['description']), 0, 100)) ?><?= mb_strlen(strip_tags($order['description'])) > 100 ? '…' : '' ?></div>
                                         <?php endif; ?>
                                     </td>
                                     <td style="padding:12px 16px;text-align:center;">1</td>
                                     <td style="padding:12px 16px;text-align:right;font-weight:600;">Rp <?= number_format($inv['subtotal'], 0, ',', '.') ?></td>
                                 </tr>
                             </tbody>
-                            <tfoot style="background:#f8fafc;">
+                            <tfoot style="background:#FCFBF7;">
                                 <?php if ($inv['discount'] > 0): ?>
-                                <tr style="border-top:1px solid #e2e8f0;">
-                                    <td colspan="2" style="padding:8px 16px;color:#64748b;">Diskon</td>
+                                <tr style="border-top:1px solid #E3E0D4;">
+                                    <td colspan="2" style="padding:8px 16px;color:#77857D;">Diskon</td>
                                     <td style="padding:8px 16px;text-align:right;color:#dc2626;">-Rp <?= number_format($inv['discount'], 0, ',', '.') ?></td>
                                 </tr>
                                 <?php endif; ?>
                                 <?php if ($inv['show_pph23'] && $inv['tax_pph23'] > 0): ?>
-                                <tr style="border-top:1px solid #e2e8f0;">
-                                    <td colspan="2" style="padding:8px 16px;color:#64748b;">PPh 23 (2%)*</td>
-                                    <td style="padding:8px 16px;text-align:right;color:#B8860B;">-Rp <?= number_format($inv['tax_pph23'], 0, ',', '.') ?></td>
+                                <tr style="border-top:1px solid #E3E0D4;">
+                                    <td colspan="2" style="padding:8px 16px;color:#77857D;">PPh 23 (2%)*</td>
+                                    <td style="padding:8px 16px;text-align:right;color:#A9752F;">-Rp <?= number_format($inv['tax_pph23'], 0, ',', '.') ?></td>
                                 </tr>
                                 <?php endif; ?>
                                 <tr style="border-top:2px solid var(--primary);">
@@ -194,12 +194,12 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                         </table>
                     </div>
                     <?php if ($inv['show_pph23'] && $inv['tax_pph23'] > 0): ?>
-                    <p style="font-size:11px;color:#94a3b8;margin-top:8px;margin-bottom:0;">*) PPh 23 dipotong oleh pembeli badan usaha sesuai ketentuan perpajakan.</p>
+                    <p style="font-size:11px;color:#A6B0A9;margin-top:8px;margin-bottom:0;">*) PPh 23 dipotong oleh pembeli badan usaha sesuai ketentuan perpajakan.</p>
                     <?php endif; ?>
 
                     <?php if (!empty($inv['admin_notes'])): ?>
-                    <div style="margin-top:16px;padding:12px 16px;background:#f8fafc;border-radius:8px;border-left:3px solid var(--primary);">
-                        <div style="font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px;">CATATAN ADMIN</div>
+                    <div style="margin-top:16px;padding:12px 16px;background:#FCFBF7;border-radius:8px;border-left:3px solid var(--primary);">
+                        <div style="font-size:11px;font-weight:700;color:#A6B0A9;margin-bottom:4px;">CATATAN ADMIN</div>
                         <div style="font-size:13px;color:#374151;"><?= nl2br(htmlspecialchars($inv['admin_notes'])) ?></div>
                     </div>
                     <?php endif; ?>
@@ -222,11 +222,11 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                     <a href="<?= htmlspecialchars($pdfUrl) ?>" target="_blank" class="btn btn-primary">
                         <i class="fas fa-eye me-2"></i>Lihat / Download PDF
                     </a>
-                    <div style="font-size:11px;color:#94a3b8;word-break:break-all;">
+                    <div style="font-size:11px;color:#A6B0A9;word-break:break-all;">
                         Link pelanggan: <a href="<?= htmlspecialchars($pdfUrl) ?>" target="_blank" style="color:var(--primary);"><?= htmlspecialchars($pdfUrl) ?></a>
                     </div>
                     <?php else: ?>
-                    <div style="padding:10px 14px;background:#fef3c7;border-radius:8px;border:1px solid #fcd34d;font-size:13px;color:#92400e;">
+                    <div style="padding:10px 14px;background:#F7EEDF;border-radius:8px;border:1px solid #fcd34d;font-size:13px;color:#7A5A0C;">
                         <i class="fas fa-exclamation-triangle me-1"></i> PDF belum tersedia
                     </div>
                     <?php endif; ?>
@@ -254,9 +254,9 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                             <i class="fas fa-paper-plane me-2"></i>Kirim Invoice ke Email Klien
                         </button>
                     </form>
-                    <div style="font-size:12px;color:#94a3b8;">Akan dikirim ke: <strong><?= htmlspecialchars($order['client_email']) ?></strong></div>
+                    <div style="font-size:12px;color:#A6B0A9;">Akan dikirim ke: <strong><?= htmlspecialchars($order['client_email']) ?></strong></div>
                     <?php elseif (empty($order['client_email'])): ?>
-                    <div style="padding:10px 14px;background:#fef2f2;border-radius:8px;font-size:13px;color:#991b1b;">
+                    <div style="padding:10px 14px;background:#fef2f2;border-radius:8px;font-size:13px;color:#8A2C23;">
                         <i class="fas fa-exclamation-circle me-1"></i> Email klien tidak tersedia
                     </div>
                     <?php endif; ?>
@@ -272,7 +272,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                     <?php endif; ?>
 
                     <?php if ($inv['status'] === 'paid'): ?>
-                    <div style="padding:12px 16px;background:#f0fdf4;border-radius:8px;border:1px solid #bbf7d0;text-align:center;font-size:13px;font-weight:700;color:#15803d;">
+                    <div style="padding:12px 16px;background:#f0fdf4;border-radius:8px;border:1px solid #bbf7d0;text-align:center;font-size:13px;font-weight:700;color:#1F5637;">
                         <i class="fas fa-check-circle me-2"></i>INVOICE LUNAS
                         <div style="font-size:11px;font-weight:400;margin-top:4px;"><?= $inv['paid_at'] ? date('d F Y H:i', strtotime($inv['paid_at'])) : '' ?></div>
                     </div>
@@ -296,13 +296,13 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                     <h5 class="admin-card-title"><i class="fas fa-hand-holding-usd"></i> Info Pembayaran</h5>
                 </div>
                 <div style="padding:16px 20px;">
-                    <div style="font-size:13px;color:#64748b;margin-bottom:12px;">Minimal DP (50%):</div>
+                    <div style="font-size:13px;color:#77857D;margin-bottom:12px;">Minimal DP (50%):</div>
                     <div style="font-size:22px;font-weight:800;color:var(--primary);">
                         Rp <?= number_format((int)ceil($inv['total'] / 2), 0, ',', '.') ?>
                     </div>
-                    <div style="font-size:12px;color:#94a3b8;margin-top:4px;">dari total Rp <?= number_format($inv['total'], 0, ',', '.') ?></div>
+                    <div style="font-size:12px;color:#A6B0A9;margin-top:4px;">dari total Rp <?= number_format($inv['total'], 0, ',', '.') ?></div>
                     <?php if ($inv['due_date']): ?>
-                    <div style="margin-top:12px;padding:8px 12px;background:#fef3c7;border-radius:8px;font-size:12px;color:#92400e;">
+                    <div style="margin-top:12px;padding:8px 12px;background:#F7EEDF;border-radius:8px;font-size:12px;color:#7A5A0C;">
                         <i class="fas fa-clock me-1"></i>Jatuh tempo: <?= date('d F Y', strtotime($inv['due_date'])) ?>
                     </div>
                     <?php endif; ?>

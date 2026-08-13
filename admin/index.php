@@ -30,6 +30,11 @@ if (!file_exists($config_file)) {
 require_once ROOT_PATH . '/includes/db.php';
 require_once ROOT_PATH . '/includes/functions.php';
 
+// Never leak PHP notices/warnings into the admin UI on hosts with display_errors on
+header_remove('X-Powered-By');
+ini_set('display_errors', 0);
+error_reporting(0);
+
 // Security headers
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
@@ -39,9 +44,11 @@ header('Cache-Control: no-store, no-cache, must-revalidate, private');
 if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
     header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
 }
+// NOTE: code.jquery.com and cdn.datatables.net must stay allow-listed —
+// the admin tables (DataTables) are loaded from them in includes/footer.php.
 header("Content-Security-Policy: default-src 'self'; " .
-    "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com; " .
-    "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com https://fonts.gstatic.com; " .
+    "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com https://code.jquery.com https://cdn.datatables.net; " .
+    "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.datatables.net; " .
     "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; " .
     "img-src 'self' data: https: blob:; " .
     "connect-src 'self' https://api.fonnte.com https://app.wablas.com; " .
@@ -90,6 +97,14 @@ switch ($page) {
         require_once ADMIN_PATH . '/pesanan-detail.php';
         break;
     
+    case 'publikasi':
+        require_once ADMIN_PATH . '/publikasi.php';
+        break;
+
+    case 'publikasi-form':
+        require_once ADMIN_PATH . '/publikasi-form.php';
+        break;
+
     case 'portofolio':
         require_once ADMIN_PATH . '/portofolio.php';
         break;

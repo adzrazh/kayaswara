@@ -60,9 +60,12 @@ Rute lama tetap dilayani (`/harga`, `/blog`, `/konsultasi`, `/tracking`, `/katal
 - [x] Milestone bawaan diselaraskan dengan alur di halaman Proses
 - [x] `install.php` & `migrate.php` diperbarui; berkas migrasi ad-hoc lama dihapus
 - [x] Sapuan kepatuhan: nol penawaran ISBN di seluruh halaman
+- [x] `seed.php`: 5 judul katalog + 5 tulisan wawasan tersimpan di basis data,
+      dapat dihapus kembali dengan `--remove` (ISBN sengaja dikosongkan)
 
 ## Yang Harus Diisi Pemilik Situs
 
+- [ ] Jalankan `php seed.php --remove` lalu ganti data contoh dengan terbitan asli
 - [ ] Isi Katalog Publikasi dengan judul yang benar-benar sudah terbit (sampul + bibliografi)
 - [ ] Lengkapi Pengaturan → Umum: nama badan usaha, tahun berdiri, NIB, akta, NPWP
 - [ ] Unggah logo & favicon

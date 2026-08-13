@@ -89,6 +89,24 @@ variabel CSS pada `includes/header.php`.
 4. Selesai. Masuk ke `/admin`, lengkapi **Pengaturan → Umum**, lalu isi **Katalog Publikasi**.
 5. Hapus `install.php` dan `migrate.php` dari server.
 
+## Data Contoh (opsional)
+
+`seed.php` mengisi basis data dengan **5 judul katalog** dan **5 tulisan wawasan**
+supaya tampilan situs dapat dinilai memakai data nyata dari database, bukan contoh
+yang ditanam di dalam template.
+
+```
+php seed.php            # memasukkan data contoh (melewati yang sudah ada)
+php seed.php --remove    # menghapus kembali seluruh data contoh
+```
+
+Kolom ISBN pada data contoh sengaja dikosongkan — ISBN adalah nomor resmi dan tidak
+boleh diisi angka karangan.
+
+> **Sebelum mengajukan situs ke Perpustakaan Nasional:** jalankan `php seed.php --remove`,
+> isi katalog dengan terbitan yang benar-benar sudah diterbitkan, lalu hapus `seed.php`
+> dari server.
+
 ## Memperbarui Instalasi Lama
 
 1. Timpa berkas lama dengan versi ini (jangan hapus `config.php`).
@@ -123,6 +141,7 @@ variabel CSS pada `includes/header.php`.
 ├── index.php               Front controller & perutean
 ├── install.php             Pemasang berbasis web
 ├── migrate.php             Migrasi basis data (hapus setelah dipakai)
+├── seed.php                Data contoh katalog & wawasan (hapus setelah dipakai)
 └── .htaccess               Perutean bersih, header keamanan, kompresi
 ```
 

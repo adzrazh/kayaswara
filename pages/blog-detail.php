@@ -48,7 +48,9 @@ try {
     }
 } catch (Exception $e) {}
 
-$readMinutes = max(1, (int) ceil(str_word_count(strip_tags($post['content'] ?? '')) / 200));
+// preg_split, bukan str_word_count(), agar kata ber-UTF-8 tetap terhitung
+$wordCount   = count(preg_split('/\s+/u', trim(strip_tags($post['content'] ?? '')), -1, PREG_SPLIT_NO_EMPTY));
+$readMinutes = max(1, (int) ceil($wordCount / 200));
 ?>
 
 <div class="page-head">

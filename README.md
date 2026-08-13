@@ -66,15 +66,15 @@ Situs ini disusun mengikuti catatan penilaian Perpusnas:
 
 ## Sistem Desain
 
-Palet "kertas daur ulang + tinta hijau tua", diringkas di `design_guidelines.json`:
+Palet "kertas putih bersih + tinta biru akademik", diringkas di `design_guidelines.json`:
 
 | Token | Nilai | Pemakaian |
 |-------|-------|-----------|
-| `--primary` | `#1F4B3F` | Warna utama, tombol, pita CTA |
-| `--secondary` | `#2F6B57` | Ikon, aksen tenang |
-| `--accent` | `#A9752F` | Penekanan, sorotan, garis eyebrow |
-| `--paper` | `#FBFAF6` | Latar halaman |
-| `--ink` | `#16211C` | Teks judul |
+| `--primary` | `#1A3C5E` | Warna utama, tombol, pita CTA |
+| `--secondary` | `#2E6188` | Ikon, aksen tenang |
+| `--accent` | `#B8860B` | Penekanan, sorotan, garis eyebrow |
+| `--paper` | `#F7F9FB` | Latar halaman |
+| `--ink` | `#12212E` | Teks judul |
 
 Ketiga warna merek dapat diubah dari **Admin → Pengaturan → Tampilan** dan disuntikkan sebagai
 variabel CSS pada `includes/header.php`.

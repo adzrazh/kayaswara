@@ -323,15 +323,15 @@ if ($isCli) {
 <meta charset="UTF-8">
 <title>Data Contoh — Kayaswara</title>
 <style>
-    body { font-family: system-ui, sans-serif; max-width: 760px; margin: 60px auto; padding: 0 20px; color:#45544D; background:#FBFAF6; }
-    h1 { color:#1F4B3F; font-size:1.5rem; }
+    body { font-family: system-ui, sans-serif; max-width: 760px; margin: 60px auto; padding: 0 20px; color:#41525F; background:#F7F9FB; }
+    h1 { color:#1A3C5E; font-size:1.5rem; }
     ul { list-style:none; padding:0; }
-    li { padding:.55rem .9rem; border:1px solid #E3E0D4; border-radius:8px; margin-bottom:.45rem; background:#fff; font-size:.93rem; }
-    .ok { border-left:3px solid #2F6B57; }
-    .skip { border-left:3px solid #CFCBBB; color:#77857D; }
+    li { padding:.55rem .9rem; border:1px solid #DCE5ED; border-radius:8px; margin-bottom:.45rem; background:#fff; font-size:.93rem; }
+    .ok { border-left:3px solid #2E6188; }
+    .skip { border-left:3px solid #C0CCD8; color:#74838E; }
     .error { border-left:3px solid #B3392E; color:#8A2C23; font-weight:600; }
-    .warn { background:#F7EEDF; border:1px solid #E0C89A; padding:14px 18px; border-radius:8px; margin-top:24px; font-size:.92rem; }
-    code { background:#EDEAE0; padding:.1em .35em; border-radius:4px; }
+    .warn { background:#FAF2E0; border:1px solid #D8C79A; padding:14px 18px; border-radius:8px; margin-top:24px; font-size:.92rem; }
+    code { background:#E2EAF1; padding:.1em .35em; border-radius:4px; }
 </style>
 </head>
 <body>

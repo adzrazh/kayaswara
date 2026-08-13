@@ -201,7 +201,7 @@ if (substr($wa_phone, 0, 1) === '0') {
                                             <?= htmlspecialchars($konsultasi['phone']) ?>
                                         </a>
                                     <?php else: ?>
-                                        <span style="color:#A6B0A9;">Tidak disediakan</span>
+                                        <span style="color:#9AA7B2;">Tidak disediakan</span>
                                     <?php endif; ?>
                                 </span>
                             </div>
@@ -236,11 +236,11 @@ if (substr($wa_phone, 0, 1) === '0') {
                 </div>
                 <div class="admin-card-body">
                     <?php if (!empty($konsultasi['message'])): ?>
-                    <div style="background:#FCFBF7;border-radius:10px;padding:20px;border-left:4px solid var(--secondary);font-size:14px;line-height:1.7;color:#374151;white-space:pre-line;">
+                    <div style="background:#F9FBFD;border-radius:10px;padding:20px;border-left:4px solid var(--secondary);font-size:14px;line-height:1.7;color:#374151;white-space:pre-line;">
                         <?= htmlspecialchars($konsultasi['message']) ?>
                     </div>
                     <?php else: ?>
-                    <p style="color:#A6B0A9;font-style:italic;">Tidak ada pesan tambahan.</p>
+                    <p style="color:#9AA7B2;font-style:italic;">Tidak ada pesan tambahan.</p>
                     <?php endif; ?>
                 </div>
             </div>
@@ -266,17 +266,17 @@ if (substr($wa_phone, 0, 1) === '0') {
                     ];
                     $icon = $iconMap[$ext] ?? 'fas fa-file';
                     ?>
-                    <div style="display:flex;align-items:center;gap:16px;background:#FCFBF7;border-radius:10px;padding:16px 20px;border:1px solid #E3E0D4;">
+                    <div style="display:flex;align-items:center;gap:16px;background:#F9FBFD;border-radius:10px;padding:16px 20px;border:1px solid #DCE5ED;">
                         <i class="<?= $icon ?>" style="font-size:2rem;color:var(--primary);"></i>
                         <div style="flex:1;">
-                            <div style="font-weight:600;font-size:14px;color:#16211C;"><?= $origName ?></div>
-                            <div style="font-size:12px;color:#A6B0A9;margin-top:2px;">Format: <?= strtoupper($ext) ?></div>
+                            <div style="font-weight:600;font-size:14px;color:#12212E;"><?= $origName ?></div>
+                            <div style="font-size:12px;color:#9AA7B2;margin-top:2px;">Format: <?= strtoupper($ext) ?></div>
                         </div>
                         <a href="<?= $filePath ?>" download="<?= $origName ?>" class="btn btn-primary btn-sm" style="white-space:nowrap;">
                             <i class="fas fa-download me-1"></i>Download File
                         </a>
                     </div>
-                    <p style="font-size:12px;color:#A6B0A9;margin-top:8px;margin-bottom:0;">
+                    <p style="font-size:12px;color:#9AA7B2;margin-top:8px;margin-bottom:0;">
                         <i class="fas fa-info-circle me-1"></i>File ini diunggah oleh calon penulis saat mengisi formulir konsultasi.
                     </p>
                 </div>
@@ -294,32 +294,32 @@ if (substr($wa_phone, 0, 1) === '0') {
                 <div class="admin-card-body">
                     <div class="row g-3">
                         <div class="col-sm-4">
-                            <div style="text-align:center;padding:16px;background:#FCFBF7;border-radius:10px;border:1px solid #E3E0D4;">
-                                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#A6B0A9;margin-bottom:6px;">Tanggal Masuk</div>
-                                <div style="font-size:14px;font-weight:700;color:#16211C;">
+                            <div style="text-align:center;padding:16px;background:#F9FBFD;border-radius:10px;border:1px solid #DCE5ED;">
+                                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#9AA7B2;margin-bottom:6px;">Tanggal Masuk</div>
+                                <div style="font-size:14px;font-weight:700;color:#12212E;">
                                     <?= date('d M Y', strtotime($konsultasi['created_at'])) ?>
                                 </div>
-                                <div style="font-size:12px;color:#77857D;">
+                                <div style="font-size:12px;color:#74838E;">
                                     <?= date('H:i', strtotime($konsultasi['created_at'])) ?> WIB
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-4">
-                            <div style="text-align:center;padding:16px;background:#FCFBF7;border-radius:10px;border:1px solid #E3E0D4;">
-                                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#A6B0A9;margin-bottom:6px;">Terakhir Diperbarui</div>
-                                <div style="font-size:14px;font-weight:700;color:#16211C;">
+                            <div style="text-align:center;padding:16px;background:#F9FBFD;border-radius:10px;border:1px solid #DCE5ED;">
+                                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#9AA7B2;margin-bottom:6px;">Terakhir Diperbarui</div>
+                                <div style="font-size:14px;font-weight:700;color:#12212E;">
                                     <?= date('d M Y', strtotime($konsultasi['updated_at'])) ?>
                                 </div>
-                                <div style="font-size:12px;color:#77857D;">
+                                <div style="font-size:12px;color:#74838E;">
                                     <?= date('H:i', strtotime($konsultasi['updated_at'])) ?> WIB
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-4">
-                            <div style="text-align:center;padding:16px;background:<?= !empty($konsultasi['follow_up_date']) && strtotime($konsultasi['follow_up_date']) < time() && !in_array($konsultasi['status'], ['closed_won','closed_lost']) ? '#fff8f0' : '#FCFBF7' ?>;border-radius:10px;border:1px solid <?= !empty($konsultasi['follow_up_date']) && strtotime($konsultasi['follow_up_date']) < time() && !in_array($konsultasi['status'], ['closed_won','closed_lost']) ? '#fed7aa' : '#E3E0D4' ?>;">
-                                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#A6B0A9;margin-bottom:6px;">Jadwal Follow Up</div>
+                            <div style="text-align:center;padding:16px;background:<?= !empty($konsultasi['follow_up_date']) && strtotime($konsultasi['follow_up_date']) < time() && !in_array($konsultasi['status'], ['closed_won','closed_lost']) ? '#fff8f0' : '#F9FBFD' ?>;border-radius:10px;border:1px solid <?= !empty($konsultasi['follow_up_date']) && strtotime($konsultasi['follow_up_date']) < time() && !in_array($konsultasi['status'], ['closed_won','closed_lost']) ? '#fed7aa' : '#DCE5ED' ?>;">
+                                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#9AA7B2;margin-bottom:6px;">Jadwal Follow Up</div>
                                 <?php if (!empty($konsultasi['follow_up_date'])): ?>
-                                    <div style="font-size:14px;font-weight:700;color:#16211C;">
+                                    <div style="font-size:14px;font-weight:700;color:#12212E;">
                                         <?= date('d M Y', strtotime($konsultasi['follow_up_date'])) ?>
                                     </div>
                                     <?php if (strtotime($konsultasi['follow_up_date']) < time() && !in_array($konsultasi['status'], ['closed_won','closed_lost'])): ?>
@@ -328,7 +328,7 @@ if (substr($wa_phone, 0, 1) === '0') {
                                     </div>
                                     <?php endif; ?>
                                 <?php else: ?>
-                                    <div style="font-size:13px;color:#A6B0A9;">Belum dijadwalkan</div>
+                                    <div style="font-size:13px;color:#9AA7B2;">Belum dijadwalkan</div>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -379,7 +379,7 @@ if (substr($wa_phone, 0, 1) === '0') {
                         <?php endforeach; ?>
                     </div>
                     <?php else: ?>
-                    <div style="text-align:center;padding:24px;color:#A6B0A9;">
+                    <div style="text-align:center;padding:24px;color:#9AA7B2;">
                         <i class="fas fa-sticky-note fa-2x mb-2 d-block"></i>
                         <p style="font-size:13px;">Belum ada catatan. Tambahkan catatan untuk mendokumentasikan perkembangan konsultasi ini.</p>
                     </div>
@@ -501,30 +501,30 @@ if (substr($wa_phone, 0, 1) === '0') {
             </div>
 
             <!-- Consultation Summary -->
-            <div class="admin-card" style="background:linear-gradient(135deg,rgba(31,75,63,0.04),rgba(26,54,93,0.04));">
+            <div class="admin-card" style="background:linear-gradient(135deg,rgba(26,60,94,0.04),rgba(26,54,93,0.04));">
                 <div class="admin-card-body">
-                    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#A6B0A9;margin-bottom:14px;">
+                    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#9AA7B2;margin-bottom:14px;">
                         <i class="fas fa-info-circle me-1"></i>Ringkasan
                     </div>
                     <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
                         <div style="display:flex;justify-content:space-between;">
-                            <span style="color:#77857D;">ID Konsultasi:</span>
+                            <span style="color:#74838E;">ID Konsultasi:</span>
                             <strong>#<?= $id ?></strong>
                         </div>
                         <div style="display:flex;justify-content:space-between;">
-                            <span style="color:#77857D;">Status:</span>
+                            <span style="color:#74838E;">Status:</span>
                             <span class="badge badge-status-<?= $konsultasi['status'] ?>">
                                 <?= $status_labels[$konsultasi['status']] ?? $konsultasi['status'] ?>
                             </span>
                         </div>
                         <div style="display:flex;justify-content:space-between;">
-                            <span style="color:#77857D;">Prioritas:</span>
+                            <span style="color:#74838E;">Prioritas:</span>
                             <span class="badge badge-priority-<?= $konsultasi['priority'] ?>">
                                 <?= $priority_labels[$konsultasi['priority']] ?? $konsultasi['priority'] ?>
                             </span>
                         </div>
                         <div style="display:flex;justify-content:space-between;">
-                            <span style="color:#77857D;">Catatan:</span>
+                            <span style="color:#74838E;">Catatan:</span>
                             <strong><?= count($notes_timeline) ?> entri</strong>
                         </div>
                     </div>

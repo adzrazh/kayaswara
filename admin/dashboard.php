@@ -71,7 +71,7 @@ for ($i = 5; $i >= 0; $i--) {
 // --- Chart Data: Status Distribution ---
 $status_labels = ['Baru', 'Dihubungi', 'Follow Up', 'Negosiasi', 'Closed Won', 'Closed Lost'];
 $status_keys   = ['new', 'contacted', 'follow_up', 'negotiation', 'closed_won', 'closed_lost'];
-$status_colors = ['#2C6E8F', '#2F6B57', '#A9752F', '#77857D', '#1F4B3F', '#B3392E'];
+$status_colors = ['#2C6E8F', '#2E6188', '#B8860B', '#74838E', '#1A3C5E', '#B3392E'];
 $status_data   = [];
 foreach ($status_keys as $sk) {
     try {
@@ -123,7 +123,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
             <p>Selamat datang kembali, <strong><?= htmlspecialchars($_SESSION['admin_name'] ?? 'Admin') ?></strong>. Berikut ringkasan hari ini.</p>
         </div>
         <div class="page-header-actions">
-            <span class="badge" style="background:#E3E0D4;color:#45544D;font-size:12px;padding:8px 14px;">
+            <span class="badge" style="background:#DCE5ED;color:#41525F;font-size:12px;padding:8px 14px;">
                 <i class="fas fa-calendar-day me-1"></i>
                 <?= date('d F Y') ?>
             </span>
@@ -133,7 +133,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
     <!-- Revenue Cards -->
     <div class="row g-4 mb-4">
         <div class="col-md-6">
-            <div style="background:linear-gradient(135deg,#1F4B3F,#2F6B57);border-radius:16px;padding:24px 28px;display:flex;align-items:center;gap:20px;box-shadow:0 6px 22px rgba(31,75,63,0.18);">
+            <div style="background:linear-gradient(135deg,#1A3C5E,#2E6188);border-radius:16px;padding:24px 28px;display:flex;align-items:center;gap:20px;box-shadow:0 6px 22px rgba(26,60,94,0.18);">
                 <div style="background:rgba(255,255,255,0.15);border-radius:14px;width:60px;height:60px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                     <i class="fas fa-coins fa-xl" style="color:#fff;"></i>
                 </div>
@@ -145,7 +145,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
             </div>
         </div>
         <div class="col-md-6">
-            <div style="background:linear-gradient(135deg,#8E6126,#A9752F);border-radius:16px;padding:24px 28px;display:flex;align-items:center;gap:20px;box-shadow:0 6px 22px rgba(169,117,47,0.18);">
+            <div style="background:linear-gradient(135deg,#96700A,#B8860B);border-radius:16px;padding:24px 28px;display:flex;align-items:center;gap:20px;box-shadow:0 6px 22px rgba(184,134,11,0.18);">
                 <div style="background:rgba(255,255,255,0.15);border-radius:14px;width:60px;height:60px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                     <i class="fas fa-shopping-bag fa-xl" style="color:#fff;"></i>
                 </div>
@@ -317,7 +317,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                 <tr>
                                     <td>
                                         <div style="font-weight:600;"><?= htmlspecialchars($k['name']) ?></div>
-                                        <div style="font-size:12px;color:#77857D;"><?= htmlspecialchars($k['institution'] ?? '-') ?></div>
+                                        <div style="font-size:12px;color:#74838E;"><?= htmlspecialchars($k['institution'] ?? '-') ?></div>
                                     </td>
                                     <td>
                                         <span style="font-size:12.5px;">
@@ -329,7 +329,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                             <?= function_exists('getStatusLabel') ? getStatusLabel($k['status']) : htmlspecialchars($k['status']) ?>
                                         </span>
                                     </td>
-                                    <td style="font-size:12px;color:#77857D;white-space:nowrap;">
+                                    <td style="font-size:12px;color:#74838E;white-space:nowrap;">
                                         <?= function_exists('formatDate') ? formatDate($k['created_at']) : date('d M Y', strtotime($k['created_at'])) ?>
                                     </td>
                                     <td>
@@ -421,14 +421,14 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                         </a>
 
                         <a href="index.php?page=konsultasi" class="quick-action-btn">
-                            <div class="quick-action-icon" style="background:rgba(169,117,47,0.12);color:#A9752F;">
+                            <div class="quick-action-icon" style="background:rgba(184,134,11,0.12);color:#B8860B;">
                                 <i class="fas fa-inbox"></i>
                             </div>
                             <div>
                                 <div style="font-weight:700;font-size:13.5px;">Pengajuan Naskah</div>
                                 <div style="font-size:12px;color:var(--text-muted);">
                                     <?php if ($new_konsultasi > 0): ?>
-                                        <span style="color:#A9752F;"><?= $new_konsultasi ?> naskah menunggu telaah</span>
+                                        <span style="color:#B8860B;"><?= $new_konsultasi ?> naskah menunggu telaah</span>
                                     <?php else: ?>
                                         Tidak ada antrean baru
                                     <?php endif; ?>
@@ -457,7 +457,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                         </a>
 
                         <a href="index.php?page=pengaturan" class="quick-action-btn">
-                            <div class="quick-action-icon" style="background:rgba(119,133,125,0.14);color:#45544D;">
+                            <div class="quick-action-icon" style="background:rgba(116,131,142,0.14);color:#41525F;">
                                 <i class="fas fa-sliders"></i>
                             </div>
                             <div>
@@ -486,12 +486,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 datasets: [{
                     label: "Konsultasi",
                     data: ' . json_encode($chart_data) . ',
-                    backgroundColor: "rgba(47, 107, 87, 0.16)",
-                    borderColor: "#1F4B3F",
+                    backgroundColor: "rgba(46, 97, 136, 0.16)",
+                    borderColor: "#1A3C5E",
                     borderWidth: 2,
                     borderRadius: 8,
                     borderSkipped: false,
-                    hoverBackgroundColor: "rgba(47, 107, 87, 0.32)",
+                    hoverBackgroundColor: "rgba(46, 97, 136, 0.32)",
                 }]
             },
             options: {
@@ -518,7 +518,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             stepSize: 1,
                             precision: 0
                         },
-                        grid: { color: "#EDEAE0" }
+                        grid: { color: "#E2EAF1" }
                     }
                 }
             }

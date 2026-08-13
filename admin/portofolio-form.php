@@ -217,12 +217,12 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                 <small class="text-muted fw-normal">(auto-generate dari judul)</small>
                             </label>
                             <div class="input-group">
-                                <span class="input-group-text" style="background:#FCFBF7;font-size:12px;color:#A6B0A9;">/portofolio/</span>
+                                <span class="input-group-text" style="background:#F9FBFD;font-size:12px;color:#9AA7B2;">/portofolio/</span>
                                 <input type="text" id="slug" name="slug_preview"
                                        class="form-control"
                                        value="<?= htmlspecialchars($item['slug']) ?>"
                                        readonly
-                                       style="background:#FCFBF7;color:#77857D;">
+                                       style="background:#F9FBFD;color:#74838E;">
                             </div>
                             <div class="form-hint">Slug dihasilkan otomatis dari judul.</div>
                         </div>
@@ -318,17 +318,17 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
 
                         <!-- Featured -->
                         <div class="mb-3">
-                            <div class="form-check" style="padding:14px 16px;background:#FCFBF7;border-radius:8px;border:1.5px solid #E3E0D4;">
+                            <div class="form-check" style="padding:14px 16px;background:#F9FBFD;border-radius:8px;border:1.5px solid #DCE5ED;">
                                 <input class="form-check-input" type="checkbox"
                                        id="is_featured" name="is_featured" value="1"
                                        <?= $item['is_featured'] ? 'checked' : '' ?>
                                        style="width:18px;height:18px;margin-top:2px;">
                                 <label class="form-check-label ms-2" for="is_featured">
                                     <span style="font-weight:600;font-size:13.5px;">
-                                        <i class="fas fa-star me-1" style="color:#A9752F;"></i>
+                                        <i class="fas fa-star me-1" style="color:#B8860B;"></i>
                                         Tampilkan sebagai Featured
                                     </span>
-                                    <div style="font-size:12px;color:#77857D;">Ditampilkan di bagian utama halaman portofolio</div>
+                                    <div style="font-size:12px;color:#74838E;">Ditampilkan di bagian utama halaman portofolio</div>
                                 </label>
                             </div>
                         </div>
@@ -358,7 +358,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                         <!-- Current Image Preview -->
                         <?php if ($is_edit && !empty($item['image'])): ?>
                         <div class="mb-3">
-                            <div style="font-size:12px;font-weight:600;color:#77857D;margin-bottom:8px;">Gambar Saat Ini:</div>
+                            <div style="font-size:12px;font-weight:600;color:#74838E;margin-bottom:8px;">Gambar Saat Ini:</div>
                             <div class="img-preview-wrap" id="currentImgWrap">
                                 <img src="../assets/uploads/portfolio/<?= htmlspecialchars($item['image']) ?>"
                                      alt="Current"
@@ -369,7 +369,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                         </div>
                         <?php else: ?>
                         <div id="previewContainer" style="display:none;margin-bottom:12px;">
-                            <div style="font-size:12px;font-weight:600;color:#77857D;margin-bottom:8px;">Preview:</div>
+                            <div style="font-size:12px;font-weight:600;color:#74838E;margin-bottom:8px;">Preview:</div>
                             <div class="img-preview-wrap">
                                 <img id="imgPreview" src="" alt="Preview"
                                      class="img-preview" style="width:100%;height:160px;display:none;">

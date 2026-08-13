@@ -64,30 +64,30 @@ $page_title = $adminTitles[$current_page] ?? 'Panel Admin';
         --sidebar-collapsed-width: 72px;
         --topbar-height: 62px;
 
-        --primary: #1F4B3F;
-        --primary-hover: #163830;
-        --secondary: #2F6B57;
-        --secondary-hover: #255643;
-        --accent: #A9752F;
+        --primary: #1A3C5E;
+        --primary-hover: #14304B;
+        --secondary: #2E6188;
+        --secondary-hover: #244E6E;
+        --accent: #B8860B;
 
-        --sidebar-bg: #16302A;
+        --sidebar-bg: #16293A;
         --sidebar-hover: rgba(255,255,255,.07);
-        --sidebar-active-bg: rgba(169,117,47,.18);
-        --sidebar-text: #C3D2CB;
-        --sidebar-heading: #74897F;
+        --sidebar-active-bg: rgba(184,134,11,.18);
+        --sidebar-text: #C6D3DE;
+        --sidebar-heading: #7A8B99;
 
-        --content-bg: #F5F4EE;
+        --content-bg: #F1F5F8;
         --card-bg: #FFFFFF;
         --topbar-bg: #FFFFFF;
-        --border-color: #E3E0D4;
-        --border-strong: #CFCBBB;
+        --border-color: #DCE5ED;
+        --border-strong: #C0CCD8;
 
-        --text-primary: #16211C;
-        --text-secondary: #45544D;
-        --text-muted: #77857D;
+        --text-primary: #12212E;
+        --text-secondary: #41525F;
+        --text-muted: #74838E;
 
         --success: #2E7D4F;
-        --warning: #A9752F;
+        --warning: #B8860B;
         --danger:  #B3392E;
         --info:    #2C6E8F;
 
@@ -95,8 +95,8 @@ $page_title = $adminTitles[$current_page] ?? 'Panel Admin';
         --radius-md: 10px;
         --radius-lg: 14px;
 
-        --card-shadow: 0 1px 2px rgba(22,33,28,.05), 0 4px 16px rgba(22,33,28,.04);
-        --card-shadow-hover: 0 6px 20px rgba(22,33,28,.09);
+        --card-shadow: 0 1px 2px rgba(18,33,46,.05), 0 4px 16px rgba(18,33,46,.04);
+        --card-shadow-hover: 0 6px 20px rgba(18,33,46,.09);
         --transition: all .22s cubic-bezier(.4,0,.2,1);
         --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         --font-display: 'Source Serif 4', Georgia, serif;
@@ -159,7 +159,7 @@ $page_title = $adminTitles[$current_page] ?? 'Panel Admin';
         font-family: var(--font-display);
         font-weight: 700;
         font-size: 15px;
-        color: #F3F6F4;
+        color: #F2F6FA;
         white-space: nowrap;
         line-height: 1.2;
     }
@@ -239,14 +239,14 @@ $page_title = $adminTitles[$current_page] ?? 'Panel Admin';
         font-weight: 700; font-size: 13px;
     }
     .sidebar-user-info { flex: 1; overflow: hidden; }
-    .sidebar-user-name { display: block; font-size: 13px; font-weight: 600; color: #F3F6F4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sidebar-user-name { display: block; font-size: 13px; font-weight: 600; color: #F2F6FA; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .sidebar-user-role { display: block; font-size: 11px; color: var(--sidebar-heading); }
 
     .sidebar-overlay {
         display: none;
         position: fixed;
         inset: 0;
-        background: rgba(22,33,28,.5);
+        background: rgba(18,33,46,.5);
         z-index: 1020;
         opacity: 0;
         transition: opacity .25s ease;
@@ -358,7 +358,7 @@ $page_title = $adminTitles[$current_page] ?? 'Panel Admin';
     .admin-card-header {
         padding: 16px 22px;
         border-bottom: 1px solid var(--border-color);
-        background: #FCFBF7;
+        background: #F9FBFD;
         display: flex; align-items: center; justify-content: space-between; gap: 12px;
     }
     .admin-card-title {
@@ -416,13 +416,13 @@ $page_title = $adminTitles[$current_page] ?? 'Panel Admin';
     .stat-change.down { color: var(--danger); }
 
     .stat-card-primary { --stat-color: var(--primary); }
-    .stat-card-primary .stat-icon { background: rgba(31,75,63,.1); color: var(--primary); }
+    .stat-card-primary .stat-icon { background: rgba(26,60,94,.1); color: var(--primary); }
     .stat-card-success { --stat-color: var(--success); }
     .stat-card-success .stat-icon { background: rgba(46,125,79,.1); color: var(--success); }
     .stat-card-warning { --stat-color: var(--warning); }
-    .stat-card-warning .stat-icon { background: rgba(169,117,47,.12); color: var(--warning); }
+    .stat-card-warning .stat-icon { background: rgba(184,134,11,.12); color: var(--warning); }
     .stat-card-info { --stat-color: var(--secondary); }
-    .stat-card-info .stat-icon { background: rgba(47,107,87,.1); color: var(--secondary); }
+    .stat-card-info .stat-icon { background: rgba(46,97,136,.1); color: var(--secondary); }
     .stat-card-danger { --stat-color: var(--danger); }
     .stat-card-danger .stat-icon { background: rgba(179,57,46,.1); color: var(--danger); }
 
@@ -465,9 +465,9 @@ $page_title = $adminTitles[$current_page] ?? 'Panel Admin';
     }
     .form-control:focus, .form-select:focus {
         border-color: var(--secondary);
-        box-shadow: 0 0 0 3px rgba(47,107,87,.12);
+        box-shadow: 0 0 0 3px rgba(46,97,136,.12);
     }
-    .form-control::placeholder { color: #A6B0A9; }
+    .form-control::placeholder { color: #9AA7B2; }
     .form-hint, .form-text { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
     .form-section-title {
         font-family: var(--font-display);
@@ -491,14 +491,14 @@ $page_title = $adminTitles[$current_page] ?? 'Panel Admin';
         letter-spacing: .07em;
         text-transform: uppercase;
         color: var(--text-muted);
-        background: #FCFBF7;
+        background: #F9FBFD;
         border-bottom: 2px solid var(--border-color);
         padding: 11px 15px;
         white-space: nowrap;
     }
     .table tbody td { padding: 11px 15px; vertical-align: middle; border-bottom: 1px solid var(--border-color); }
     .table tbody tr:last-child td { border-bottom: 0; }
-    .table tbody tr:hover td { background: #FBFAF6; }
+    .table tbody tr:hover td { background: #F7F9FB; }
     .table-thumbnail {
         width: 48px; height: 36px;
         object-fit: cover;
@@ -525,7 +525,7 @@ $page_title = $adminTitles[$current_page] ?? 'Panel Admin';
     .dataTables_wrapper .dataTables_length select:focus {
         border-color: var(--secondary);
         outline: none;
-        box-shadow: 0 0 0 3px rgba(47,107,87,.12);
+        box-shadow: 0 0 0 3px rgba(46,97,136,.12);
     }
     .dataTables_wrapper .dataTables_length select { width: auto; min-width: 74px; display: inline-block; }
     .dataTables_wrapper .dataTables_length label,
@@ -559,15 +559,15 @@ $page_title = $adminTitles[$current_page] ?? 'Panel Admin';
     .badge.bg-info      { background: var(--info) !important; color: #fff !important; }
 
     .badge-status-new          { background:#E4EDF4; color:#23566F; }
-    .badge-status-contacted    { background:#E8F0EA; color:#1F5637; }
-    .badge-status-follow_up    { background:#F7EEDF; color:#7A5A0C; }
-    .badge-status-negotiation  { background:#EDE9E0; color:#5A5344; }
+    .badge-status-contacted    { background:#E7EFF6; color:#1F5637; }
+    .badge-status-follow_up    { background:#FAF2E0; color:#7A5A0C; }
+    .badge-status-negotiation  { background:#EDE9E0; color:#4A5765; }
     .badge-status-closed_won   { background:#E1EFE6; color:#1F5637; }
     .badge-status-closed_lost  { background:#FBEDEC; color:#8A2C23; }
     .badge-status-published    { background:#E1EFE6; color:#1F5637; }
-    .badge-status-draft        { background:#EDEAE0; color:#5A5344; }
-    .badge-priority-low        { background:#F1F0E9; color:#45544D; }
-    .badge-priority-medium     { background:#F7EEDF; color:#7A5A0C; }
+    .badge-status-draft        { background:#E2EAF1; color:#4A5765; }
+    .badge-priority-low        { background:#EEF3F7; color:#41525F; }
+    .badge-priority-medium     { background:#FAF2E0; color:#7A5A0C; }
     .badge-priority-high       { background:#FBEDEC; color:#8A2C23; }
 
     /* ---------- Flash ---------- */
@@ -585,7 +585,7 @@ $page_title = $adminTitles[$current_page] ?? 'Panel Admin';
         border-left: 3px solid;
         border-radius: var(--radius-md);
         padding: 13px 16px;
-        box-shadow: 0 10px 30px rgba(22,33,28,.14);
+        box-shadow: 0 10px 30px rgba(18,33,46,.14);
         display: flex; align-items: flex-start; gap: 11px;
         animation: flashIn .3s ease forwards;
     }
@@ -654,7 +654,7 @@ $page_title = $adminTitles[$current_page] ?? 'Panel Admin';
         padding: 10px 18px;
         display: flex; align-items: center; gap: 8px;
     }
-    .nav-tabs .nav-link:hover { color: var(--text-primary); background: #FCFBF7; }
+    .nav-tabs .nav-link:hover { color: var(--text-primary); background: #F9FBFD; }
     .nav-tabs .nav-link.active {
         color: var(--primary);
         background: var(--card-bg);
@@ -697,7 +697,7 @@ $page_title = $adminTitles[$current_page] ?? 'Panel Admin';
         border: 2px solid #fff;
         box-shadow: 0 0 0 2px var(--border-color);
     }
-    .timeline-content { background: #FCFBF7; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 11px 15px; }
+    .timeline-content { background: #F9FBFD; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 11px 15px; }
     .timeline-time { font-size: 11px; color: var(--text-muted); margin-bottom: 3px; }
     .timeline-text { font-size: 13px; color: var(--text-primary); line-height: 1.5; }
 
@@ -717,13 +717,13 @@ $page_title = $adminTitles[$current_page] ?? 'Panel Admin';
     .quick-action-btn:hover {
         border-color: var(--secondary);
         color: var(--primary);
-        background: #FBFAF6;
+        background: #F7F9FB;
         transform: translateY(-1px);
     }
     .quick-action-icon {
         width: 38px; height: 38px; flex: 0 0 38px;
         border-radius: var(--radius-sm);
-        background: rgba(47,107,87,.1);
+        background: rgba(46,97,136,.1);
         color: var(--secondary);
         display: grid; place-items: center;
         font-size: 15px;
@@ -733,7 +733,7 @@ $page_title = $adminTitles[$current_page] ?? 'Panel Admin';
     .export-icon {
         width: 60px; height: 60px;
         border-radius: var(--radius-lg);
-        background: rgba(47,107,87,.1);
+        background: rgba(46,97,136,.1);
         color: var(--secondary);
         font-size: 25px;
         display: grid; place-items: center;
@@ -748,17 +748,17 @@ $page_title = $adminTitles[$current_page] ?? 'Panel Admin';
 
     /* ---------- Colour preview (settings) ---------- */
     .color-preview-card { border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border-color); }
-    .color-preview-bar { height: 8px; background: linear-gradient(90deg, var(--preview-primary,#1F4B3F), var(--preview-secondary,#2F6B57), var(--preview-accent,#A9752F)); }
+    .color-preview-bar { height: 8px; background: linear-gradient(90deg, var(--preview-primary,#1A3C5E), var(--preview-secondary,#2E6188), var(--preview-accent,#B8860B)); }
     .color-preview-body { padding: 18px; background: #fff; }
-    .color-preview-btn { display: inline-block; padding: 8px 18px; border-radius: 6px; font-weight: 600; font-size: 13px; color: #fff; background: var(--preview-primary,#1F4B3F); margin-right: 8px; }
-    .color-preview-btn-sec { background: var(--preview-secondary,#2F6B57); }
-    .color-preview-btn-acc { background: var(--preview-accent,#A9752F); }
+    .color-preview-btn { display: inline-block; padding: 8px 18px; border-radius: 6px; font-weight: 600; font-size: 13px; color: #fff; background: var(--preview-primary,#1A3C5E); margin-right: 8px; }
+    .color-preview-btn-sec { background: var(--preview-secondary,#2E6188); }
+    .color-preview-btn-acc { background: var(--preview-accent,#B8860B); }
 
     /* ---------- Editor ---------- */
     .editor-toolbar {
         display: flex; flex-wrap: wrap; gap: 4px;
         padding: 8px 11px;
-        background: #FCFBF7;
+        background: #F9FBFD;
         border: 1.5px solid var(--border-color);
         border-bottom: 0;
         border-radius: var(--radius-sm) var(--radius-sm) 0 0;
@@ -790,9 +790,9 @@ $page_title = $adminTitles[$current_page] ?? 'Panel Admin';
     .breadcrumb-item.active { color: var(--text-muted); }
 
     .alert { border-radius: var(--radius-md); border: 1px solid transparent; font-size: 13.5px; }
-    .alert-success { background:#E8F0EA; border-color:rgba(46,125,79,.25); color:#1F5637; }
+    .alert-success { background:#E7EFF6; border-color:rgba(46,125,79,.25); color:#1F5637; }
     .alert-danger  { background:#FBEDEC; border-color:rgba(179,57,46,.22); color:#8A2C23; }
-    .alert-warning { background:#F7EEDF; border-color:rgba(169,117,47,.25); color:#7A5A0C; }
+    .alert-warning { background:#FAF2E0; border-color:rgba(184,134,11,.25); color:#7A5A0C; }
     .alert-info    { background:#EAF2F6; border-color:rgba(44,110,143,.22); color:#23566F; }
 
     .form-select { padding-right: 32px; }
@@ -831,8 +831,8 @@ $page_title = $adminTitles[$current_page] ?? 'Panel Admin';
     .fw-800 { font-weight: 800; }
     .rounded-custom { border-radius: var(--radius-md); }
     .serif { font-family: var(--font-display); }
-    .overdue-row td { background: #FCF4E8 !important; }
-    .overdue-row:hover td { background: #F8EDDC !important; }
+    .overdue-row td { background: #FDF6E7 !important; }
+    .overdue-row:hover td { background: #FAEFD8 !important; }
 
     /* ---------- Responsive ---------- */
     @media (max-width: 1024px) {
@@ -858,8 +858,8 @@ $page_title = $adminTitles[$current_page] ?? 'Panel Admin';
             left: calc(100% + 12px);
             top: 50%;
             transform: translateY(-50%);
-            background: #0F211C;
-            color: #F3F6F4;
+            background: #101E2B;
+            color: #F2F6FA;
             padding: 6px 12px;
             border-radius: var(--radius-sm);
             font-size: 12px;

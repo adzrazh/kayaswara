@@ -22,15 +22,15 @@ Situs versi 2 dirombak total dari sisi desain, informasi, dan alur — logika bi
 - **Surel**: kayaswara.jurnal@gmail.com
 - **Kode pelacakan**: `KYSWR-DDMMYYYY-NNN`
 
-## Sistem Desain — Academic Press, ramah lingkungan
+## Sistem Desain — Academic Press, biru-putih
 
 | Token | Nilai |
 |-------|-------|
-| Primary | `#1F4B3F` (hijau hutan) |
-| Secondary | `#2F6B57` |
-| Accent | `#A9752F` (kuning tanah) |
-| Paper | `#FBFAF6` (kertas daur ulang) |
-| Ink | `#16211C` |
+| Primary | `#1A3C5E` (biru akademik) |
+| Secondary | `#2E6188` |
+| Accent | `#B8860B` (emas akademik) |
+| Paper | `#F7F9FB` (putih sejuk) |
+| Ink | `#12212E` |
 | Fonts | Source Serif 4 (judul) + Inter (isi) |
 | Radius | 6–16px, garis tipis, bayangan sangat halus |
 
@@ -46,6 +46,7 @@ Rute lama tetap dilayani (`/harga`, `/blog`, `/konsultasi`, `/tracking`, `/katal
 ## Yang Sudah Dikerjakan
 
 - [x] Sistem desain baru (`assets/css/style.css`) + perilaku front-end (`assets/js/main.js`)
+- [x] Palet dikembalikan ke biru-putih (biru akademik + emas) tanpa mengubah tata letak
 - [x] Kerangka situs baru: topbar utilitas, masthead lengket, laci mobile, footer empat kolom
 - [x] **Tabel `publications`** + katalog publik (cari, saring kategori/tahun, urutkan, paginasi)
 - [x] Halaman detail buku dengan tabel data bibliografi

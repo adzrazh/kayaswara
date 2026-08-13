@@ -85,35 +85,35 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
         $total_views     = array_sum(array_column($blog_posts, 'views'));
         ?>
         <div class="col-sm-4">
-            <div style="background:#fff;border-radius:10px;padding:16px 20px;border:1px solid #E3E0D4;display:flex;align-items:center;gap:12px;">
+            <div style="background:#fff;border-radius:10px;padding:16px 20px;border:1px solid #DCE5ED;display:flex;align-items:center;gap:12px;">
                 <div style="width:40px;height:40px;border-radius:8px;background:rgba(22,163,74,0.1);color:#16a34a;display:flex;align-items:center;justify-content:center;font-size:18px;">
                     <i class="fas fa-check-circle"></i>
                 </div>
                 <div>
-                    <div style="font-size:22px;font-weight:800;color:#16211C;"><?= $published_count ?></div>
-                    <div style="font-size:12px;color:#77857D;">Dipublikasikan</div>
+                    <div style="font-size:22px;font-weight:800;color:#12212E;"><?= $published_count ?></div>
+                    <div style="font-size:12px;color:#74838E;">Dipublikasikan</div>
                 </div>
             </div>
         </div>
         <div class="col-sm-4">
-            <div style="background:#fff;border-radius:10px;padding:16px 20px;border:1px solid #E3E0D4;display:flex;align-items:center;gap:12px;">
-                <div style="width:40px;height:40px;border-radius:8px;background:rgba(169,117,47,0.1);color:#A9752F;display:flex;align-items:center;justify-content:center;font-size:18px;">
+            <div style="background:#fff;border-radius:10px;padding:16px 20px;border:1px solid #DCE5ED;display:flex;align-items:center;gap:12px;">
+                <div style="width:40px;height:40px;border-radius:8px;background:rgba(184,134,11,0.1);color:#B8860B;display:flex;align-items:center;justify-content:center;font-size:18px;">
                     <i class="fas fa-file-alt"></i>
                 </div>
                 <div>
-                    <div style="font-size:22px;font-weight:800;color:#16211C;"><?= $draft_count ?></div>
-                    <div style="font-size:12px;color:#77857D;">Draft</div>
+                    <div style="font-size:22px;font-weight:800;color:#12212E;"><?= $draft_count ?></div>
+                    <div style="font-size:12px;color:#74838E;">Draft</div>
                 </div>
             </div>
         </div>
         <div class="col-sm-4">
-            <div style="background:#fff;border-radius:10px;padding:16px 20px;border:1px solid #E3E0D4;display:flex;align-items:center;gap:12px;">
+            <div style="background:#fff;border-radius:10px;padding:16px 20px;border:1px solid #DCE5ED;display:flex;align-items:center;gap:12px;">
                 <div style="width:40px;height:40px;border-radius:8px;background:rgba(8,145,178,0.1);color:#0891b2;display:flex;align-items:center;justify-content:center;font-size:18px;">
                     <i class="fas fa-eye"></i>
                 </div>
                 <div>
-                    <div style="font-size:22px;font-weight:800;color:#16211C;"><?= number_format($total_views) ?></div>
-                    <div style="font-size:12px;color:#77857D;">Total Views</div>
+                    <div style="font-size:22px;font-weight:800;color:#12212E;"><?= number_format($total_views) ?></div>
+                    <div style="font-size:12px;color:#74838E;">Total Views</div>
                 </div>
             </div>
         </div>
@@ -125,7 +125,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
             <h5 class="admin-card-title">
                 <i class="fas fa-newspaper"></i>
                 Daftar Artikel
-                <span class="badge" style="background:#E3E0D4;color:#45544D;font-size:11px;margin-left:4px;">
+                <span class="badge" style="background:#DCE5ED;color:#41525F;font-size:11px;margin-left:4px;">
                     <?= count($blog_posts) ?> artikel
                 </span>
             </h5>
@@ -157,8 +157,8 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                          class="table-thumbnail"
                                          onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iMzgiIHZpZXdCb3g9IjAgMCA1MCAzOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNTAiIGhlaWdodD0iMzgiIGZpbGw9IiNmMWY1ZjkiLz48dGV4dCB4PSIyNSIgeT0iMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5NGEzYjgiIGZvbnQtc2l6ZT0iMTAiPk5vIEltZzwvdGV4dD48L3N2Zz4='">
                                 <?php else: ?>
-                                    <div style="width:50px;height:38px;background:#F4F2EA;border-radius:6px;display:flex;align-items:center;justify-content:center;">
-                                        <i class="fas fa-image" style="color:#A6B0A9;font-size:16px;"></i>
+                                    <div style="width:50px;height:38px;background:#EEF3F7;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+                                        <i class="fas fa-image" style="color:#9AA7B2;font-size:16px;"></i>
                                     </div>
                                 <?php endif; ?>
                             </td>
@@ -166,7 +166,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                 <div style="font-weight:600;max-width:260px;">
                                     <?= htmlspecialchars(truncate($post['title'], 60)) ?>
                                 </div>
-                                <div style="font-size:11px;color:#A6B0A9;"><?= htmlspecialchars($post['slug']) ?></div>
+                                <div style="font-size:11px;color:#9AA7B2;"><?= htmlspecialchars($post['slug']) ?></div>
                             </td>
                             <td style="font-size:13px;"><?= htmlspecialchars($post['author']) ?></td>
                             <td>
@@ -176,11 +176,11 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                             </td>
                             <td>
                                 <div style="display:flex;align-items:center;gap:4px;font-size:13px;">
-                                    <i class="fas fa-eye" style="color:#A6B0A9;font-size:11px;"></i>
+                                    <i class="fas fa-eye" style="color:#9AA7B2;font-size:11px;"></i>
                                     <?= number_format($post['views']) ?>
                                 </div>
                             </td>
-                            <td style="font-size:12px;color:#77857D;white-space:nowrap;">
+                            <td style="font-size:12px;color:#74838E;white-space:nowrap;">
                                 <?= function_exists('formatDate') ? formatDate($post['created_at']) : date('d M Y', strtotime($post['created_at'])) ?>
                             </td>
                             <td>

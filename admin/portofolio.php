@@ -87,7 +87,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
             <h5 class="admin-card-title">
                 <i class="fas fa-briefcase"></i>
                 Daftar Kerja Sama
-                <span class="badge" style="background:#E3E0D4;color:#45544D;font-size:11px;margin-left:4px;">
+                <span class="badge" style="background:#DCE5ED;color:#41525F;font-size:11px;margin-left:4px;">
                     <?= count($portfolio_items) ?> item
                 </span>
             </h5>
@@ -125,8 +125,8 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                          class="table-thumbnail"
                                          onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iMzgiIHZpZXdCb3g9IjAgMCA1MCAzOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNTAiIGhlaWdodD0iMzgiIGZpbGw9IiNmMWY1ZjkiLz48dGV4dCB4PSIyNSIgeT0iMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5NGEzYjgiIGZvbnQtc2l6ZT0iMTAiPk5vIEltZzwvdGV4dD48L3N2Zz4='">
                                 <?php else: ?>
-                                    <div style="width:50px;height:38px;background:#F4F2EA;border-radius:6px;display:flex;align-items:center;justify-content:center;">
-                                        <i class="fas fa-image" style="color:#A6B0A9;font-size:16px;"></i>
+                                    <div style="width:50px;height:38px;background:#EEF3F7;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+                                        <i class="fas fa-image" style="color:#9AA7B2;font-size:16px;"></i>
                                     </div>
                                 <?php endif; ?>
                             </td>
@@ -134,24 +134,24 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                 <div style="font-weight:600;max-width:200px;">
                                     <?= htmlspecialchars(truncate($item['title'], 50)) ?>
                                 </div>
-                                <div style="font-size:11px;color:#A6B0A9;"><?= htmlspecialchars($item['slug']) ?></div>
+                                <div style="font-size:11px;color:#9AA7B2;"><?= htmlspecialchars($item['slug']) ?></div>
                             </td>
                             <td>
                                 <div style="font-size:13px;"><?= htmlspecialchars($item['client_name'] ?? '-') ?></div>
-                                <div style="font-size:11px;color:#A6B0A9;"><?= htmlspecialchars($item['client_institution'] ?? '') ?></div>
+                                <div style="font-size:11px;color:#9AA7B2;"><?= htmlspecialchars($item['client_institution'] ?? '') ?></div>
                             </td>
                             <td>
-                                <span class="badge" style="background:#E3E0D4;color:#45544D;">
+                                <span class="badge" style="background:#DCE5ED;color:#41525F;">
                                     <?= htmlspecialchars($category_labels[$item['category']] ?? $item['category']) ?>
                                 </span>
                             </td>
                             <td>
                                 <?php if ($item['is_featured']): ?>
-                                    <span class="badge" style="background:#F7EEDF;color:#7A5A0C;">
+                                    <span class="badge" style="background:#FAF2E0;color:#7A5A0C;">
                                         <i class="fas fa-star me-1"></i>Featured
                                     </span>
                                 <?php else: ?>
-                                    <span style="color:#A6B0A9;font-size:12px;">—</span>
+                                    <span style="color:#9AA7B2;font-size:12px;">—</span>
                                 <?php endif; ?>
                             </td>
                             <td>
@@ -159,7 +159,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                     <?= $item['status'] === 'published' ? 'Publikasi' : 'Draft' ?>
                                 </span>
                             </td>
-                            <td style="font-size:12px;color:#77857D;white-space:nowrap;">
+                            <td style="font-size:12px;color:#74838E;white-space:nowrap;">
                                 <?= function_exists('formatDate') ? formatDate($item['created_at']) : date('d M Y', strtotime($item['created_at'])) ?>
                             </td>
                             <td>

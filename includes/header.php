@@ -11,9 +11,9 @@ $siteTagline = html_entity_decode(getSetting('site_tagline', 'Penerbit Buku Akad
 $logoPath    = getSetting('logo_path', '');
 $faviconPath = getSetting('favicon_path', '');
 
-$primaryColor   = getSetting('primary_color', '#1F4B3F');
-$secondaryColor = getSetting('secondary_color', '#2F6B57');
-$accentColor    = getSetting('accent_color', '#A9752F');
+$primaryColor   = getSetting('primary_color', '#1A3C5E');
+$secondaryColor = getSetting('secondary_color', '#2E6188');
+$accentColor    = getSetting('accent_color', '#B8860B');
 
 $metaDescription = $metaDesc ?? getSetting(
     'meta_description',

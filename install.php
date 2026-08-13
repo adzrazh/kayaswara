@@ -186,9 +186,9 @@ function kys_default_settings(): array {
         'site_name'        => 'Kayaswara',
         'site_tagline'     => 'Penerbit Buku Akademik',
         'legal_name'       => 'CV. Kayaswara',
-        'primary_color'    => '#1F4B3F',
-        'secondary_color'  => '#2F6B57',
-        'accent_color'     => '#A9752F',
+        'primary_color'    => '#1A3C5E',
+        'secondary_color'  => '#2E6188',
+        'accent_color'     => '#B8860B',
         'logo_path'        => '',
         'favicon_path'     => '',
         'whatsapp_number'  => '081213169703',
@@ -298,33 +298,33 @@ $guessedUrl = $protocol . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . rtrim
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-    :root { --primary:#1F4B3F; --secondary:#2F6B57; --accent:#A9752F; --paper:#FBFAF6; --line:#E3E0D4; --ink:#16211C; --ink-muted:#77857D; }
-    body { font-family:'Inter',sans-serif; background:var(--paper); color:#45544D; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:2.5rem 1rem; }
-    body::before { content:''; position:fixed; inset:0; background:radial-gradient(circle at 15% 20%, rgba(47,107,87,.08), transparent 45%), radial-gradient(circle at 85% 80%, rgba(169,117,47,.08), transparent 45%); pointer-events:none; }
+    :root { --primary:#1A3C5E; --secondary:#2E6188; --accent:#B8860B; --paper:#F7F9FB; --line:#DCE5ED; --ink:#12212E; --ink-muted:#74838E; }
+    body { font-family:'Inter',sans-serif; background:var(--paper); color:#41525F; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:2.5rem 1rem; }
+    body::before { content:''; position:fixed; inset:0; background:radial-gradient(circle at 15% 20%, rgba(46,97,136,.08), transparent 45%), radial-gradient(circle at 85% 80%, rgba(184,134,11,.08), transparent 45%); pointer-events:none; }
     .wrap { position:relative; width:100%; max-width:640px; }
-    .card-install { background:#fff; border:1px solid var(--line); border-radius:16px; box-shadow:0 18px 48px rgba(22,33,28,.1); overflow:hidden; }
+    .card-install { background:#fff; border:1px solid var(--line); border-radius:16px; box-shadow:0 18px 48px rgba(18,33,46,.1); overflow:hidden; }
     .card-head { background:var(--primary); color:#fff; padding:2rem; }
     .card-head h1 { font-family:'Source Serif 4',Georgia,serif; font-size:1.6rem; margin:0 0 .25rem; }
     .card-head p { margin:0; opacity:.8; font-size:.9rem; }
     .card-body-install { padding:2rem; }
     .steps { display:flex; gap:.5rem; margin-bottom:1.75rem; }
-    .steps div { flex:1; height:4px; border-radius:2px; background:#E3E0D4; }
+    .steps div { flex:1; height:4px; border-radius:2px; background:#DCE5ED; }
     .steps div.on { background:var(--secondary); }
     h5 { font-family:'Source Serif 4',Georgia,serif; color:var(--ink); }
     .form-label { font-size:.84rem; font-weight:600; color:var(--ink); }
     .form-control { border:1.5px solid var(--line); border-radius:6px; padding:.62rem .85rem; font-size:.93rem; }
-    .form-control:focus { border-color:var(--secondary); box-shadow:0 0 0 3px rgba(47,107,87,.12); }
+    .form-control:focus { border-color:var(--secondary); box-shadow:0 0 0 3px rgba(46,97,136,.12); }
     .form-text { font-size:.78rem; color:var(--ink-muted); }
     .btn-go { background:var(--primary); border:0; color:#fff; font-weight:600; padding:.8rem 1.5rem; border-radius:6px; width:100%; }
-    .btn-go:hover { background:#163830; color:#fff; }
+    .btn-go:hover { background:#14304B; color:#fff; }
     .legend { font-size:.72rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--secondary); margin-bottom:.85rem; }
     .req-list { list-style:none; padding:0; margin:0 0 1.5rem; border:1px solid var(--line); border-radius:10px; overflow:hidden; }
     .req-list li { display:flex; justify-content:space-between; align-items:center; padding:.75rem 1rem; border-bottom:1px solid var(--line); font-size:.9rem; }
     .req-list li:last-child { border-bottom:0; }
     .pill { font-size:.72rem; font-weight:700; padding:.2rem .6rem; border-radius:99px; }
-    .pill-ok { background:#E8F0EA; color:#1F5637; }
+    .pill-ok { background:#E7EFF6; color:#1F5637; }
     .pill-no { background:#FBEDEC; color:#8A2C23; }
-    .pill-info { background:#F4F2EA; color:#45544D; }
+    .pill-info { background:#EEF3F7; color:#41525F; }
 </style>
 </head>
 <body>

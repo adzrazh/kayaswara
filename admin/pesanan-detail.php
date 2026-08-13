@@ -345,7 +345,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                 </div>
                 <div class="admin-card-body">
                     <!-- Tracking Code -->
-                    <div style="background:linear-gradient(135deg,#1F4B3F,#1A1A1A);border-radius:12px;padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+                    <div style="background:linear-gradient(135deg,#1A3C5E,#1A1A1A);border-radius:12px;padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
                         <div>
                             <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.65);margin-bottom:4px;">
                                 Kode Tracking
@@ -378,7 +378,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                             <?= htmlspecialchars($order['client_email']) ?>
                                         </a>
                                     <?php else: ?>
-                                        <span style="color:#A6B0A9;">Tidak disediakan</span>
+                                        <span style="color:#9AA7B2;">Tidak disediakan</span>
                                     <?php endif; ?>
                                 </span>
                             </div>
@@ -395,7 +395,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                             <?= htmlspecialchars($order['client_phone']) ?>
                                         </a>
                                     <?php else: ?>
-                                        <span style="color:#A6B0A9;">Tidak disediakan</span>
+                                        <span style="color:#9AA7B2;">Tidak disediakan</span>
                                     <?php endif; ?>
                                 </span>
                             </div>
@@ -422,8 +422,8 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
 
                     <?php if (!empty($order['description'])): ?>
                     <div style="margin-top:16px;">
-                        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#A6B0A9;margin-bottom:8px;">Deskripsi Kebutuhan</div>
-                        <div style="background:#FCFBF7;border-radius:10px;padding:16px;border-left:4px solid var(--secondary);font-size:14px;line-height:1.7;color:#374151;white-space:pre-line;">
+                        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#9AA7B2;margin-bottom:8px;">Deskripsi Kebutuhan</div>
+                        <div style="background:#F9FBFD;border-radius:10px;padding:16px;border-left:4px solid var(--secondary);font-size:14px;line-height:1.7;color:#374151;white-space:pre-line;">
                             <?= htmlspecialchars($order['description']) ?>
                         </div>
                     </div>
@@ -437,7 +437,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                     ?>
                     <?php if (!empty($detailAddons)): ?>
                     <div style="margin-top:16px;">
-                        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#A6B0A9;margin-bottom:8px;">
+                        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#9AA7B2;margin-bottom:8px;">
                             <i class="fas fa-layer-group me-1"></i>Layanan Tambahan (Add-ons)
                         </div>
                         <div style="background:#f0fdf4;border-radius:10px;padding:14px;border-left:4px solid #22c55e;font-size:13.5px;">
@@ -452,7 +452,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                             </div>
                             <?php endforeach; ?>
                             <?php if (!empty($order['price'])): ?>
-                            <div style="display:flex;justify-content:space-between;padding:6px 0 2px;font-weight:700;color:#16211C;">
+                            <div style="display:flex;justify-content:space-between;padding:6px 0 2px;font-weight:700;color:#12212E;">
                                 <span>Total (Paket + Add-ons)</span>
                                 <span>Rp <?= number_format((int)$order['price'] + $addonsGrandTotal, 0, ',', '.') ?></span>
                             </div>
@@ -463,7 +463,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
 
                     <?php if (!empty($order['notes'])): ?>
                     <div style="margin-top:16px;">
-                        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#A6B0A9;margin-bottom:8px;">
+                        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#9AA7B2;margin-bottom:8px;">
                             <i class="fas fa-lock me-1"></i>Catatan Internal Admin
                         </div>
                         <div style="background:#fffbeb;border-radius:10px;padding:16px;border-left:4px solid #f59e0b;font-size:14px;line-height:1.7;color:#374151;white-space:pre-line;">
@@ -475,17 +475,17 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                     <!-- Timestamps -->
                     <div class="row g-3 mt-2">
                         <div class="col-sm-6">
-                            <div style="text-align:center;padding:14px;background:#FCFBF7;border-radius:10px;border:1px solid #E3E0D4;">
-                                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#A6B0A9;margin-bottom:5px;">Tanggal Dibuat</div>
-                                <div style="font-size:14px;font-weight:700;color:#16211C;"><?= date('d M Y', strtotime($order['created_at'])) ?></div>
-                                <div style="font-size:12px;color:#77857D;"><?= date('H:i', strtotime($order['created_at'])) ?> WIB</div>
+                            <div style="text-align:center;padding:14px;background:#F9FBFD;border-radius:10px;border:1px solid #DCE5ED;">
+                                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#9AA7B2;margin-bottom:5px;">Tanggal Dibuat</div>
+                                <div style="font-size:14px;font-weight:700;color:#12212E;"><?= date('d M Y', strtotime($order['created_at'])) ?></div>
+                                <div style="font-size:12px;color:#74838E;"><?= date('H:i', strtotime($order['created_at'])) ?> WIB</div>
                             </div>
                         </div>
                         <div class="col-sm-6">
-                            <div style="text-align:center;padding:14px;background:#FCFBF7;border-radius:10px;border:1px solid #E3E0D4;">
-                                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#A6B0A9;margin-bottom:5px;">Terakhir Diperbarui</div>
-                                <div style="font-size:14px;font-weight:700;color:#16211C;"><?= date('d M Y', strtotime($order['updated_at'])) ?></div>
-                                <div style="font-size:12px;color:#77857D;"><?= date('H:i', strtotime($order['updated_at'])) ?> WIB</div>
+                            <div style="text-align:center;padding:14px;background:#F9FBFD;border-radius:10px;border:1px solid #DCE5ED;">
+                                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#9AA7B2;margin-bottom:5px;">Terakhir Diperbarui</div>
+                                <div style="font-size:14px;font-weight:700;color:#12212E;"><?= date('d M Y', strtotime($order['updated_at'])) ?></div>
+                                <div style="font-size:12px;color:#74838E;"><?= date('H:i', strtotime($order['updated_at'])) ?> WIB</div>
                             </div>
                         </div>
                     </div>
@@ -498,7 +498,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                     <h5 class="admin-card-title">
                         <i class="fas fa-tasks"></i>
                         Milestone Pengerjaan
-                        <span class="badge" style="background:#E3E0D4;color:#45544D;font-size:11px;margin-left:4px;">
+                        <span class="badge" style="background:#DCE5ED;color:#41525F;font-size:11px;margin-left:4px;">
                             <?= $ms_completed ?>/<?= $ms_total ?>
                         </span>
                     </h5>
@@ -517,13 +517,13 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                     <?php if ($ms_total > 0): ?>
                     <div style="margin-bottom:24px;">
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-                            <span style="font-size:13px;color:#77857D;">Progress Pengerjaan</span>
-                            <span style="font-size:13px;font-weight:700;color:#16211C;"><?= $ms_percentage ?>%</span>
+                            <span style="font-size:13px;color:#74838E;">Progress Pengerjaan</span>
+                            <span style="font-size:13px;font-weight:700;color:#12212E;"><?= $ms_percentage ?>%</span>
                         </div>
-                        <div style="height:10px;background:#E3E0D4;border-radius:10px;overflow:hidden;">
+                        <div style="height:10px;background:#DCE5ED;border-radius:10px;overflow:hidden;">
                             <div style="height:100%;width:<?= $ms_percentage ?>%;background:linear-gradient(90deg,#1A1A1A,#22c55e);border-radius:10px;transition:width 0.5s ease;"></div>
                         </div>
-                        <div style="font-size:11px;color:#A6B0A9;margin-top:4px;"><?= $ms_completed ?> dari <?= $ms_total ?> milestone selesai</div>
+                        <div style="font-size:11px;color:#9AA7B2;margin-top:4px;"><?= $ms_completed ?> dari <?= $ms_total ?> milestone selesai</div>
                     </div>
                     <?php endif; ?>
 
@@ -533,9 +533,9 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                         <?php foreach ($milestones as $step => $ms): ?>
                         <?php
                         // Determine colors
-                        $ms_color = '#A6B0A9'; // pending = gray
-                        $ms_bg    = '#F4F2EA';
-                        $ms_border= '#CFCBBB';
+                        $ms_color = '#9AA7B2'; // pending = gray
+                        $ms_bg    = '#EEF3F7';
+                        $ms_border= '#C0CCD8';
                         if ($ms['status'] === 'in_progress') {
                             $ms_color  = '#1F5637';
                             $ms_bg     = '#ecfeff';
@@ -573,11 +573,11 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                 <div style="background:<?= $ms_bg ?>;border:1px solid <?= $ms_border ?>;border-radius:10px;padding:14px 16px;">
                                     <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
                                         <div>
-                                            <div style="font-weight:700;font-size:14px;color:#16211C;margin-bottom:2px;">
+                                            <div style="font-weight:700;font-size:14px;color:#12212E;margin-bottom:2px;">
                                                 <?= htmlspecialchars($ms['title']) ?>
                                             </div>
                                             <?php if (!empty($ms['description'])): ?>
-                                            <div style="font-size:13px;color:#77857D;line-height:1.5;">
+                                            <div style="font-size:13px;color:#74838E;line-height:1.5;">
                                                 <?= htmlspecialchars($ms['description']) ?>
                                             </div>
                                             <?php endif; ?>
@@ -693,49 +693,49 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
             </div>
 
             <!-- Summary Card -->
-            <div class="admin-card mb-4" style="background:linear-gradient(135deg,rgba(31,75,63,0.04),rgba(26,54,93,0.04));">
+            <div class="admin-card mb-4" style="background:linear-gradient(135deg,rgba(26,60,94,0.04),rgba(26,54,93,0.04));">
                 <div class="admin-card-body">
-                    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#A6B0A9;margin-bottom:14px;">
+                    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#9AA7B2;margin-bottom:14px;">
                         <i class="fas fa-info-circle me-1"></i>Ringkasan Pesanan
                     </div>
                     <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;">
                         <div style="display:flex;justify-content:space-between;">
-                            <span style="color:#77857D;">Kode Tracking:</span>
-                            <code style="font-size:11.5px;font-weight:700;color:#16211C;"><?= htmlspecialchars($order['tracking_code']) ?></code>
+                            <span style="color:#74838E;">Kode Tracking:</span>
+                            <code style="font-size:11.5px;font-weight:700;color:#12212E;"><?= htmlspecialchars($order['tracking_code']) ?></code>
                         </div>
                         <div style="display:flex;justify-content:space-between;">
-                            <span style="color:#77857D;">Status:</span>
+                            <span style="color:#74838E;">Status:</span>
                             <span class="badge bg-<?= getOrderStatusBadge($order['status']) ?>" style="font-size:11px;" id="summaryStatusBadge">
                                 <?= getOrderStatusLabel($order['status']) ?>
                             </span>
                         </div>
                         <div style="display:flex;justify-content:space-between;">
-                            <span style="color:#77857D;">Layanan:</span>
+                            <span style="color:#74838E;">Layanan:</span>
                             <strong style="font-size:12.5px;"><?= htmlspecialchars($service_labels[$order['service_type']] ?? $order['service_type']) ?></strong>
                         </div>
                         <div style="display:flex;justify-content:space-between;">
-                            <span style="color:#77857D;">Paket:</span>
+                            <span style="color:#74838E;">Paket:</span>
                             <strong><?= htmlspecialchars($package_labels[$order['package_tier']] ?? $order['package_tier']) ?></strong>
                         </div>
                         <?php if (!empty($order['price']) || !empty($detailAddons)): ?>
                         <div style="display:flex;justify-content:space-between;">
-                            <span style="color:#77857D;">Nilai Pesanan:</span>
+                            <span style="color:#74838E;">Nilai Pesanan:</span>
                             <strong style="color:#1A1A1A;">
                                 <?php
                                 $sidebarAddonsTotal = 0;
                                 foreach ($detailAddons as $_da) { $sidebarAddonsTotal += (int)($_da['price'] ?? 0); }
                                 echo 'Rp ' . number_format((int)$order['price'] + $sidebarAddonsTotal, 0, ',', '.');
-                                if (!empty($detailAddons)) echo ' <small style="font-size:10px;color:#A6B0A9;">('.count($detailAddons).' add-on)</small>';
+                                if (!empty($detailAddons)) echo ' <small style="font-size:10px;color:#9AA7B2;">('.count($detailAddons).' add-on)</small>';
                                 ?>
                             </strong>
                         </div>
                         <?php endif; ?>
                         <div style="display:flex;justify-content:space-between;">
-                            <span style="color:#77857D;">Milestone Selesai:</span>
+                            <span style="color:#74838E;">Milestone Selesai:</span>
                             <strong id="summaryMsCount"><?= $ms_completed ?>/<?= $ms_total ?></strong>
                         </div>
                         <div style="display:flex;justify-content:space-between;">
-                            <span style="color:#77857D;">Progress:</span>
+                            <span style="color:#74838E;">Progress:</span>
                             <strong id="summaryProgress"><?= $ms_percentage ?>%</strong>
                         </div>
                     </div>
@@ -795,7 +795,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
 <div class="modal fade" id="addMilestoneModal" tabindex="-1" aria-labelledby="addMilestoneModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="border-radius:16px;border:none;box-shadow:0 20px 60px rgba(0,0,0,0.15);">
-            <div class="modal-header" style="border-bottom:1px solid #E3E0D4;padding:20px 24px;">
+            <div class="modal-header" style="border-bottom:1px solid #DCE5ED;padding:20px 24px;">
                 <h5 class="modal-title" id="addMilestoneModalLabel">
                     <i class="fas fa-plus-circle me-2 text-primary"></i>Tambah Milestone Baru
                 </h5>
@@ -813,7 +813,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                               placeholder="Penjelasan singkat tentang milestone ini..."></textarea>
                 </div>
             </div>
-            <div class="modal-footer" style="border-top:1px solid #E3E0D4;padding:16px 24px;">
+            <div class="modal-footer" style="border-top:1px solid #DCE5ED;padding:16px 24px;">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
                 <button type="button" class="btn btn-primary" onclick="addMilestone()">
                     <i class="fas fa-plus me-1"></i>Tambah Milestone
@@ -935,7 +935,7 @@ function showWaToast(type, message) {
     var existing = document.getElementById("waToast");
     if (existing) existing.remove();
 
-    var bgColor = type === 'success' ? '#16a34a' : '#A9752F';
+    var bgColor = type === 'success' ? '#16a34a' : '#B8860B';
     var icon    = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle';
 
     var toast = document.createElement('div');

@@ -122,9 +122,9 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
         <?php
         $tab_colors = [
             'new'         => ['bg' => '#E4EDF4', 'color' => '#23566F'],
-            'contacted'   => ['bg' => '#E8F0EA', 'color' => '#1F5637'],
-            'follow_up'   => ['bg' => '#F7EEDF', 'color' => '#7A5A0C'],
-            'negotiation' => ['bg' => '#EDEAE0', 'color' => '#5A5344'],
+            'contacted'   => ['bg' => '#E7EFF6', 'color' => '#1F5637'],
+            'follow_up'   => ['bg' => '#FAF2E0', 'color' => '#7A5A0C'],
+            'negotiation' => ['bg' => '#E2EAF1', 'color' => '#4A5765'],
             'closed_won'  => ['bg' => '#E1EFE6', 'color' => '#1F5637'],
             'closed_lost' => ['bg' => '#FBEDEC', 'color' => '#8A2C23'],
         ];
@@ -157,7 +157,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
             <h5 class="admin-card-title">
                 <i class="fas fa-comments"></i>
                 <?= $filter_status === 'all' ? 'Semua Konsultasi' : $status_tab_labels[$filter_status] ?>
-                <span class="badge" style="background:#E3E0D4;color:#45544D;font-size:11px;margin-left:4px;">
+                <span class="badge" style="background:#DCE5ED;color:#41525F;font-size:11px;margin-left:4px;">
                     <?= count($consultations) ?> data
                 </span>
             </h5>
@@ -191,9 +191,9 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                             <td><?= $i + 1 ?></td>
                             <td>
                                 <div style="font-weight:600;"><?= htmlspecialchars($k['name']) ?></div>
-                                <div style="font-size:11px;color:#77857D;"><?= htmlspecialchars($k['email']) ?></div>
+                                <div style="font-size:11px;color:#74838E;"><?= htmlspecialchars($k['email']) ?></div>
                                 <?php if (!empty($k['phone'])): ?>
-                                <div style="font-size:11px;color:#A6B0A9;">
+                                <div style="font-size:11px;color:#9AA7B2;">
                                     <i class="fas fa-phone fa-xs me-1"></i><?= htmlspecialchars($k['phone']) ?>
                                 </div>
                                 <?php endif; ?>
@@ -206,7 +206,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                     <?= htmlspecialchars($service_labels[$k['service_type']] ?? $k['service_type']) ?>
                                 </span>
                                 <?php if (!empty($k['budget_range'])): ?>
-                                <div style="font-size:11px;color:#A6B0A9;"><?= htmlspecialchars($k['budget_range']) ?></div>
+                                <div style="font-size:11px;color:#9AA7B2;"><?= htmlspecialchars($k['budget_range']) ?></div>
                                 <?php endif; ?>
                             </td>
                             <td>
@@ -237,17 +237,17 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                             </td>
                             <td>
                                 <?php if (!empty($k['follow_up_date'])): ?>
-                                    <span style="font-size:12px;<?= $is_overdue ? 'color:#dc2626;font-weight:700;' : 'color:#77857D;' ?>">
+                                    <span style="font-size:12px;<?= $is_overdue ? 'color:#dc2626;font-weight:700;' : 'color:#74838E;' ?>">
                                         <?php if ($is_overdue): ?>
                                             <i class="fas fa-exclamation-triangle me-1"></i>
                                         <?php endif; ?>
                                         <?= date('d M Y', strtotime($k['follow_up_date'])) ?>
                                     </span>
                                 <?php else: ?>
-                                    <span style="color:#A6B0A9;font-size:12px;">—</span>
+                                    <span style="color:#9AA7B2;font-size:12px;">—</span>
                                 <?php endif; ?>
                             </td>
-                            <td style="font-size:12px;color:#77857D;white-space:nowrap;">
+                            <td style="font-size:12px;color:#74838E;white-space:nowrap;">
                                 <?= function_exists('formatDate') ? formatDate($k['created_at']) : date('d M Y', strtotime($k['created_at'])) ?>
                             </td>
                             <td>
@@ -310,7 +310,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
 
     <!-- Overdue Legend -->
     <?php if (!empty($consultations)): ?>
-    <div style="margin-top:12px;font-size:12px;color:#77857D;display:flex;align-items:center;gap:8px;">
+    <div style="margin-top:12px;font-size:12px;color:#74838E;display:flex;align-items:center;gap:8px;">
         <div style="width:14px;height:14px;background:#fff8f0;border:1px solid #fed7aa;border-radius:3px;"></div>
         <span>Baris dengan latar kuning = follow-up date telah lewat / overdue</span>
     </div>

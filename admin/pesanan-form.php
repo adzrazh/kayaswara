@@ -349,7 +349,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                 <div class="form-text">Isi harga paket utama saja (belum termasuk add-ons).</div>
                             </div>
                             <div class="col-12">
-                                <label class="form-label">Layanan Tambahan <small style="font-size:11px;color:#A6B0A9;">(opsional — tampil di invoice sebagai baris terpisah)</small></label>
+                                <label class="form-label">Layanan Tambahan <small style="font-size:11px;color:#9AA7B2;">(opsional — tampil di invoice sebagai baris terpisah)</small></label>
                                 <div id="addonRows" style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px;">
                                     <?php
                                     $existingAddons = [];
@@ -403,7 +403,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                       placeholder="Catatan internal: hal teknis, kesepakatan harga, informasi penting, dll."
                                       ><?= htmlspecialchars($order['notes']) ?></textarea>
                         </div>
-                        <div style="font-size:12px;color:#A6B0A9;margin-top:4px;">
+                        <div style="font-size:12px;color:#9AA7B2;margin-top:4px;">
                             <i class="fas fa-lock me-1"></i>Catatan ini hanya terlihat oleh admin.
                         </div>
                     </div>
@@ -431,11 +431,11 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                         </select>
 
                         <?php if ($is_edit && !empty($order['tracking_code'])): ?>
-                        <div style="background:#FCFBF7;border-radius:8px;padding:12px;border:1px solid #E3E0D4;">
-                            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#A6B0A9;margin-bottom:6px;">
+                        <div style="background:#F9FBFD;border-radius:8px;padding:12px;border:1px solid #DCE5ED;">
+                            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#9AA7B2;margin-bottom:6px;">
                                 Kode Tracking
                             </div>
-                            <code style="font-size:13px;font-weight:700;color:#16211C;">
+                            <code style="font-size:13px;font-weight:700;color:#12212E;">
                                 <?= htmlspecialchars($order['tracking_code']) ?>
                             </code>
                         </div>
@@ -445,7 +445,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                 <i class="fas fa-magic me-1"></i>
                                 Kode tracking akan dibuat otomatis setelah pesanan disimpan.
                             </div>
-                            <div style="font-size:11px;color:#A6B0A9;margin-top:4px;">
+                            <div style="font-size:11px;color:#9AA7B2;margin-top:4px;">
                                 Format: <code>KYSWR-ddMMyyyy-NNN</code>
                             </div>
                         </div>
@@ -455,12 +455,12 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
 
                 <!-- Info Card -->
                 <?php if (!$is_edit): ?>
-                <div class="admin-card mb-4" style="background:linear-gradient(135deg,rgba(31,75,63,0.04),rgba(26,54,93,0.04));">
+                <div class="admin-card mb-4" style="background:linear-gradient(135deg,rgba(26,60,94,0.04),rgba(26,54,93,0.04));">
                     <div class="admin-card-body">
-                        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#A6B0A9;margin-bottom:12px;">
+                        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#9AA7B2;margin-bottom:12px;">
                             <i class="fas fa-info-circle me-1"></i>Informasi
                         </div>
-                        <div style="font-size:13px;color:#45544D;line-height:1.6;">
+                        <div style="font-size:13px;color:#41525F;line-height:1.6;">
                             <p class="mb-2">Saat pesanan baru dibuat, sistem akan otomatis:</p>
                             <ul class="mb-0 ps-3" style="font-size:12.5px;">
                                 <li>Membuat kode tracking unik</li>

@@ -188,7 +188,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
             'cancelled'   => 'fa-times-circle',
         ];
         $tab_colors = [
-            'pending'     => ['color' => '#A9752F'],
+            'pending'     => ['color' => '#B8860B'],
             'in_progress' => ['color' => '#1F5637'],
             'completed'   => ['color' => '#1F5637'],
             'cancelled'   => ['color' => '#8A2C23'],
@@ -215,7 +215,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
             <h5 class="admin-card-title">
                 <i class="fas fa-clipboard-list"></i>
                 <?= $filter_status === 'all' ? 'Semua Pesanan' : $status_tab_labels[$filter_status] ?>
-                <span class="badge" style="background:#E3E0D4;color:#45544D;font-size:11px;margin-left:4px;">
+                <span class="badge" style="background:#DCE5ED;color:#41525F;font-size:11px;margin-left:4px;">
                     <?= count($orders) ?> data
                 </span>
             </h5>
@@ -242,7 +242,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                             <td><?= $i + 1 ?></td>
                             <td>
                                 <div style="display:flex;align-items:center;gap:6px;">
-                                    <code style="font-size:12px;background:#F4F2EA;padding:3px 8px;border-radius:6px;color:#16211C;font-weight:600;letter-spacing:0.03em;">
+                                    <code style="font-size:12px;background:#EEF3F7;padding:3px 8px;border-radius:6px;color:#12212E;font-weight:600;letter-spacing:0.03em;">
                                         <?= htmlspecialchars($o['tracking_code']) ?>
                                     </code>
                                     <button type="button"
@@ -258,10 +258,10 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                             <td>
                                 <div style="font-weight:600;"><?= htmlspecialchars($o['client_name']) ?></div>
                                 <?php if (!empty($o['client_email'])): ?>
-                                <div style="font-size:11px;color:#77857D;"><?= htmlspecialchars($o['client_email']) ?></div>
+                                <div style="font-size:11px;color:#74838E;"><?= htmlspecialchars($o['client_email']) ?></div>
                                 <?php endif; ?>
                                 <?php if (!empty($o['client_institution'])): ?>
-                                <div style="font-size:11px;color:#A6B0A9;">
+                                <div style="font-size:11px;color:#9AA7B2;">
                                     <i class="fas fa-university fa-xs me-1"></i><?= htmlspecialchars($o['client_institution']) ?>
                                 </div>
                                 <?php endif; ?>
@@ -272,7 +272,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                 </span>
                             </td>
                             <td>
-                                <span style="font-size:12px;color:#77857D;">
+                                <span style="font-size:12px;color:#74838E;">
                                     <?= htmlspecialchars($package_labels[$o['package_tier']] ?? $o['package_tier']) ?>
                                 </span>
                             </td>
@@ -284,7 +284,7 @@ require_once ADMIN_PATH . '/includes/sidebar.php';
                                     <?= getOrderStatusLabel($o['status']) ?>
                                 </span>
                             </td>
-                            <td style="font-size:12px;color:#77857D;white-space:nowrap;">
+                            <td style="font-size:12px;color:#74838E;white-space:nowrap;">
                                 <?= function_exists('formatDate') ? formatDate($o['created_at']) : date('d M Y', strtotime($o['created_at'])) ?>
                             </td>
                             <td>

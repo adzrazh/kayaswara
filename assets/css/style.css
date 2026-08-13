@@ -1,6 +1,6 @@
 /* ==========================================================================
    KAYASWARA — Design System
-   Penerbit buku akademik. Tenang, bersih, ramah lingkungan, akademis.
+   Penerbit buku akademik. Tenang, bersih, biru-putih, akademis.
    --------------------------------------------------------------------------
    1.  Tokens
    2.  Reset & Base
@@ -27,24 +27,24 @@
    ========================================================================== */
 :root {
     /* Brand colours — overridden at runtime by admin settings */
-    --primary:   #1F4B3F;
-    --secondary: #2F6B57;
-    --accent:    #A9752F;
+    --primary:   #1A3C5E;
+    --secondary: #2E6188;
+    --accent:    #B8860B;
 
-    /* Derived neutrals — the "recycled paper" ground */
-    --paper:        #FBFAF6;
-    --paper-tint:   #F4F2EA;
-    --paper-deep:   #EDEAE0;
+    /* Derived neutrals — clean, cool white ground */
+    --paper:        #F7F9FB;
+    --paper-tint:   #EEF3F7;
+    --paper-deep:   #E2EAF1;
     --surface:      #FFFFFF;
-    --line:         #E3E0D4;
-    --line-strong:  #CFCBBB;
+    --line:         #DCE5ED;
+    --line-strong:  #C0CCD8;
 
-    --ink:        #16211C;
-    --ink-soft:   #45544D;
-    --ink-muted:  #77857D;
+    --ink:        #12212E;
+    --ink-soft:   #41525F;
+    --ink-muted:  #74838E;
 
-    --leaf-soft:  #E8F0EA;
-    --gold-soft:  #F7EEDF;
+    --brand-soft:  #E7EFF6;
+    --accent-soft: #FAF2E0;
 
     --ok:      #2E7D4F;
     --warn:    #B8860B;
@@ -63,10 +63,10 @@
     --r-pill: 999px;
 
     /* Elevation — restrained, paper-like */
-    --shadow-xs: 0 1px 2px rgba(22, 33, 28, .05);
-    --shadow-sm: 0 2px 8px rgba(22, 33, 28, .06);
-    --shadow-md: 0 8px 24px rgba(22, 33, 28, .08);
-    --shadow-lg: 0 18px 48px rgba(22, 33, 28, .12);
+    --shadow-xs: 0 1px 2px rgba(18, 33, 46, .05);
+    --shadow-sm: 0 2px 8px rgba(18, 33, 46, .06);
+    --shadow-md: 0 8px 24px rgba(18, 33, 46, .08);
+    --shadow-lg: 0 18px 48px rgba(18, 33, 46, .12);
 
     /* Rhythm */
     --section-y: 5.5rem;
@@ -104,7 +104,7 @@ a {
 }
 a:hover { color: var(--accent); }
 
-::selection { background: var(--leaf-soft); color: var(--ink); }
+::selection { background: var(--brand-soft); color: var(--ink); }
 
 :focus-visible {
     outline: 2px solid var(--accent);
@@ -244,7 +244,7 @@ p { margin-bottom: 1rem; }
 .bg-paper   { background-color: var(--paper) !important; }
 .bg-tint    { background-color: var(--paper-tint) !important; }
 .bg-surface { background-color: var(--surface) !important; }
-.bg-forest  { background-color: var(--primary) !important; color: #fff; }
+.bg-brand  { background-color: var(--primary) !important; color: #fff; }
 
 .fw-500 { font-weight: 500 !important; }
 .fw-600 { font-weight: 600 !important; }
@@ -282,8 +282,8 @@ p { margin-bottom: 1rem; }
     pointer-events: none;
     opacity: .5;
     background-image:
-        radial-gradient(circle at 20% 30%, rgba(31, 75, 63, .04) 0, transparent 45%),
-        radial-gradient(circle at 80% 70%, rgba(169, 117, 47, .04) 0, transparent 40%);
+        radial-gradient(circle at 20% 30%, rgba(26, 60, 94, .05) 0, transparent 45%),
+        radial-gradient(circle at 80% 70%, rgba(184, 134, 11, .05) 0, transparent 40%);
 }
 .paper-grain > * { position: relative; }
 
@@ -298,12 +298,12 @@ p { margin-bottom: 1rem; }
     font-weight: 600;
     letter-spacing: .04em;
     text-transform: uppercase;
-    background: var(--leaf-soft);
+    background: var(--brand-soft);
     color: var(--primary);
-    border: 1px solid rgba(31, 75, 63, .12);
+    border: 1px solid rgba(26, 60, 94, .14);
     white-space: nowrap;
 }
-.chip-gold   { background: var(--gold-soft); color: #7C5417; border-color: rgba(169, 117, 47, .18); }
+.chip-gold   { background: var(--accent-soft); color: #7A5A0C; border-color: rgba(184, 134, 11, .20); }
 .chip-plain  { background: var(--paper-deep); color: var(--ink-soft); border-color: var(--line); }
 .chip-outline { background: transparent; }
 
@@ -343,8 +343,8 @@ p { margin-bottom: 1rem; }
     box-shadow: var(--shadow-xs);
 }
 .btn-primary:hover {
-    --btn-bg: #163830;
-    --btn-bd: #163830;
+    --btn-bg: #14304B;
+    --btn-bd: #14304B;
     --btn-fg: #fff;
     box-shadow: var(--shadow-md);
 }
@@ -357,8 +357,8 @@ p { margin-bottom: 1rem; }
     box-shadow: var(--shadow-xs);
 }
 .btn-accent:hover {
-    --btn-bg: #8E6126;
-    --btn-bd: #8E6126;
+    --btn-bg: #96700A;
+    --btn-bd: #96700A;
     --btn-fg: #fff;
     box-shadow: var(--shadow-md);
 }
@@ -425,11 +425,11 @@ p { margin-bottom: 1rem; }
     padding: .68rem .9rem;
     transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
 }
-.form-control::placeholder { color: #A6B0A9; }
+.form-control::placeholder { color: #9AA7B2; }
 .form-control:focus,
 .form-select:focus {
     border-color: var(--secondary);
-    box-shadow: 0 0 0 3px rgba(47, 107, 87, .12);
+    box-shadow: 0 0 0 3px rgba(46, 97, 136, .14);
     background-color: var(--surface);
 }
 .form-control.is-invalid,
@@ -482,7 +482,7 @@ p { margin-bottom: 1rem; }
     width: 26px; height: 26px;
     flex: 0 0 26px;
     border-radius: 50%;
-    background: var(--leaf-soft);
+    background: var(--brand-soft);
     color: var(--primary);
     font-family: var(--font-body);
     font-size: .78rem;
@@ -504,7 +504,7 @@ p { margin-bottom: 1rem; }
     cursor: pointer;
 }
 .file-drop:hover,
-.file-drop.dragover { border-color: var(--secondary); background: var(--leaf-soft); }
+.file-drop.dragover { border-color: var(--secondary); background: var(--brand-soft); }
 .file-drop input[type="file"] {
     position: absolute;
     inset: 0;
@@ -540,7 +540,7 @@ p { margin-bottom: 1rem; }
     align-items: flex-start;
     font-size: .85rem;
     color: var(--ink-soft);
-    background: var(--leaf-soft);
+    background: var(--brand-soft);
     border-radius: var(--r-sm);
     padding: .85rem 1rem;
 }
@@ -582,11 +582,11 @@ p { margin-bottom: 1rem; }
 }
 @supports ((backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px))) {
     .site-header {
-        background: rgba(251, 250, 246, .94);
+        background: rgba(247, 249, 251, .94);
         -webkit-backdrop-filter: saturate(180%) blur(12px);
         backdrop-filter: saturate(180%) blur(12px);
     }
-    .site-header.is-stuck { background: rgba(251, 250, 246, .985); }
+    .site-header.is-stuck { background: rgba(247, 249, 251, .985); }
 }
 .site-header.is-stuck { box-shadow: var(--shadow-sm); }
 
@@ -697,7 +697,7 @@ p { margin-bottom: 1rem; }
 .mobile-nav-list a.active {
     color: var(--primary);
     font-weight: 600;
-    background: var(--leaf-soft);
+    background: var(--brand-soft);
     border-left-color: var(--accent);
 }
 .mobile-nav-list a.active i { color: var(--primary); }
@@ -720,7 +720,7 @@ p { margin-bottom: 1rem; }
     width: 620px;
     height: 620px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(47, 107, 87, .09) 0%, rgba(47, 107, 87, 0) 68%);
+    background: radial-gradient(circle, rgba(46, 97, 136, .10) 0%, rgba(46, 97, 136, 0) 68%);
     pointer-events: none;
 }
 .hero-inner { position: relative; z-index: 1; }
@@ -802,8 +802,10 @@ p { margin-bottom: 1rem; }
     content: '';
     position: absolute;
     inset: 0;
+    /* Kedalaman biru-ke-biru. Overlay emas di atas biru menghasilkan
+       kesan zaitun, jadi sorotannya memakai nada biru yang lebih terang. */
     background:
-        radial-gradient(circle at 88% 12%, rgba(169, 117, 47, .28) 0, transparent 45%),
+        radial-gradient(circle at 88% 12%, rgba(46, 97, 136, .55) 0, transparent 48%),
         radial-gradient(circle at 8% 90%, rgba(255, 255, 255, .07) 0, transparent 40%);
     pointer-events: none;
 }
@@ -916,7 +918,7 @@ p { margin-bottom: 1rem; }
 .service-icon {
     width: 48px; height: 48px;
     border-radius: var(--r-md);
-    background: var(--leaf-soft);
+    background: var(--brand-soft);
     color: var(--primary);
     display: grid;
     place-items: center;
@@ -973,7 +975,7 @@ p { margin-bottom: 1rem; }
     flex-direction: column;
     justify-content: space-between;
     padding: 1.15rem 1rem;
-    background: linear-gradient(160deg, var(--primary), #143229);
+    background: linear-gradient(160deg, var(--primary), #12293D);
     color: #fff;
     text-align: left;
 }
@@ -1192,7 +1194,7 @@ p { margin-bottom: 1rem; }
 .quote-avatar {
     width: 42px; height: 42px;
     border-radius: 50%;
-    background: var(--leaf-soft);
+    background: var(--brand-soft);
     color: var(--primary);
     display: grid;
     place-items: center;
@@ -1243,7 +1245,7 @@ p { margin-bottom: 1rem; }
     position: absolute;
     inset: 0;
     background:
-        radial-gradient(circle at 92% 8%, rgba(169, 117, 47, .3) 0, transparent 42%),
+        radial-gradient(circle at 92% 8%, rgba(46, 97, 136, .55) 0, transparent 45%),
         radial-gradient(circle at 4% 96%, rgba(255, 255, 255, .08) 0, transparent 38%);
     pointer-events: none;
 }
@@ -1466,7 +1468,7 @@ p { margin-bottom: 1rem; }
     width: 38px; height: 38px;
     flex: 0 0 38px;
     border-radius: var(--r-sm);
-    background: var(--leaf-soft);
+    background: var(--brand-soft);
     color: var(--primary);
     display: grid;
     place-items: center;
@@ -1487,7 +1489,7 @@ p { margin-bottom: 1rem; }
     width: 68px; height: 68px;
     margin: 0 auto .9rem;
     border-radius: 50%;
-    background: var(--leaf-soft);
+    background: var(--brand-soft);
     color: var(--primary);
     display: grid;
     place-items: center;
@@ -1534,7 +1536,7 @@ p { margin-bottom: 1rem; }
     width: 60px; height: 60px;
     margin: 0 auto 1.25rem;
     border-radius: var(--r-md);
-    background: var(--leaf-soft);
+    background: var(--brand-soft);
     color: var(--primary);
     display: grid;
     place-items: center;
@@ -1618,8 +1620,8 @@ p { margin-bottom: 1rem; }
     border-radius: var(--r-md);
     padding: .95rem 1.15rem;
 }
-.tl-item.is-done .tl-body { border-color: rgba(47, 107, 87, .28); }
-.tl-item.is-active .tl-body { border-color: rgba(169, 117, 47, .35); background: #FFFCF7; }
+.tl-item.is-done .tl-body { border-color: rgba(46, 97, 136, .30); }
+.tl-item.is-active .tl-body { border-color: rgba(184, 134, 11, .38); background: #F7FAFD; }
 .tl-title { font-size: 1rem; margin-bottom: .25rem; }
 .tl-desc { font-size: .88rem; color: var(--ink-soft); margin-bottom: .4rem; }
 .tl-stamp { font-size: .78rem; color: var(--ink-muted); display: inline-flex; align-items: center; gap: .35rem; }
@@ -1644,7 +1646,7 @@ p { margin-bottom: 1rem; }
     padding: 1.05rem 1.35rem;
     box-shadow: none;
 }
-.faq .accordion-button:not(.collapsed) { background: var(--leaf-soft); color: var(--primary); }
+.faq .accordion-button:not(.collapsed) { background: var(--brand-soft); color: var(--primary); }
 .faq .accordion-button:focus { box-shadow: none; border-color: transparent; }
 .faq .accordion-button::after {
     background-size: 1rem;
@@ -1658,9 +1660,9 @@ p { margin-bottom: 1rem; }
     font-size: .92rem;
     padding: .9rem 1.15rem;
 }
-.alert-success { background: var(--leaf-soft); border-color: rgba(46, 125, 79, .25); color: #1F5637; }
+.alert-success { background: var(--brand-soft); border-color: rgba(46, 125, 79, .25); color: #1F5637; }
 .alert-danger  { background: #FBEDEC; border-color: rgba(179, 57, 46, .22); color: #8A2C23; }
-.alert-warning { background: var(--gold-soft); border-color: rgba(184, 134, 11, .25); color: #7A5A0C; }
+.alert-warning { background: var(--accent-soft); border-color: rgba(184, 134, 11, .25); color: #7A5A0C; }
 .alert-info    { background: #EAF2F6; border-color: rgba(44, 110, 143, .22); color: #23566F; }
 
 .notice {
@@ -1692,7 +1694,7 @@ p { margin-bottom: 1rem; }
    15. FOOTER
    ========================================================================== */
 .site-footer {
-    background: #142B24;
+    background: #13293C;
     color: rgba(255, 255, 255, .7);
     margin-top: auto;
 }
